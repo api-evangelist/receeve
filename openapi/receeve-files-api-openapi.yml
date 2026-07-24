@@ -1,0 +1,215 @@
+openapi: 3.0.3
+info:
+  title: InDebted Receive API Documentation Account Files API
+  description: 'This is the API definition for interacting with InDebted''s Receive debt servicing platform. For more details please visit the [Integration Documentation](https://docs.indebted.co/docs/receive/receive-knowledge-base).
+
+
+    **Using this spec in code generators, Postman, or other tooling?** Fetch the raw document at [https://receive-api.indebted.co/openapi/apiSchema.yaml](https://receive-api.indebted.co/openapi/apiSchema.yaml) — that is the canonical OpenAPI file. Prefer it over the in-page download button, which re-serialises the document and can alter value types (e.g. date-formatted strings).'
+  contact:
+    email: techteam@indebted.co
+  version: 1.53.1
+servers:
+- url: /
+  description: API base path
+tags:
+- name: Files
+paths:
+  /files/v1/{clientId}/upload_files:
+    post:
+      tags:
+      - Files
+      summary: It upload the files corresponding to the account
+      operationId: uploadFiles
+      parameters:
+      - $ref: '#/components/parameters/ClientIdParameter'
+      - $ref: '#/components/parameters/AuthorizationParameter'
+      - $ref: '#/components/parameters/TriggerNameParameter'
+      responses:
+        '200':
+          $ref: '#/components/responses/200Success'
+        '400':
+          $ref: '#/components/responses/400BadRequest'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '403':
+          $ref: '#/components/responses/403Forbidden'
+        '429':
+          $ref: '#/components/responses/429LimitsReached'
+        '500':
+          $ref: '#/components/responses/500InternalError'
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+              - file
+              - accountId
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: The file to upload
+                accountId:
+                  type: string
+                  description: The account id
+                documentType:
+                  type: string
+                  description: Type of the document as specified in the backoffice e.g 'CSV', 'Invoice'
+                externalClaimRef:
+                  type: string
+                  description: External claim reference
+                productReference:
+                  type: string
+                  description: Product reference
+              example:
+                file: (binary file contents)
+                accountId: ACC-DE-5567
+                documentType: Invoice
+                externalClaimRef: INV-2024-0042
+              oneOf:
+              - required:
+                - externalClaimRef
+              - required:
+                - ProductReference
+      security:
+      - api_key: []
+components:
+  schemas:
+    ActionResponse:
+      type: object
+      description: Response of any action that causes any side effect in the platform (e.g. create, update, delete)
+      required:
+      - success
+      - messages
+      - messageIds
+      properties:
+        success:
+          type: boolean
+          example: false
+          description: Status of the action
+        messages:
+          type: array
+          items:
+            type: string
+            example: Successfully created claim claim1
+            description: Human-friendly message about the action
+        messageIds:
+          type: array
+          description: Identifier of the messages (used for tracing)
+          items:
+            type: string
+            format: uuid
+            example: 32638681-bb15-400d-acc8-15bf8e38661e
+      example:
+        success: true
+        messages:
+        - Successfully processed action
+        messageIds:
+        - e66d62ed-2331-4ced-8c03-5e729e984adc
+  parameters:
+    ClientIdParameter:
+      name: clientId
+      in: path
+      required: true
+      description: 'A Receive system identifier that will be assigned automatically.
+
+        It will be used for situations like Support related interventions or data segmentation.
+
+        '
+      example: ec702157-705b-42a0-b70e-a60a63dd24ab
+      schema:
+        type: string
+        format: uuid
+    AuthorizationParameter:
+      in: header
+      name: Authorization
+      required: true
+      description: 'OAuth2 Token (obtained from /oauth2/token )
+
+        Reference: https://docs.indebted.co/docs/receive/integration/use-cases/authentication-use-case
+
+        '
+      example: Bearer <access_token>
+      schema:
+        type: string
+    TriggerNameParameter:
+      name: triggerName
+      in: query
+      required: false
+      description: This is name of Custom Trigger that should be triggered when this API is called.
+      schema:
+        type: string
+      example: customTrigger1
+  responses:
+    403Forbidden:
+      description: Access is denied
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Forbidden
+    400BadRequest:
+      description: Incorrectly formed request
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: 'Missing required request parameters: [Authorization]'
+    429LimitsReached:
+      description: Request was throttled
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Too Many Requests
+    500InternalError:
+      description: Internal error occured
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Internal error
+    401Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
+    200Success:
+      description: Request was successful
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties:
+              $ref: '#/components/schemas/ActionResponse'
+          example:
+            REFERENCE_1:
+              success: true
+              messages:
+              - Successfully processed action
+              messageIds:
+              - e66d62ed-2331-4ced-8c03-5e729e984adc
+  securitySchemes:
+    api_key:
+      type: apiKey
+      name: Authorization
+      in: header

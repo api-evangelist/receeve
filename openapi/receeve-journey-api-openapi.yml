@@ -1,0 +1,326 @@
+openapi: 3.0.3
+info:
+  title: InDebted Receive API Documentation Account Journey API
+  description: 'This is the API definition for interacting with InDebted''s Receive debt servicing platform. For more details please visit the [Integration Documentation](https://docs.indebted.co/docs/receive/receive-knowledge-base).
+
+
+    **Using this spec in code generators, Postman, or other tooling?** Fetch the raw document at [https://receive-api.indebted.co/openapi/apiSchema.yaml](https://receive-api.indebted.co/openapi/apiSchema.yaml) — that is the canonical OpenAPI file. Prefer it over the in-page download button, which re-serialises the document and can alter value types (e.g. date-formatted strings).'
+  contact:
+    email: techteam@indebted.co
+  version: 1.53.1
+servers:
+- url: /
+  description: API base path
+tags:
+- name: Journey
+  description: This is the overall strategy to resolve the outstanding payment or debt.
+  externalDocs:
+    description: Strategy
+    url: https://docs.indebted.co/docs/receive/strategy
+paths:
+  /v1/{clientId}/pause_journeys:
+    post:
+      tags:
+      - Journey
+      summary: Pause Journeys for particular claims. You may restart them at a later date if you choose. It will resume where it left off.
+      operationId: pauseJourneys
+      parameters:
+      - $ref: '#/components/parameters/ClientIdParameter'
+      - $ref: '#/components/parameters/AuthorizationParameter'
+      - $ref: '#/components/parameters/TriggerNameParameter'
+      - $ref: '#/components/parameters/SequentialParameter'
+      - $ref: '#/components/parameters/AsyncParameter'
+      - $ref: '#/components/parameters/MinorVersionParameter'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+                properties:
+                  ref:
+                    type: string
+                    example: CLAIM_REF_002
+              example:
+              - ref: CLAIM_REF_002
+      responses:
+        '200':
+          $ref: '#/components/responses/200Success'
+        '400':
+          $ref: '#/components/responses/400BadRequest'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '403':
+          $ref: '#/components/responses/403Forbidden'
+        '429':
+          $ref: '#/components/responses/429LimitsReached'
+        '500':
+          $ref: '#/components/responses/500InternalError'
+      security:
+      - api_key: []
+  /v1/{clientId}/resume_journeys:
+    post:
+      tags:
+      - Journey
+      summary: Resume Journeys for particular claims.
+      operationId: resumeJourneys
+      parameters:
+      - $ref: '#/components/parameters/ClientIdParameter'
+      - $ref: '#/components/parameters/AuthorizationParameter'
+      - $ref: '#/components/parameters/TriggerNameParameter'
+      - $ref: '#/components/parameters/SequentialParameter'
+      - $ref: '#/components/parameters/AsyncParameter'
+      - $ref: '#/components/parameters/MinorVersionParameter'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+                properties:
+                  ref:
+                    type: string
+                    example: CLAIM_REF_002
+              example:
+              - ref: CLAIM_REF_002
+      responses:
+        '200':
+          $ref: '#/components/responses/200Success'
+        '400':
+          $ref: '#/components/responses/400BadRequest'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '403':
+          $ref: '#/components/responses/403Forbidden'
+        '429':
+          $ref: '#/components/responses/429LimitsReached'
+        '500':
+          $ref: '#/components/responses/500InternalError'
+      security:
+      - api_key: []
+  /v1/{clientId}/stop_journeys:
+    post:
+      tags:
+      - Journey
+      summary: Stop Journeys for particular claims. This ends all processing on those claims.
+      operationId: stopJourneys
+      parameters:
+      - $ref: '#/components/parameters/ClientIdParameter'
+      - $ref: '#/components/parameters/AuthorizationParameter'
+      - $ref: '#/components/parameters/TriggerNameParameter'
+      - $ref: '#/components/parameters/SequentialParameter'
+      - $ref: '#/components/parameters/AsyncParameter'
+      - $ref: '#/components/parameters/MinorVersionParameter'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+                properties:
+                  ref:
+                    type: string
+                    example: CLAIM_REF_002
+                  reason:
+                    $ref: '#/components/schemas/ClaimResolutionReason'
+                  description:
+                    type: string
+                    example: Direct bank transfer received
+                    description: Human friendly description why the strategies stopped
+              example:
+              - ref: INV-2024-0042
+                reason: CLAIM_DISCARDED
+                description: Direct bank transfer received outside the platform
+      responses:
+        '200':
+          $ref: '#/components/responses/200Success'
+        '400':
+          $ref: '#/components/responses/400BadRequest'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '403':
+          $ref: '#/components/responses/403Forbidden'
+        '429':
+          $ref: '#/components/responses/429LimitsReached'
+        '500':
+          $ref: '#/components/responses/500InternalError'
+      security:
+      - api_key: []
+components:
+  parameters:
+    SequentialParameter:
+      name: sequential
+      in: query
+      required: false
+      description: The request body items are executed one after another one
+      schema:
+        type: boolean
+    ClientIdParameter:
+      name: clientId
+      in: path
+      required: true
+      description: 'A Receive system identifier that will be assigned automatically.
+
+        It will be used for situations like Support related interventions or data segmentation.
+
+        '
+      example: ec702157-705b-42a0-b70e-a60a63dd24ab
+      schema:
+        type: string
+        format: uuid
+    AuthorizationParameter:
+      in: header
+      name: Authorization
+      required: true
+      description: 'OAuth2 Token (obtained from /oauth2/token )
+
+        Reference: https://docs.indebted.co/docs/receive/integration/use-cases/authentication-use-case
+
+        '
+      example: Bearer <access_token>
+      schema:
+        type: string
+    MinorVersionParameter:
+      name: minorVersion
+      in: query
+      required: false
+      description: Optional minor version identifier for message versioning. This value is passed as additional metadata with emitted messages.
+      schema:
+        type: string
+    AsyncParameter:
+      name: async
+      in: query
+      required: false
+      description: The request is added to the queue without expecting the response
+      schema:
+        type: boolean
+    TriggerNameParameter:
+      name: triggerName
+      in: query
+      required: false
+      description: This is name of Custom Trigger that should be triggered when this API is called.
+      schema:
+        type: string
+      example: customTrigger1
+  schemas:
+    ActionResponse:
+      type: object
+      description: Response of any action that causes any side effect in the platform (e.g. create, update, delete)
+      required:
+      - success
+      - messages
+      - messageIds
+      properties:
+        success:
+          type: boolean
+          example: false
+          description: Status of the action
+        messages:
+          type: array
+          items:
+            type: string
+            example: Successfully created claim claim1
+            description: Human-friendly message about the action
+        messageIds:
+          type: array
+          description: Identifier of the messages (used for tracing)
+          items:
+            type: string
+            format: uuid
+            example: 32638681-bb15-400d-acc8-15bf8e38661e
+      example:
+        success: true
+        messages:
+        - Successfully processed action
+        messageIds:
+        - e66d62ed-2331-4ced-8c03-5e729e984adc
+    ClaimResolutionReason:
+      type: string
+      enum:
+      - CLAIM_SOLD
+      - CLAIM_PAID
+      - FRAUDULENT
+      - CLAIM_DISCARDED
+      - CLAIM_DISCHARGED
+      - CLAIM_INVALIDATED
+      example: CLAIM_PAID
+      description: 'The reason for the claim resolution.
+
+        '
+  responses:
+    403Forbidden:
+      description: Access is denied
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Forbidden
+    400BadRequest:
+      description: Incorrectly formed request
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: 'Missing required request parameters: [Authorization]'
+    429LimitsReached:
+      description: Request was throttled
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Too Many Requests
+    500InternalError:
+      description: Internal error occured
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Internal error
+    401Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
+    200Success:
+      description: Request was successful
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties:
+              $ref: '#/components/schemas/ActionResponse'
+          example:
+            REFERENCE_1:
+              success: true
+              messages:
+              - Successfully processed action
+              messageIds:
+              - e66d62ed-2331-4ced-8c03-5e729e984adc
+  securitySchemes:
+    api_key:
+      type: apiKey
+      name: Authorization
+      in: header

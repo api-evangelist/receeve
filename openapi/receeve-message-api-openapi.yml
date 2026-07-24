@@ -1,0 +1,281 @@
+openapi: 3.0.3
+info:
+  title: InDebted Receive API Documentation Account Message API
+  description: 'This is the API definition for interacting with InDebted''s Receive debt servicing platform. For more details please visit the [Integration Documentation](https://docs.indebted.co/docs/receive/receive-knowledge-base).
+
+
+    **Using this spec in code generators, Postman, or other tooling?** Fetch the raw document at [https://receive-api.indebted.co/openapi/apiSchema.yaml](https://receive-api.indebted.co/openapi/apiSchema.yaml) — that is the canonical OpenAPI file. Prefer it over the in-page download button, which re-serialises the document and can alter value types (e.g. date-formatted strings).'
+  contact:
+    email: techteam@indebted.co
+  version: 1.53.1
+servers:
+- url: /
+  description: API base path
+tags:
+- name: Message
+  description: Communication message in .eml format that was sent to Debtor.
+paths:
+  /v1/{clientId}/get_message:
+    get:
+      tags:
+      - Message
+      summary: Get message in .eml format.
+      operationId: getMessage
+      parameters:
+      - $ref: '#/components/parameters/ClientIdParameter'
+      - $ref: '#/components/parameters/AuthorizationParameter'
+      - name: messageURL
+        in: query
+        schema:
+          type: string
+          pattern: ^\/(.+.eml)$
+        required: true
+        description: URL of the message
+        example: /Operations/email/Message/3b97bd7a-1c07-44d4-b33f-2250f6419e95.eml
+      responses:
+        '200':
+          $ref: '#/components/responses/200SuccessMessage'
+        '400':
+          $ref: '#/components/responses/400BadRequest'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '403':
+          $ref: '#/components/responses/403Forbidden'
+        '429':
+          $ref: '#/components/responses/429LimitsReached'
+        '500':
+          $ref: '#/components/responses/500InternalError'
+      security:
+      - api_key: []
+  /v1/{clientId}/get_communication_message_urls:
+    get:
+      tags:
+      - Message
+      summary: Get communication message URLs by communication type, timeframe. Paginated.
+      operationId: getCommunicationMessageURLs
+      parameters:
+      - $ref: '#/components/parameters/ClientIdParameter'
+      - $ref: '#/components/parameters/AuthorizationParameter'
+      - $ref: '#/components/parameters/ClaimReferenceParameter'
+      - name: communicationType
+        in: query
+        schema:
+          type: string
+          enum:
+          - email
+          - letter
+          - SMS
+        description: type of communication that happened in Receive system. Leave it unspecified to get message URLs related to all communication types.
+        example: email
+      - name: startDate
+        in: query
+        schema:
+          type: string
+          format: date
+        description: date from which to start getting the events
+        example: '2019-05-28'
+      - name: limit
+        in: query
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 10000
+        description: amount of events per page, default is 1000
+        example: 1000
+      - name: page
+        in: query
+        schema:
+          type: integer
+          minimum: 1
+        description: number of page to retrieve the events for, default is 1
+        example: 1
+      responses:
+        '200':
+          $ref: '#/components/responses/200SuccessGetCommunicationMessageURLs'
+        '400':
+          $ref: '#/components/responses/400BadRequest'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '403':
+          $ref: '#/components/responses/403Forbidden'
+        '429':
+          $ref: '#/components/responses/429LimitsReached'
+        '500':
+          $ref: '#/components/responses/500InternalError'
+      security:
+      - api_key: []
+components:
+  parameters:
+    ClientIdParameter:
+      name: clientId
+      in: path
+      required: true
+      description: 'A Receive system identifier that will be assigned automatically.
+
+        It will be used for situations like Support related interventions or data segmentation.
+
+        '
+      example: ec702157-705b-42a0-b70e-a60a63dd24ab
+      schema:
+        type: string
+        format: uuid
+    ClaimReferenceParameter:
+      name: claimReference
+      in: query
+      required: true
+      example: ACCOUNT_REFERENCE_002
+      description: Receive Claim Reference
+      schema:
+        type: string
+        minLength: 1
+    AuthorizationParameter:
+      in: header
+      name: Authorization
+      required: true
+      description: 'OAuth2 Token (obtained from /oauth2/token )
+
+        Reference: https://docs.indebted.co/docs/receive/integration/use-cases/authentication-use-case
+
+        '
+      example: Bearer <access_token>
+      schema:
+        type: string
+  schemas:
+    CommunicationMessageURL:
+      type: object
+      required:
+      - communicationType
+      - messageURL
+      - dateTime
+      - bundleId
+      - bundleName
+      properties:
+        communicationType:
+          type: string
+          enum:
+          - email
+          - letter
+          - SMS
+          description: type of communication that happened in Receive system
+          example: email
+        messageURL:
+          type: string
+          pattern: ^\/(.+.eml)$
+          description: URL of the message
+          example: /Operations/email/Message/3b97bd7a-1c07-44d4-b33f-2250f6419e95.eml
+        dateTime:
+          type: integer
+          description: Timestamp when the communication event occured
+          example: 1621536535901
+        bundleId:
+          type: string
+          format: uuid
+          description: template id of communication that happened in Receive system
+          example: 00000000-0000-0000-0000-000000000000
+        bundleName:
+          type: string
+          description: template display name of communication that happened in Receive system
+          example: Default Email Template
+  responses:
+    200SuccessMessage:
+      description: Request for get_message is successful
+      content:
+        text/plain:
+          schema:
+            type: string
+            example: 'Content-Type: text/plain; charset=utf-8 Message-ID: <f533311e-9dd6-5209-2969-1ad8d3e64636@169.169.169.93> Content-Transfer-Encoding: quoted-printable Date: Thu, 12 Mar 2020 14:19:04 +0000 MIME-Version: 1.0
+
+              SMS Text =E2=82=AC20.42'
+    403Forbidden:
+      description: Access is denied
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Forbidden
+    200SuccessGetCommunicationMessageURLs:
+      description: Request for get_communication_message_urls is successful
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+            - communicationMessageURLs
+            - limit
+            - page
+            - numberOfPages
+            properties:
+              communicationMessageURLs:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CommunicationMessageURL'
+              limit:
+                type: integer
+                description: amount of events per current page
+                example: 1000
+              page:
+                type: integer
+                description: current page number
+                example: 1
+              numberOfPages:
+                type: integer
+                description: amount of pages with limit that is given for that request
+                example: 2
+          example:
+            page: 1
+            limit: 1000
+            numberOfPages: 1
+            communicationMessageURLs:
+            - communicationType: email
+              messageURL: https://messages.indebted.co/m/6119cd85-80ea-4a8b-9c6d-2e5f8a1b0c4d
+              dateTime: 1714636253
+              bundleId: BUNDLE-2024-05
+              bundleName: May 2024 dunning cycle
+    429LimitsReached:
+      description: Request was throttled
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Too Many Requests
+    400BadRequest:
+      description: Incorrectly formed request
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: 'Missing required request parameters: [Authorization]'
+    500InternalError:
+      description: Internal error occured
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Internal error
+    401Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
+  securitySchemes:
+    api_key:
+      type: apiKey
+      name: Authorization
+      in: header

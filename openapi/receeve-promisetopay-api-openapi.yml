@@ -1,0 +1,253 @@
+openapi: 3.0.3
+info:
+  title: InDebted Receive API Documentation Account PromiseToPay API
+  description: 'This is the API definition for interacting with InDebted''s Receive debt servicing platform. For more details please visit the [Integration Documentation](https://docs.indebted.co/docs/receive/receive-knowledge-base).
+
+
+    **Using this spec in code generators, Postman, or other tooling?** Fetch the raw document at [https://receive-api.indebted.co/openapi/apiSchema.yaml](https://receive-api.indebted.co/openapi/apiSchema.yaml) — that is the canonical OpenAPI file. Prefer it over the in-page download button, which re-serialises the document and can alter value types (e.g. date-formatted strings).'
+  contact:
+    email: techteam@indebted.co
+  version: 1.53.1
+servers:
+- url: /
+  description: API base path
+tags:
+- name: PromiseToPay
+paths:
+  /v1/{clientId}/create_promises_to_pay:
+    post:
+      tags:
+      - PromiseToPay
+      summary: Create promises to pay, a Promise to Pay enables a debt to be paid partially by a certain minimum amount and by a particular due date.
+      operationId: createPromisesToPay
+      parameters:
+      - $ref: '#/components/parameters/ClientIdParameter'
+      - $ref: '#/components/parameters/AuthorizationParameter'
+      - $ref: '#/components/parameters/TriggerNameParameter'
+      - $ref: '#/components/parameters/SequentialParameter'
+      - $ref: '#/components/parameters/AsyncParameter'
+      - $ref: '#/components/parameters/MinorVersionParameter'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: ClaimReference as key and the PromiseToPay as value
+              additionalProperties:
+                $ref: '#/components/schemas/PromiseToPay'
+            example:
+              INV-2024-0042:
+                amount: 50000
+                currency: EUR
+                dueDate: '2024-07-31'
+      responses:
+        '200':
+          $ref: '#/components/responses/200SuccessCreatePromisesToPay'
+        '400':
+          $ref: '#/components/responses/400BadRequest'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '403':
+          $ref: '#/components/responses/403Forbidden'
+        '429':
+          $ref: '#/components/responses/429LimitsReached'
+        '500':
+          $ref: '#/components/responses/500InternalError'
+      security:
+      - api_key: []
+components:
+  schemas:
+    Amount:
+      minimum: 0
+      type: integer
+      example: 13025
+      description: Monetary value in cents (natural nuumber)
+    ActionResponse:
+      type: object
+      description: Response of any action that causes any side effect in the platform (e.g. create, update, delete)
+      required:
+      - success
+      - messages
+      - messageIds
+      properties:
+        success:
+          type: boolean
+          example: false
+          description: Status of the action
+        messages:
+          type: array
+          items:
+            type: string
+            example: Successfully created claim claim1
+            description: Human-friendly message about the action
+        messageIds:
+          type: array
+          description: Identifier of the messages (used for tracing)
+          items:
+            type: string
+            format: uuid
+            example: 32638681-bb15-400d-acc8-15bf8e38661e
+      example:
+        success: true
+        messages:
+        - Successfully processed action
+        messageIds:
+        - e66d62ed-2331-4ced-8c03-5e729e984adc
+    Currency:
+      type: string
+      example: EUR
+      pattern: ^[A-Z]{3}$
+      description: 3-digit currency code (ISO 4217)
+    CreatePromisesToPay:
+      allOf:
+      - $ref: '#/components/schemas/ActionResponse'
+      - type: object
+        properties:
+          data:
+            $ref: '#/components/schemas/PromiseToPay'
+    PromiseToPay:
+      description: A promise to pay is a commitment from a debtor to pay a certain amount at a certain date.
+      type: object
+      required:
+      - amount
+      - currency
+      - dueDate
+      properties:
+        amount:
+          $ref: '#/components/schemas/Amount'
+        currency:
+          $ref: '#/components/schemas/Currency'
+        dueDate:
+          $ref: '#/components/schemas/DueDate'
+    DueDate:
+      type: string
+      format: date
+      example: '2019-06-28'
+      description: Current due date in your system. Use originalDueDate unless you purchased the debt and need this distinction.
+  responses:
+    200SuccessCreatePromisesToPay:
+      description: Response of creating a set of promises to pay
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties:
+              $ref: '#/components/schemas/CreatePromisesToPay'
+          example:
+            INV-2024-0042:
+              success: true
+              messages:
+              - Successfully created promise to pay for claim INV-2024-0042
+              messageIds:
+              - a1b2c3d4-0000-4a8b-9c6d-2e5f8a1b0c45
+    403Forbidden:
+      description: Access is denied
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Forbidden
+    400BadRequest:
+      description: Incorrectly formed request
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: 'Missing required request parameters: [Authorization]'
+    429LimitsReached:
+      description: Request was throttled
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Too Many Requests
+    500InternalError:
+      description: Internal error occured
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Internal error
+    401Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
+  parameters:
+    ClientIdParameter:
+      name: clientId
+      in: path
+      required: true
+      description: 'A Receive system identifier that will be assigned automatically.
+
+        It will be used for situations like Support related interventions or data segmentation.
+
+        '
+      example: ec702157-705b-42a0-b70e-a60a63dd24ab
+      schema:
+        type: string
+        format: uuid
+    SequentialParameter:
+      name: sequential
+      in: query
+      required: false
+      description: The request body items are executed one after another one
+      schema:
+        type: boolean
+    AuthorizationParameter:
+      in: header
+      name: Authorization
+      required: true
+      description: 'OAuth2 Token (obtained from /oauth2/token )
+
+        Reference: https://docs.indebted.co/docs/receive/integration/use-cases/authentication-use-case
+
+        '
+      example: Bearer <access_token>
+      schema:
+        type: string
+    MinorVersionParameter:
+      name: minorVersion
+      in: query
+      required: false
+      description: Optional minor version identifier for message versioning. This value is passed as additional metadata with emitted messages.
+      schema:
+        type: string
+    AsyncParameter:
+      name: async
+      in: query
+      required: false
+      description: The request is added to the queue without expecting the response
+      schema:
+        type: boolean
+    TriggerNameParameter:
+      name: triggerName
+      in: query
+      required: false
+      description: This is name of Custom Trigger that should be triggered when this API is called.
+      schema:
+        type: string
+      example: customTrigger1
+  securitySchemes:
+    api_key:
+      type: apiKey
+      name: Authorization
+      in: header

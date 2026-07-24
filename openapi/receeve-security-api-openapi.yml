@@ -1,0 +1,139 @@
+openapi: 3.0.3
+info:
+  title: InDebted Receive API Documentation Account Security API
+  description: 'This is the API definition for interacting with InDebted''s Receive debt servicing platform. For more details please visit the [Integration Documentation](https://docs.indebted.co/docs/receive/receive-knowledge-base).
+
+
+    **Using this spec in code generators, Postman, or other tooling?** Fetch the raw document at [https://receive-api.indebted.co/openapi/apiSchema.yaml](https://receive-api.indebted.co/openapi/apiSchema.yaml) — that is the canonical OpenAPI file. Prefer it over the in-page download button, which re-serialises the document and can alter value types (e.g. date-formatted strings).'
+  contact:
+    email: techteam@indebted.co
+  version: 1.53.1
+servers:
+- url: /
+  description: API base path
+tags:
+- name: Security
+  externalDocs:
+    description: Authentication Use Case
+    url: https://docs.indebted.co/docs/receive/integration/use-cases/authentication-use-case
+paths:
+  /v1/oauth2/token:
+    post:
+      tags:
+      - Security
+      summary: Get OAuth2 token
+      operationId: getOauth2Token
+      parameters:
+      - name: Authorization
+        in: header
+        description: 'Basic Auth where you need to provide auth client id and client secret.
+
+          Reference: https://docs.indebted.co/docs/receive/integration/use-cases/authentication-use-case
+
+          '
+        required: true
+        schema:
+          type: string
+          example: Basic NGExdm42azRhYzRocDV1dTNxMnF2NTU1NTU6MTE5NXVpdjlzdWI0Z2tjZ2RsOHRpb2UyMDlsdmNtdml2dTU1YjFlZjYwcjdsaFhYWFhYWA==
+      - name: Content-Type
+        in: header
+        description: must be application/x-www-form-urlencoded
+        required: true
+        schema:
+          type: string
+          example: application/x-www-form-urlencoded
+      responses:
+        '200':
+          $ref: '#/components/responses/200SuccessOauth2Token'
+        '400':
+          $ref: '#/components/responses/400BadRequest'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '403':
+          $ref: '#/components/responses/403Forbidden'
+        '429':
+          $ref: '#/components/responses/429LimitsReached'
+        '500':
+          $ref: '#/components/responses/500InternalError'
+      security:
+      - NONE: []
+components:
+  responses:
+    200SuccessOauth2Token:
+      description: Request to get oauth2 token was successful
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              access_token:
+                type: string
+                description: Access Token used in all the other API Endpoints
+                example: <access_token>
+              expires_in:
+                type: integer
+                description: Time in seconds until the token expires, please refresh the token before it expires.
+                example: 3600
+              token_type:
+                type: string
+                example: Bearer
+                description: OAuth2 token type
+          example:
+            access_token: <access_token>
+            token_type: Bearer
+            expires_in: 3600
+    403Forbidden:
+      description: Access is denied
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Forbidden
+    400BadRequest:
+      description: Incorrectly formed request
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: 'Missing required request parameters: [Authorization]'
+    429LimitsReached:
+      description: Request was throttled
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Too Many Requests
+    500InternalError:
+      description: Internal error occured
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Internal error
+    401Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
+  securitySchemes:
+    api_key:
+      type: apiKey
+      name: Authorization
+      in: header

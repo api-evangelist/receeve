@@ -1,0 +1,2295 @@
+openapi: 3.0.3
+info:
+  title: InDebted Receive API Documentation Account API
+  description: 'This is the API definition for interacting with InDebted''s Receive debt servicing platform. For more details please visit the [Integration Documentation](https://docs.indebted.co/docs/receive/receive-knowledge-base).
+
+
+    **Using this spec in code generators, Postman, or other tooling?** Fetch the raw document at [https://receive-api.indebted.co/openapi/apiSchema.yaml](https://receive-api.indebted.co/openapi/apiSchema.yaml) — that is the canonical OpenAPI file. Prefer it over the in-page download button, which re-serialises the document and can alter value types (e.g. date-formatted strings).'
+  contact:
+    email: techteam@indebted.co
+  version: 1.53.1
+servers:
+- url: /
+  description: API base path
+tags:
+- name: Account
+  description: A formal business arrangement providing for regular dealings or services (such as banking, advertising, or store credit) and involving the establishment and maintenance of an account
+  externalDocs:
+    description: Account
+    url: https://docs.indebted.co/docs/receive/integration/account-claims
+paths:
+  /v1/{clientId}/get_account:
+    get:
+      tags:
+      - Account
+      summary: It retrieves the Account information
+      operationId: getAccount
+      parameters:
+      - $ref: '#/components/parameters/ClientIdParameter'
+      - $ref: '#/components/parameters/AuthorizationParameter'
+      - $ref: '#/components/parameters/TriggerNameParameter'
+      - $ref: '#/components/parameters/AccountReferenceParameter'
+      responses:
+        '200':
+          $ref: '#/components/responses/200SuccessGetAccount'
+        '400':
+          $ref: '#/components/responses/400BadRequest'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '403':
+          $ref: '#/components/responses/403Forbidden'
+        '429':
+          $ref: '#/components/responses/429LimitsReached'
+        '500':
+          $ref: '#/components/responses/500InternalError'
+      security:
+      - api_key: []
+  /v1/{clientId}/create_accounts:
+    post:
+      tags:
+      - Account
+      summary: Create Accounts in Receive
+      description: 'The intetion of this endpoint is to create an Account in the platform, and it offer the possibility to include other related entities like the Debtor, the Account Score, Products, etc. But all those other sub-entities are optional and can be included in subsequent calls.
+
+        For more details about the Account, and the relationship with the other entities please visit the [Account](https://docs.indebted.co/docs/receive/integration/account-claims) page.
+
+        '
+      operationId: createAccounts
+      parameters:
+      - $ref: '#/components/parameters/ClientIdParameter'
+      - $ref: '#/components/parameters/AuthorizationParameter'
+      - $ref: '#/components/parameters/TriggerNameParameter'
+      - $ref: '#/components/parameters/AsyncParameter'
+      - $ref: '#/components/parameters/MinorVersionParameter'
+      - $ref: '#/components/parameters/SequentialParameter'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: AccountReference as key and the Account as value
+              additionalProperties:
+                $ref: '#/components/schemas/CreateAccountInput'
+              example:
+                ACCOUNT_REFERENCE_002:
+                  currency: EUR
+                  paymentReference: ACCOUNT_PAYMENT_REFERENCE
+                  meta:
+                    accountMetaKey002: value002
+                    invoiceExternalNumber: 111
+                  scores:
+                  - type: INTERNAL
+                    value: V1
+                  debtors:
+                  - lastName: LAST_NAME_1
+                    firstName: FIRST_NAME
+                    debtorReference: EXTERNAL_DEBTOR_REF_002
+                    contactInformation:
+                      country: NL
+                      email: first.last@acme.com
+                  products:
+                  - productReference: PRODUCT_REFERENCE_1
+                    paymentReference: PRODUCT_PAYMENT_REFERENCE_1
+                  - productReference: PRODUCT_REFERENCE_2
+                    paymentReference: PRODUCT_PAYMENT_REFERENCE_2
+                  ledgerEntries:
+                  - ledgerEntryReference: INVOICE_LEDGER_ENTRY_REFERENCE_002_1
+                    invoiceDetails:
+                      amount: 100000
+                      dueDate: '2022-01-08'
+                      paymentReference: INVOICE_PAYMENT_REFERENCE_1
+                    context:
+                      productReference: PRODUCT_REFERENCE_1
+      responses:
+        '200':
+          $ref: '#/components/responses/200SuccessCreateAccounts'
+        '400':
+          $ref: '#/components/responses/400BadRequest'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '403':
+          $ref: '#/components/responses/403Forbidden'
+        '429':
+          $ref: '#/components/responses/429LimitsReached'
+        '500':
+          $ref: '#/components/responses/500InternalError'
+      security:
+      - api_key: []
+  /v1/{clientId}/update_account_meta:
+    post:
+      tags:
+      - Account
+      summary: Update Account Meta
+      description: 'The intetion of this endpoint is to update the Account level metadata, the given information is merged with the previous data.
+
+        Notice that the metadata that is provided in the Account level, is inherited by the Claims that are created for that Account.
+
+        For more details about the Account, and the relationship with the other entities please visit the [Account](https://docs.indebted.co/docs/receive/integration/account-claims) page.
+
+        '
+      operationId: updateAccountMeta
+      parameters:
+      - $ref: '#/components/parameters/ClientIdParameter'
+      - $ref: '#/components/parameters/AuthorizationParameter'
+      - $ref: '#/components/parameters/TriggerNameParameter'
+      - $ref: '#/components/parameters/AsyncParameter'
+      - $ref: '#/components/parameters/MinorVersionParameter'
+      - $ref: '#/components/parameters/SequentialParameter'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: AccountReference as key and the Metadata as value
+              additionalProperties:
+                $ref: '#/components/schemas/Metadata'
+              example:
+                ACCOUNT_REFERENCE_002:
+                  updateAccountMeta002: updateAccountMetaValue002
+      responses:
+        '200':
+          $ref: '#/components/responses/200Success'
+        '400':
+          $ref: '#/components/responses/400BadRequest'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '403':
+          $ref: '#/components/responses/403Forbidden'
+        '429':
+          $ref: '#/components/responses/429LimitsReached'
+        '500':
+          $ref: '#/components/responses/500InternalError'
+      security:
+      - api_key: []
+  /v1/{clientId}/add_account_ledger_entries:
+    post:
+      tags:
+      - Account
+      summary: Add account ledger entries
+      description: 'The intetion of this endpoint is to add Ledger Entries to the Account.
+
+        Those Entries are used to create or update the Claims that are associated with the Account.
+
+        For more details about the Account, and the relationship with the other entities please visit the [Account](https://docs.indebted.co/docs/receive/integration/account-claims) page.
+
+        '
+      operationId: addAccountLedgerEntries
+      parameters:
+      - $ref: '#/components/parameters/ClientIdParameter'
+      - $ref: '#/components/parameters/AuthorizationParameter'
+      - $ref: '#/components/parameters/TriggerNameParameter'
+      - $ref: '#/components/parameters/AsyncParameter'
+      - $ref: '#/components/parameters/MinorVersionParameter'
+      - $ref: '#/components/parameters/SequentialParameter'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                allOf:
+                - $ref: '#/components/schemas/LedgerEntry'
+                - $ref: '#/components/schemas/EntityWithAccountReference'
+              example:
+              - accountReference: ACCOUNT_REFERENCE_002
+                context: {}
+                invoiceDetails:
+                  amount: 13025
+                  dueDate: '2020-01-01'
+                  meta: {}
+                ledgerEntryReference: INVOICE_LEDGER_ENTRY_REFERENCE_002_2
+      responses:
+        '200':
+          $ref: '#/components/responses/200SuccessAddAccountLedgerEntries'
+        '400':
+          $ref: '#/components/responses/400BadRequest'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '403':
+          $ref: '#/components/responses/403Forbidden'
+        '429':
+          $ref: '#/components/responses/429LimitsReached'
+        '500':
+          $ref: '#/components/responses/500InternalError'
+      security:
+      - api_key: []
+  /v1/{clientId}/add_account_products:
+    post:
+      tags:
+      - Account
+      summary: Add Account Products
+      description: 'The intetion of this endpoint is to Add Products to the Account.
+
+        The products are used as contextual information to the Claims that are created for that Account. And can be used for further Use Cases within the platform.
+
+        For more details about the Account, and the relationship with the other entities please visit the [Account](https://docs.indebted.co/docs/receive/integration/account-claims) page.
+
+        '
+      operationId: addAccountProducts
+      parameters:
+      - $ref: '#/components/parameters/ClientIdParameter'
+      - $ref: '#/components/parameters/AuthorizationParameter'
+      - $ref: '#/components/parameters/TriggerNameParameter'
+      - $ref: '#/components/parameters/AsyncParameter'
+      - $ref: '#/components/parameters/MinorVersionParameter'
+      - $ref: '#/components/parameters/SequentialParameter'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                allOf:
+                - $ref: '#/components/schemas/Product'
+                - $ref: '#/components/schemas/EntityWithAccountReference'
+              example:
+              - accountReference: ACCOUNT_REFERENCE_002
+                productReference: PRODUCT_REFERENCE_002_2
+                type: Computer
+                name: MacBook Air
+                code: '2022'
+      responses:
+        '200':
+          $ref: '#/components/responses/200SuccessAccountProductResponse'
+        '400':
+          $ref: '#/components/responses/400BadRequest'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '403':
+          $ref: '#/components/responses/403Forbidden'
+        '429':
+          $ref: '#/components/responses/429LimitsReached'
+        '500':
+          $ref: '#/components/responses/500InternalError'
+      security:
+      - api_key: []
+  /v1/{clientId}/update_account_products:
+    post:
+      tags:
+      - Account
+      summary: Update Account Products
+      description: 'The intetion of this endpoint is to update existing Products of the Account.
+
+        The products are used as contextual information to the Claims that are created for that Account. And can be used for further Use Cases within the platform.
+
+        For more details about the Account, and the relationship with the other entities please visit the [Account](https://docs.indebted.co/docs/receive/integration/account-claims) page.
+
+        '
+      operationId: updateAccountProducts
+      parameters:
+      - $ref: '#/components/parameters/ClientIdParameter'
+      - $ref: '#/components/parameters/AuthorizationParameter'
+      - $ref: '#/components/parameters/TriggerNameParameter'
+      - $ref: '#/components/parameters/AsyncParameter'
+      - $ref: '#/components/parameters/MinorVersionParameter'
+      - $ref: '#/components/parameters/SequentialParameter'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                allOf:
+                - $ref: '#/components/schemas/Product'
+                - $ref: '#/components/schemas/EntityWithAccountReference'
+              example:
+              - accountReference: ACCOUNT_REFERENCE_002
+                productReference: PRODUCT_REFERENCE_002_2
+                type: Computer
+                name: MacBook Air
+                code: '2022'
+      responses:
+        '200':
+          $ref: '#/components/responses/200SuccessAccountProductResponse'
+        '400':
+          $ref: '#/components/responses/400BadRequest'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '403':
+          $ref: '#/components/responses/403Forbidden'
+        '429':
+          $ref: '#/components/responses/429LimitsReached'
+        '500':
+          $ref: '#/components/responses/500InternalError'
+      security:
+      - api_key: []
+  /v1/{clientId}/add_account_debtors:
+    post:
+      tags:
+      - Account
+      summary: Add Account Debtors
+      description: 'The intetion of this endpoint is to Add Debtors to the Account.
+
+        The Debtor represents the entity that owes money described by the Account.
+
+        For more details about the Account, and the relationship with the other entities please visit the [Account](https://docs.indebted.co/docs/receive/integration/account-claims) page.
+
+        '
+      operationId: addAccountDebtors
+      parameters:
+      - $ref: '#/components/parameters/ClientIdParameter'
+      - $ref: '#/components/parameters/AuthorizationParameter'
+      - $ref: '#/components/parameters/TriggerNameParameter'
+      - $ref: '#/components/parameters/AsyncParameter'
+      - $ref: '#/components/parameters/MinorVersionParameter'
+      - $ref: '#/components/parameters/SequentialParameter'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                allOf:
+                - $ref: '#/components/schemas/Debtor'
+                - $ref: '#/components/schemas/EntityWithAccountReference'
+              example:
+              - accountReference: ACCOUNT_REFERENCE_002
+                debtorReference: EXTERNAL_DEBTOR_REF_002
+                contactInformation:
+                  country: DE
+                  email: first.last@acme.com
+                firstName: First_2
+                lastName: Last_2
+      responses:
+        '200':
+          $ref: '#/components/responses/200SuccessDebtorResponse'
+        '400':
+          $ref: '#/components/responses/400BadRequest'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '403':
+          $ref: '#/components/responses/403Forbidden'
+        '429':
+          $ref: '#/components/responses/429LimitsReached'
+        '500':
+          $ref: '#/components/responses/500InternalError'
+      security:
+      - api_key: []
+  /v1/{clientId}/update_account_debtors:
+    post:
+      tags:
+      - Account
+      summary: Update Account Debtors
+      description: 'The intetion of this endpoint is to Update Debtors to the Account.
+
+        The Debtor represents the entity that owes money described by the Account.
+
+        For more details about the Account, and the relationship with the other entities please visit the [Account](https://docs.indebted.co/docs/receive/integration/account-claims) page.
+
+        '
+      operationId: updateAccountDebtors
+      parameters:
+      - $ref: '#/components/parameters/ClientIdParameter'
+      - $ref: '#/components/parameters/AuthorizationParameter'
+      - $ref: '#/components/parameters/TriggerNameParameter'
+      - $ref: '#/components/parameters/AsyncParameter'
+      - $ref: '#/components/parameters/MinorVersionParameter'
+      - $ref: '#/components/parameters/SequentialParameter'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                allOf:
+                - $ref: '#/components/schemas/Debtor'
+                - $ref: '#/components/schemas/EntityWithAccountReference'
+              example:
+              - accountReference: ACCOUNT_REFERENCE_002
+                debtorReference: EXTERNAL_DEBTOR_REF_002
+                contactInformation:
+                  country: DE
+                  email: first.last@acme.com
+                firstName: First_2
+                lastName: Last_2
+      responses:
+        '200':
+          $ref: '#/components/responses/200Success'
+        '400':
+          $ref: '#/components/responses/400BadRequest'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '403':
+          $ref: '#/components/responses/403Forbidden'
+        '429':
+          $ref: '#/components/responses/429LimitsReached'
+        '500':
+          $ref: '#/components/responses/500InternalError'
+      security:
+      - api_key: []
+  /v1/{clientId}/get_account_claims:
+    get:
+      tags:
+      - Account
+      summary: It retrieves the claims from a given account
+      description: 'The intetion of this endpoint is to fetch the Claims from a given Account.
+
+        For more details about the Account, and the relationship with the other entities please visit the [Account](https://docs.indebted.co/docs/receive/integration/account-claims) page.
+
+        '
+      operationId: getAccountClaims
+      parameters:
+      - $ref: '#/components/parameters/ClientIdParameter'
+      - $ref: '#/components/parameters/AuthorizationParameter'
+      - $ref: '#/components/parameters/TriggerNameParameter'
+      - $ref: '#/components/parameters/AccountReferenceParameter'
+      - name: status
+        in: query
+        required: false
+        description: Claim Status filter
+        schema:
+          type: string
+          enum:
+          - ACTIVE
+          - RESOLVED
+          description: 'The Claim is either Active or Resolved, where Active means that there is an existing debt and Resolved means that the debt does not longer exist (there are multiple ways of resolving the Claim other than paying the claim, please refer to the Integration Documentation for further details).
+
+            '
+      - name: paginationId
+        in: query
+        required: false
+        description: Get the Account Claims by Pagination
+        schema:
+          type: string
+          description: 'The Pagination will be unique identifier to fetch and traverse the claims page wise with every new request and returns null when no claims founds in DB.
+
+            '
+          example: paginationId=eyJhY2NvdW50SWQiOiJBTExBVklOX0FDQ09VTlRfMDEyNyIsImNsaWVudElkIjoiM2QxMzJiMTgtNmI2Zi00ZjdjLWI0NjQtNmE4ZWU3Y2E1MjM1IiwiZXh0ZXJuYWxDbGFpbVJlZiI6IjAyOGZmNDM3LTc2NmItNDNjNC1iY2E4LWVlMTI4OWVhMDZjMCJ9
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 10000
+        description: amount of events per page, default is 1000
+        example: 1000
+      responses:
+        '200':
+          $ref: '#/components/responses/200SuccessGetAccountClaims'
+        '400':
+          $ref: '#/components/responses/400BadRequest'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '403':
+          $ref: '#/components/responses/403Forbidden'
+        '429':
+          $ref: '#/components/responses/429LimitsReached'
+        '500':
+          $ref: '#/components/responses/500InternalError'
+      security:
+      - api_key: []
+  /v1/{clientId}/set_account_scores:
+    post:
+      tags:
+      - Account
+      summary: Set Account Scores
+      description: 'The intention of the endpoint is to set the scores for the Account.
+
+        The scores provide further contextual information about the Account that can be used to improve the performance of the processes in the Collection Strategy.
+
+        For more details about the Account, and the relationship with the other entities please visit the [Account](https://docs.indebted.co/docs/receive/integration/account-claims) page.
+
+        '
+      operationId: SetAccountScores
+      parameters:
+      - $ref: '#/components/parameters/ClientIdParameter'
+      - $ref: '#/components/parameters/AuthorizationParameter'
+      - $ref: '#/components/parameters/TriggerNameParameter'
+      - $ref: '#/components/parameters/SequentialParameter'
+      - $ref: '#/components/parameters/AsyncParameter'
+      - $ref: '#/components/parameters/MinorVersionParameter'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                allOf:
+                - $ref: '#/components/schemas/AccountScore'
+                - $ref: '#/components/schemas/EntityWithAccountReference'
+              example:
+              - accountReference: ACCOUNT_REFERENCE_002
+                type: EXTERNAL
+                value: SCORE1
+                meta: {}
+      responses:
+        '200':
+          $ref: '#/components/responses/200SuccessSetAccountScore'
+        '400':
+          $ref: '#/components/responses/400BadRequest'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '403':
+          $ref: '#/components/responses/403Forbidden'
+        '429':
+          $ref: '#/components/responses/429LimitsReached'
+        '500':
+          $ref: '#/components/responses/500InternalError'
+      security:
+      - api_key: []
+  /v1/{clientId}/match_account_payment:
+    post:
+      tags:
+      - Account
+      summary: Register a payment for an account
+      description: 'The intention of the endpoint is to register a payment for an account.
+
+        The payment amount will be matched to the different claims of the account using the indicated matching strategy.
+
+        '
+      operationId: MatchAccountPayment
+      parameters:
+      - $ref: '#/components/parameters/ClientIdParameter'
+      - $ref: '#/components/parameters/AuthorizationParameter'
+      - $ref: '#/components/parameters/TriggerNameParameter'
+      - $ref: '#/components/parameters/SequentialParameter'
+      - $ref: '#/components/parameters/AsyncParameter'
+      - $ref: '#/components/parameters/MinorVersionParameter'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                allOf:
+                - $ref: '#/components/schemas/MatchAccountPaymentInput'
+                - $ref: '#/components/schemas/EntityWithAccountReference'
+              example:
+              - accountReference: ACCOUNT_REFERENCE_002
+                currency: EUR
+                matchStrategy: ORDERED_INVOICES_WITH_FEES_THEN_ACCOUNT_ENTRIES
+                totalAmount: 100000
+                providerName: trustly
+                trackingId: TRACKING_ID_2
+                paymentReference: PAYMENT_REFERENCE_2
+                context:
+                  productReference: PRODUCT_REFERENCE_2
+                meta: {}
+      responses:
+        '200':
+          $ref: '#/components/responses/200SuccessMatchAccountPayment'
+        '400':
+          $ref: '#/components/responses/400BadRequest'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '403':
+          $ref: '#/components/responses/403Forbidden'
+        '429':
+          $ref: '#/components/responses/429LimitsReached'
+        '500':
+          $ref: '#/components/responses/500InternalError'
+      security:
+      - api_key: []
+  /v1/{clientId}/allocate_account_payment:
+    post:
+      tags:
+      - Account
+      summary: Allocate a payment across an account's claims
+      description: 'Distribute a single lump payment across an account''s open claims for
+
+        accounts that are not ledger-managed. The amount is allocated one claim
+
+        at a time using the chosen strategy; the per-claim breakdown is published
+
+        on the event.accountPayment.allocated event.
+
+        '
+      operationId: AllocateAccountPayment
+      parameters:
+      - $ref: '#/components/parameters/ClientIdParameter'
+      - $ref: '#/components/parameters/AuthorizationParameter'
+      - $ref: '#/components/parameters/TriggerNameParameter'
+      - $ref: '#/components/parameters/SequentialParameter'
+      - $ref: '#/components/parameters/AsyncParameter'
+      - $ref: '#/components/parameters/MinorVersionParameter'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                allOf:
+                - $ref: '#/components/schemas/AllocateAccountPaymentInput'
+                - $ref: '#/components/schemas/EntityWithAccountReference'
+              example:
+              - accountReference: ACCOUNT_REFERENCE_002
+                currency: EUR
+                matchStrategy: OLDEST_FIRST
+                totalAmount: 6000
+                providerName: trustly
+                trackingId: TRACKING_ID_2
+                context:
+                  productReference: PRODUCT_REFERENCE_2
+      responses:
+        '200':
+          $ref: '#/components/responses/200SuccessAllocateAccountPayment'
+        '400':
+          $ref: '#/components/responses/400BadRequest'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '403':
+          $ref: '#/components/responses/403Forbidden'
+        '429':
+          $ref: '#/components/responses/429LimitsReached'
+        '500':
+          $ref: '#/components/responses/500InternalError'
+      security:
+      - api_key: []
+  /v1/{clientId}/update_account_ledger_entries_amounts:
+    post:
+      tags:
+      - Account
+      summary: Updates the amounts of Account ledger entries
+      description: 'The intention of the endpoint is to update the amounts of the Account ledger entries.
+
+        This is an abstraction over adding directly the Ledger Entries to the Account, the objective is to simplify the process of updating the amounts of the ledger entries, using the target amount in the request, instead of the individual entries.
+
+        Notes:
+
+        - The calculations are executed first, and the claims related to those invoices will be updated only once.
+
+        - The `reason` field is mandatory, and it will be used to identify the reason of the update, `PAYMENT` and `CHARGEBACK` are special values that will affect the creation of the ledger entries, creating Payment Ledger Entries and Chargeback Ledger Entries, any other reason is mapped to Adjustment Ledger Entries.
+
+        - The last value in the array is the one that will be used to update the claim refered by the `ledgerEntryReference`, but the previous values are used to give context of the changes.
+
+        '
+      operationId: updateAccountLedgerEntriesAmounts
+      parameters:
+      - $ref: '#/components/parameters/ClientIdParameter'
+      - $ref: '#/components/parameters/AuthorizationParameter'
+      - $ref: '#/components/parameters/TriggerNameParameter'
+      - $ref: '#/components/parameters/SequentialParameter'
+      - $ref: '#/components/parameters/AsyncParameter'
+      - $ref: '#/components/parameters/MinorVersionParameter'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/UpdateAccountLedgerEntriesAmountsInput'
+              example:
+              - accountReference: ACCOUNT_REFERENCE_002
+                ledgerEntries:
+                - ledgerEntryReference: INVOICE_LEDGER_ENTRY_REFERENCE_002_1
+                  amount: 10000
+                  reason: CHARGEBACK
+                  meta: {}
+                - ledgerEntryReference: INVOICE_LEDGER_ENTRY_REFERENCE_002_2
+                  amount: 0
+                  reason: PAYMENT
+                  meta: {}
+      responses:
+        '200':
+          $ref: '#/components/responses/200SuccessUpdateAccountLedgerEntriesAmounts'
+        '400':
+          $ref: '#/components/responses/400BadRequest'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '403':
+          $ref: '#/components/responses/403Forbidden'
+        '429':
+          $ref: '#/components/responses/429LimitsReached'
+        '500':
+          $ref: '#/components/responses/500InternalError'
+      security:
+      - api_key: []
+  /v1/{clientId}/get_debtor_accounts_and_claims:
+    get:
+      tags:
+      - Account
+      summary: It retrieves information about a debtor's accounts and claims
+      description: 'The intention of the endpoint is to retrieve information about a debtor''s accounts and claims.
+
+        '
+      operationId: getDebtorAccountsAndClaims
+      parameters:
+      - $ref: '#/components/parameters/ClientIdParameter'
+      - $ref: '#/components/parameters/AuthorizationParameter'
+      - $ref: '#/components/parameters/TriggerNameParameter'
+      - name: debtorReference
+        in: query
+        required: true
+        description: Identifier of the debtor
+        schema:
+          type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/200SuccessGetDebtorAccountsAndClaims'
+        '400':
+          $ref: '#/components/responses/400BadRequest'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '403':
+          $ref: '#/components/responses/403Forbidden'
+        '429':
+          $ref: '#/components/responses/429LimitsReached'
+        '500':
+          $ref: '#/components/responses/500InternalError'
+      security:
+      - api_key: []
+components:
+  schemas:
+    ClaimScore:
+      type: object
+      description: An Claim Score is a score that is calculated for a specific claim.
+      required:
+      - type
+      - value
+      properties:
+        type:
+          type: string
+          description: Type of score
+          enum:
+          - INTERNAL
+          - EXTERNAL
+          - COLLECTION
+          - BEHAVIORAL
+        value:
+          nullable: true
+          oneOf:
+          - type: string
+            example: risky
+            description: The score's value
+          - type: object
+            description: composed value
+        meta:
+          $ref: '#/components/schemas/Metadata'
+    RelatedClaim:
+      type: object
+      description: A typed relation from this claim to another claim (lineage metadata; the platform does not act on it)
+      required:
+      - type
+      - claimReference
+      additionalProperties: false
+      properties:
+        type:
+          type: string
+          description: 'Relation type, declared on THIS claim pointing at the referenced claim (single direction; inverses are derived at query time). REPLACES: this claim supersedes the referenced ones (e.g. a consolidated claim placed at acceleration after crediting the individual instalment claims). SPLIT_FROM: this claim was split out of the referenced claim (e.g. the disputed portion of an invoice separated for independent handling). REINSTATES: this claim places debt back into collection after the referenced claim was already resolved (e.g. a settlement breached after the original claim was closed). REFINANCES: this claim is a new credit agreement curing the referenced claims under new terms — counts as recovery. RESTRUCTURES: this claim re-schedules the referenced debt by agreement with the debtor (workout/forbearance executed in your core system and placed as a new claim — restructures executed inside Receive use an Instalment Plan instead; do not create a new claim for those). DEFERS: this fee claim gates a due-date deferral of the referenced claims.'
+          enum:
+          - REPLACES
+          - SPLIT_FROM
+          - REINSTATES
+          - REFINANCES
+          - RESTRUCTURES
+          - DEFERS
+        claimReference:
+          type: string
+          minLength: 1
+          description: Your reference of the related claim
+          example: API_CLAIM_REF_INST_001
+    MatchAccountPaymentInput:
+      description: Input for match_account_payment endpoint.
+      type: object
+      required:
+      - totalAmount
+      - currency
+      - matchStrategy
+      properties:
+        providerName:
+          type: string
+          description: Name of payment provider
+          example: trustly
+        trackingId:
+          type: string
+          description: This is the orderID or other identifier from the payment provider
+          example: 3889445415
+        totalAmount:
+          $ref: '#/components/schemas/Amount'
+        currency:
+          $ref: '#/components/schemas/Currency'
+        paymentReference:
+          $ref: '#/components/schemas/PaymentReference'
+        meta:
+          type: object
+          description: Additional information related to the transaction
+        context:
+          type: object
+          additionalProperties: false
+          description: Context used to do the matching of the payment
+          properties:
+            productReference:
+              $ref: '#/components/schemas/ProductReference'
+            feeLedgerEntriesOrder:
+              type: array
+              description: Order of fee ledger entry types used for the payment priority (only for CUSTOM_ORDERED_FEES, ignored otherwise)
+              items:
+                type: string
+        matchStrategy:
+          type: string
+          enum:
+          - ORDERED_LEDGER_ENTRIES
+          - ORDERED_INVOICES_WITH_FEES_THEN_ACCOUNT_ENTRIES
+          - ACCOUNT_ENTRIES_THEN_ORDERED_INVOICES_WITH_FEES
+          - CUSTOM_ORDERED_FEES
+    BaseContactInformation:
+      type: object
+      properties:
+        country:
+          type: string
+          example: DE
+          pattern: ^[A-Z]{2}$
+          description: 2-digit country code (ISO 3166-1). This is required for the localization and payment providers.
+        city:
+          type: string
+          minLength: 1
+          example: Delbrück
+          description: City
+        mobileNumber:
+          type: string
+          example: 495555555555
+          description: Mobile Number
+          pattern: ^\+\d{1,3}\d{9,12}$
+        postalCode:
+          type: string
+          example: 33129
+          minLength: 1
+          description: Postal Code
+        houseNumber:
+          type: string
+          minLength: 1
+          example: 24A
+          description: House number as part of the address
+        addressLine1:
+          type: string
+          example: Boikweg 24
+          minLength: 1
+          description: Address Line 1
+        addressLine2:
+          type: string
+          example: c/o Acme
+          minLength: 1
+          description: Address Line 2
+        addressLine3:
+          type: string
+          minLength: 1
+          example: first floor
+          description: Address Line 3
+        landLine:
+          type: string
+          example: 495555555555
+          description: Land Line
+          pattern: ^\+\d{1,3}\d{9,12}$
+        state:
+          type: string
+          example: Dortmund
+          minLength: 1
+          description: State
+        email:
+          type: string
+          description: Email Address
+          example: testEmail@example.com
+        additionalContactInformation:
+          type: array
+          items:
+            oneOf:
+            - type: object
+              required:
+              - email
+              additionalProperties: false
+              properties:
+                email:
+                  type: string
+                  description: Email Address
+                  example: testEmail@example.com
+            - type: object
+              required:
+              - mobileNumber
+              additionalProperties: false
+              properties:
+                mobileNumber:
+                  type: string
+                  description: Mobile Number
+                  example: 495555555555
+                  pattern: ^\+\d{1,3}\d{9,12}$
+            - type: object
+              required:
+              - landLine
+              additionalProperties: false
+              properties:
+                landLine:
+                  type: string
+                  description: Land Line Number
+                  example: 495555555555
+                  pattern: ^\+\d{1,3}\d{9,12}$
+            - type: object
+              required:
+              - workPhoneNumber
+              additionalProperties: false
+              properties:
+                workPhoneNumber:
+                  type: string
+                  description: Work Phone Number
+                  example: 495555555555
+                  pattern: ^\+\d{1,3}\d{9,12}$
+    DiscountLedgerEntry:
+      type: object
+      required:
+      - ledgerEntryReference
+      - discountDetails
+      - context
+      properties:
+        ledgerEntryReference:
+          type: string
+          description: Reference of the Discount Ledger Entry
+        discountDetails:
+          type: object
+          additionalProperties: false
+          required:
+          - amount
+          properties:
+            amount:
+              $ref: '#/components/schemas/Amount'
+            createdAt:
+              type: integer
+              example: 1621536535901
+              description: Timestamp when the ledger entry was created in milliseconds
+            meta:
+              $ref: '#/components/schemas/Metadata'
+        context:
+          type: object
+          description: Describes the specific context of the entry
+          required:
+          - ledgerEntryReference
+          properties:
+            productReference:
+              $ref: '#/components/schemas/ProductReference'
+            ledgerEntryReference:
+              type: string
+              description: Defines the target of the discount ledger entry
+    PaymentReference:
+      type: string
+      minLength: 1
+      example: paymentReference1
+      description: 'Payment reference used in online transactions.
+
+        It is a text reference that can be used to map the money transactions to other external systems.
+
+        '
+    ProductReference:
+      type: string
+      minLength: 1
+      example: PRODUCT_REFERENCE_1
+      description: Identifier for a product in your system. It is used for grouping purposes.
+    AccountScore:
+      type: object
+      description: An account score is a score that is calculated for a specific account. It can be used to determine the risk of a debtor or any other information that is relevant for the account.
+      required:
+      - type
+      - value
+      properties:
+        type:
+          type: string
+          description: Type of score
+          enum:
+          - INTERNAL
+          - EXTERNAL
+          - COLLECTION
+          - BEHAVIORAL
+        value:
+          nullable: true
+          oneOf:
+          - type: string
+            example: risky
+            description: The score's value
+          - type: object
+            description: composed value
+        meta:
+          $ref: '#/components/schemas/Metadata'
+    RelativeAmount:
+      type: integer
+      example: -13025
+      description: Monetary value in cents (positive or negative number)
+    AllocateAccountPaymentInput:
+      description: Input for allocate_account_payment endpoint.
+      type: object
+      required:
+      - totalAmount
+      - currency
+      - matchStrategy
+      properties:
+        providerName:
+          type: string
+          description: Name of payment provider
+          example: trustly
+        totalAmount:
+          $ref: '#/components/schemas/Amount'
+        currency:
+          $ref: '#/components/schemas/Currency'
+        context:
+          type: object
+          additionalProperties: false
+          description: Context used to restrict the allocation
+          properties:
+            productReference:
+              $ref: '#/components/schemas/ProductReference'
+        matchStrategy:
+          type: string
+          enum:
+          - OLDEST_FIRST
+          - FEES_FIRST_THEN_OLDEST
+    LedgerEntryCreatedAt:
+      type: integer
+      example: 1621536535901
+      description: Timestamp when the ledger entry was created in milliseconds
+    LedgerEntry:
+      description: A Ledger Entry is a record of a transaction in the Ledger.
+      oneOf:
+      - $ref: '#/components/schemas/FeeLedgerEntry'
+      - $ref: '#/components/schemas/InvoiceLedgerEntry'
+      - $ref: '#/components/schemas/PaymentLedgerEntry'
+      - $ref: '#/components/schemas/AdjustmentLedgerEntry'
+      - $ref: '#/components/schemas/ChargebackLedgerEntry'
+      - $ref: '#/components/schemas/DiscountLedgerEntry'
+      - $ref: '#/components/schemas/ReportingLedgerEntry'
+      example:
+        ledgerEntryReference: INVOICE_LEDGER_ENTRY_REFERENCE_002_1
+        invoiceDetails:
+          amount: 100000
+          dueDate: '2022-01-08'
+          paymentReference: INVOICE_PAYMENT_REFERENCE_1
+        context:
+          productReference: PRODUCT_REFERENCE_1
+    LedgerEntryResponse:
+      description: Response of any action that adds ledger entries to an account.
+      allOf:
+      - $ref: '#/components/schemas/ActionResponse'
+      - type: object
+        properties:
+          data:
+            type: array
+            items:
+              $ref: '#/components/schemas/LedgerEntry'
+      example:
+        success: true
+        data:
+        - accountReference: ACCOUNT_REFERENCE_002
+          context: {}
+          invoiceDetails:
+            amount: 13025
+            dueDate: '2020-01-01'
+            meta: {}
+          ledgerEntryReference: INVOICE_LEDGER_ENTRY_REFERENCE_002_2
+        messageIds:
+        - cddddeb1-f352-46f3-a59d-0008a84e9bd5
+        messages:
+        - 'Successfully added Ledger Entries: INVOICE_LEDGER_ENTRY_REFERENCE_002_2'
+    DueDate:
+      type: string
+      format: date
+      example: '2019-06-28'
+      description: Current due date in your system. Use originalDueDate unless you purchased the debt and need this distinction.
+    AccountScoreResponse:
+      description: Response of the set_account_score endpoint
+      allOf:
+      - $ref: '#/components/schemas/ActionResponse'
+      - type: object
+        properties:
+          data:
+            type: array
+            items:
+              $ref: '#/components/schemas/AccountScore'
+      example:
+        messages:
+        - Successfully set the score of EXTERNAL
+        success: true
+        data:
+        - accountReference: ACCOUNT_REFERENCE_002
+          type: EXTERNAL
+          value: SCORE1
+          meta: {}
+        messageIds:
+        - 0fdf533f-e453-4b64-9e4a-e1e2a2b81bf4
+    Amount:
+      minimum: 0
+      type: integer
+      example: 13025
+      description: Monetary value in cents (natural nuumber)
+    BaseDebtor:
+      type: object
+      properties:
+        birthday:
+          type: string
+          format: date
+          example: '1980-06-28'
+          description: Birthday of the debtor
+        gender:
+          type: string
+          example: M
+          pattern: ^(M|F)$
+          description: Gender of the debtor
+        firstName:
+          type: string
+          example: John
+          minLength: 1
+          description: First name of the debtor (required if type is 'natural')
+        lastName:
+          type: string
+          example: White
+          minLength: 1
+          description: Last name of the debtor (required if type is 'natural')
+        middleName:
+          type: string
+          example: Benedict
+          minLength: 1
+          description: Middle name of the debtor
+        title:
+          type: string
+          minLength: 1
+          example: Doctor
+          description: Title of the debtor
+        companyName:
+          type: string
+          minLength: 1
+          example: Acme Brick Co.
+          description: Company Name of the debtor (required if type is 'legal')
+        debtorReference:
+          $ref: '#/components/schemas/DebtorReference'
+        SSN:
+          type: string
+          example: AAA-GG-SSSS
+          description: National Identification Number of the debtor
+        type:
+          type: string
+          example: natural
+          enum:
+          - natural
+          - legal
+          description: 'Type of the debtor (default: natural)'
+        contactInformation:
+          $ref: '#/components/schemas/BaseContactInformation'
+    InvoiceLedgerEntry:
+      description: An Invoice Ledger Entry is a type of Ledger Entry that represents a claim in the system.
+      type: object
+      required:
+      - ledgerEntryReference
+      - invoiceDetails
+      - context
+      properties:
+        ledgerEntryReference:
+          $ref: '#/components/schemas/LedgerEntryReference'
+        invoiceDetails:
+          type: object
+          additionalProperties: false
+          required:
+          - amount
+          - dueDate
+          properties:
+            amount:
+              $ref: '#/components/schemas/Amount'
+            createdAt:
+              $ref: '#/components/schemas/LedgerEntryCreatedAt'
+            dueDate:
+              $ref: '#/components/schemas/DueDate'
+            paymentReference:
+              $ref: '#/components/schemas/PaymentReference'
+            meta:
+              $ref: '#/components/schemas/Metadata'
+        context:
+          type: object
+          description: Describes the specific context of the Ledger Entry
+          properties:
+            productReference:
+              $ref: '#/components/schemas/ProductReference'
+            externalDebtorReference:
+              $ref: '#/components/schemas/DebtorReference'
+    ClaimOrigination:
+      type: object
+      description: The product/service context and origin of the claim
+      required:
+      - type
+      - name
+      properties:
+        type:
+          type: string
+          enum:
+          - product
+          - service
+          description: Whether the claim originates from a product or a service
+        name:
+          type: string
+          minLength: 1
+          description: Name of the product/service
+          example: Loan
+        brand:
+          type: string
+          minLength: 1
+          description: Brand of the product
+          example: CreditLimit
+        code:
+          type: string
+          minLength: 1
+          description: External code/identifier of the product
+          example: CL
+    AllocateAccountPayment:
+      allOf:
+      - $ref: '#/components/schemas/ActionResponse'
+    AccountReference:
+      type: string
+      minLength: 1
+      example: ACCOUNT_REFERENCE_002
+      description: Account reference in your system
+    CreateAccountInput:
+      description: Input for create_account endpoint.
+      allOf:
+      - $ref: '#/components/schemas/Account'
+      - type: object
+        required:
+        - currency
+        properties:
+          currency:
+            $ref: '#/components/schemas/Currency'
+      example:
+        currency: EUR
+        paymentReference: paymentReference1
+        meta:
+          invoiceExternalNumber: 111
+        scores:
+        - type: INTERNAL
+          value: V1
+        debtors:
+        - lastName: LAST_NAME_1
+          firstName: FIRST_NAME_1
+          debtorReference: EXTERNAL_DEBTOR_REF_001
+          contactInformation:
+            country: DE
+            email: first.last@acme.com
+        products:
+        - productReference: PRODUCT_REFERENCE_1
+          paymentReference: PRODUCT_PAYMENT_REFERENCE_1
+        - productReference: PRODUCT_REFERENCE_2
+          paymentReference: PRODUCT_PAYMENT_REFERENCE_2
+        ledgerEntries:
+        - ledgerEntryReference: INVOICE_LEDGER_ENTRY_REFERENCE_002_1
+          invoiceDetails:
+            amount: 100000
+            dueDate: '2022-01-08'
+            paymentReference: INVOICE_PAYMENT_REFERENCE_1
+          context:
+            productReference: PRODUCT_REFERENCE_1
+    FeeLedgerEntry:
+      type: object
+      required:
+      - ledgerEntryReference
+      - feeDetails
+      - context
+      properties:
+        ledgerEntryReference:
+          type: string
+          description: Reference of the Fee Ledger Entry
+        feeDetails:
+          type: object
+          additionalProperties: false
+          required:
+          - amount
+          properties:
+            type:
+              type: string
+              example: COLLECTION_FEE
+              description: Type of fee
+            amount:
+              $ref: '#/components/schemas/Amount'
+            createdAt:
+              type: integer
+              example: 1621536535901
+              description: Timestamp when the ledger entry was created in milliseconds
+            meta:
+              $ref: '#/components/schemas/Metadata'
+        context:
+          type: object
+          description: Describes the specific context of the entry
+          properties:
+            productReference:
+              $ref: '#/components/schemas/ProductReference'
+            ledgerEntryReference:
+              type: string
+              description: Relationship of the fee with another ledger entry
+    DebtorReference:
+      type: string
+      minLength: 1
+      example: EXTERNAL_DEBTOR_REF_002
+      description: Your customer ID for this person or company
+    UpdateAccountLedgerEntriesAmountsInput:
+      description: Input for update_account_ledger_entries_amounts endpoint.
+      type: object
+      required:
+      - accountReference
+      - ledgerEntries
+      properties:
+        accountReference:
+          $ref: '#/components/schemas/AccountReference'
+        ledgerEntries:
+          type: array
+          items:
+            type: object
+            required:
+            - ledgerEntryReference
+            - amount
+            - reason
+            - meta
+            properties:
+              ledgerEntryReference:
+                type: string
+                description: Reference of the Ledger Entry (Invoice or Fee)
+              amount:
+                minimum: 0
+                type: integer
+                example: 13025
+                description: Amount in cents
+              reason:
+                type: string
+                example: INVALID
+                description: Reason for the adjustment
+              meta:
+                $ref: '#/components/schemas/Metadata'
+    BaseClaim:
+      type: object
+      description: A claim is an outstanding payment that is owed. You can always update this balance if multiple payments are missed and you want to aggregate the amounts.
+      minProperties: 1
+      properties:
+        amount:
+          $ref: '#/components/schemas/Amount'
+        currency:
+          $ref: '#/components/schemas/Currency'
+        product:
+          $ref: '#/components/schemas/Product'
+        portfolioReference:
+          $ref: '#/components/schemas/PortfolioReference'
+        productReference:
+          $ref: '#/components/schemas/ProductReference'
+        creditorReference:
+          type: string
+          minLength: 1
+          description: Reference of the person/company to whom money is owed
+        totalFees:
+          $ref: '#/components/schemas/Amount'
+        currentDueDate:
+          $ref: '#/components/schemas/DueDate'
+        originalDueDate:
+          $ref: '#/components/schemas/OriginalDueDate'
+        scores:
+          type: array
+          description: List of scores
+          items:
+            $ref: '#/components/schemas/ClaimScore'
+        reason:
+          type: string
+          minLength: 1
+          deprecated: true
+          description: Reason for updating a claim (the reason must not be part of the Entity)
+        paymentReference:
+          $ref: '#/components/schemas/PaymentReference'
+        accountNumber:
+          allOf:
+          - $ref: '#/components/schemas/AccountReference'
+          - minLength: 1
+            deprecated: true
+            description: Account number in your system (DEPRECATED, use accountReference)
+        accountReference:
+          $ref: '#/components/schemas/AccountReference'
+        meta:
+          $ref: '#/components/schemas/Metadata'
+        fees:
+          type: array
+          description: List of fees. If neither fees nor totalFees are provided - we treat totalFees as 0. Using this field overwrites the totalFees value if you provided it as well.
+          items:
+            $ref: '#/components/schemas/Fee'
+        linkGroupId:
+          description: 'Shared-liability group identifier. Claims sharing a linkGroupId are synced mirrors of the same underlying debt: whenever one claim in the group is updated via cmd.linkedClaims.sync, the fields amount, totalFees, and fees are overwritten on every other claim in the group. Use this field only for shared-liability scenarios (e.g. co-debtors or guarantors each holding a separate account for the same debt). Do NOT use it to group related-but-independent claims such as instalments of a single purchase — doing so would cause every instalment''s amount to overwrite the others''.
+
+            '
+          type: string
+          format: uuid
+          nullable: true
+        origination:
+          $ref: '#/components/schemas/ClaimOrigination'
+        repaymentsHistory:
+          type: array
+          description: Pre-sale payment history for the claim
+          items:
+            $ref: '#/components/schemas/Repayment'
+        relatedClaims:
+          type: array
+          description: Typed relations from this claim to other claims. Lineage metadata only — the platform does not act on it. Use it to keep consolidation history queryable, e.g. an accelerated claim declaring which instalment claims it replaces.
+          items:
+            $ref: '#/components/schemas/RelatedClaim'
+        primaryDebtor:
+          $ref: '#/components/schemas/BaseDebtor'
+    OriginalDueDate:
+      type: string
+      format: date
+      example: '2019-06-28'
+      description: Original due date in your system. This is the day when it went past due. DPD 0.
+    AdjustmentLedgerEntry:
+      type: object
+      required:
+      - ledgerEntryReference
+      - adjustmentDetails
+      - context
+      properties:
+        ledgerEntryReference:
+          type: string
+          description: Reference of the Adjustment Ledger Entry
+        adjustmentDetails:
+          type: object
+          additionalProperties: false
+          required:
+          - amount
+          properties:
+            reason:
+              type: string
+              example: INVALID
+              description: Reason for the adjustment
+            amount:
+              $ref: '#/components/schemas/RelativeAmount'
+            dueDate:
+              $ref: '#/components/schemas/DueDate'
+            createdAt:
+              type: integer
+              example: 1621536535901
+              description: Timestamp when the ledger entry was created in milliseconds
+            meta:
+              $ref: '#/components/schemas/Metadata'
+        context:
+          type: object
+          description: Describes the specific context of the entry
+          properties:
+            productReference:
+              $ref: '#/components/schemas/ProductReference'
+            ledgerEntryReference:
+              type: string
+              description: Defines the target of the payment ledger entry
+    DebtorResponse:
+      allOf:
+      - $ref: '#/components/schemas/ActionResponse'
+      - type: object
+        properties:
+          data:
+            type: array
+            items:
+              $ref: '#/components/schemas/Debtor'
+    Debtor:
+      description: 'The Debtor is the entity that owes the money. It can be a person (natural) or a company (legal).
+
+        Notes:
+
+        - If the debtor is a person (natural), then firstName and lastName are required.
+
+        - If the debtor is a company (legal), then companyName is required.
+
+        '
+      allOf:
+      - $ref: '#/components/schemas/BaseDebtor'
+      - type: object
+        required:
+        - debtorReference
+        - contactInformation
+        properties:
+          contactInformation:
+            $ref: '#/components/schemas/ContactInformation'
+    UpdateAccountLedgerEntriesAmounts:
+      allOf:
+      - $ref: '#/components/schemas/ActionResponse'
+      - type: object
+        properties:
+          data:
+            type: array
+            items:
+              $ref: '#/components/schemas/UpdateAccountLedgerEntriesAmountsInput'
+    CreateAccounts:
+      allOf:
+      - $ref: '#/components/schemas/ActionResponse'
+      - type: object
+        properties:
+          data:
+            $ref: '#/components/schemas/Account'
+    ClaimResponse:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/Claim'
+      - required:
+        - claimReference
+        - status
+        properties:
+          claimReference:
+            type: string
+            minLength: 1
+            description: The current claim's reference
+          status:
+            type: string
+            enum:
+            - ACTIVE
+            - RESOLVED
+    Currency:
+      type: string
+      example: EUR
+      pattern: ^[A-Z]{3}$
+      description: 3-digit currency code (ISO 4217)
+    EntityWithAccountReference:
+      type: object
+      description: Schema definition used in composition with other Entities, that have a reference to an Account
+      required:
+      - accountReference
+      properties:
+        accountReference:
+          $ref: '#/components/schemas/AccountReference'
+      example:
+        accountReference: ACCOUNT_REFERENCE_002
+    Repayment:
+      type: object
+      description: A repayment entry in the pre-sale payment history of a claim
+      required:
+      - amount
+      properties:
+        amount:
+          $ref: '#/components/schemas/Amount'
+        date:
+          type: string
+          format: date
+          nullable: true
+          description: Date of that repayment
+          example: '2019-06-28'
+        dueDate:
+          type: string
+          format: date
+          description: Due date of that repayment
+          example: '2019-06-28'
+        outstandingAmount:
+          allOf:
+          - $ref: '#/components/schemas/Amount'
+          description: Outstanding amount after the repayment in cents
+        meta:
+          $ref: '#/components/schemas/Metadata'
+    Metadata:
+      type: object
+      description: Additional information related to the entity.
+      example:
+        sourceSystem: system1
+    ChargebackLedgerEntry:
+      type: object
+      required:
+      - ledgerEntryReference
+      - chargebackDetails
+      - context
+      properties:
+        ledgerEntryReference:
+          type: string
+          description: Reference of the Chargeback Ledger Entry
+        chargebackDetails:
+          type: object
+          additionalProperties: false
+          required:
+          - amount
+          properties:
+            amount:
+              $ref: '#/components/schemas/Amount'
+            createdAt:
+              type: integer
+              example: 1621536535901
+              description: Timestamp when the ledger entry was created in milliseconds
+            meta:
+              $ref: '#/components/schemas/Metadata'
+        context:
+          type: object
+          description: Describes the specific context of the entry
+          required:
+          - ledgerEntryReference
+          properties:
+            productReference:
+              $ref: '#/components/schemas/ProductReference'
+            ledgerEntryReference:
+              type: string
+              description: Defines the target of the chargeback ledger entry
+    Fee:
+      type: object
+      description: Additional expected payment amount.
+      required:
+      - name
+      - amount
+      properties:
+        name:
+          type: string
+          minLength: 1
+          description: 'Fee bucket name. `debit_claims` and `credit_claims` merge fees by exact name: the same name adjusts the existing bucket, on debit an unknown name creates a new bucket, and on credit an unknown name is silently ignored. Renaming a bucket mid-lifecycle fragments its history. Recommended canonical names: `interest`, `defaultInterest`, `lateFee`, `dunningFee`, `collectionCosts`, `repossessionCosts`. Any non-empty string is accepted.'
+          example: interest
+        amount:
+          $ref: '#/components/schemas/Amount'
+    MatchAccountPayment:
+      allOf:
+      - $ref: '#/components/schemas/ActionResponse'
+      - type: object
+        properties:
+          data:
+            type: array
+            items:
+              $ref: '#/components/schemas/LedgerEntry'
+    Claim:
+      allOf:
+      - $ref: '#/components/schemas/BaseClaim'
+      - type: object
+        required:
+        - currency
+        - primaryDebtor
+        - accountReference
+        - originalDueDate
+        - currentDueDate
+        - amount
+        properties:
+          primaryDebtor:
+            $ref: '#/components/schemas/Debtor'
+    ContactInformation:
+      description: 'Contact information of the debtor, used for communication purposes.
+
+        '
+      allOf:
+      - $ref: '#/components/schemas/BaseContactInformation'
+      - type: object
+        required:
+        - country
+    ActionResponse:
+      type: object
+      description: Response of any action that causes any side effect in the platform (e.g. create, update, delete)
+      required:
+      - success
+      - messages
+      - messageIds
+      properties:
+        success:
+          type: boolean
+          example: false
+          description: Status of the action
+        messages:
+          type: array
+          items:
+            type: string
+            example: Successfully created claim claim1
+            description: Human-friendly message about the action
+        messageIds:
+          type: array
+          description: Identifier of the messages (used for tracing)
+          items:
+            type: string
+            format: uuid
+            example: 32638681-bb15-400d-acc8-15bf8e38661e
+      example:
+        success: true
+        messages:
+        - Successfully processed action
+        messageIds:
+        - e66d62ed-2331-4ced-8c03-5e729e984adc
+    PaymentLedgerEntry:
+      type: object
+      required:
+      - ledgerEntryReference
+      - paymentDetails
+      - context
+      properties:
+        ledgerEntryReference:
+          type: string
+          description: Reference of the Payment Ledger Entry
+        paymentDetails:
+          type: object
+          additionalProperties: false
+          required:
+          - amount
+          properties:
+            amount:
+              $ref: '#/components/schemas/Amount'
+            paymentReference:
+              $ref: '#/components/schemas/PaymentReference'
+            createdAt:
+              type: integer
+              example: 1621536535901
+              description: Timestamp when the ledger entry was created in milliseconds
+            paymentProvider:
+              type: string
+              description: Name of the provider used for the transaction
+            meta:
+              $ref: '#/components/schemas/Metadata'
+        context:
+          type: object
+          description: Describes the specific context of the entry
+          properties:
+            productReference:
+              $ref: '#/components/schemas/ProductReference'
+            ledgerEntryReference:
+              type: string
+              description: Defines the target of the payment ledger entry
+    PortfolioReference:
+      type: string
+      minLength: 1
+      example: EXTERNAL_PORTFOLIO_REFERENCE_002
+      description: This is a optional grouping field for reporting purposes.
+    AccountProductResponse:
+      allOf:
+      - $ref: '#/components/schemas/ActionResponse'
+      - type: object
+        properties:
+          data:
+            type: array
+            items:
+              $ref: '#/components/schemas/Product'
+    DebtorAccountsAndClaims:
+      type: array
+      items:
+        type: object
+        allOf:
+        - type: object
+          required:
+          - currency
+          - accountReference
+          properties:
+            accountReference:
+              $ref: '#/components/schemas/AccountReference'
+            meta:
+              $ref: '#/components/schemas/Metadata'
+            paymentReference:
+              $ref: '#/components/schemas/PaymentReference'
+            portfolioReference:
+              $ref: '#/components/schemas/PortfolioReference'
+            currency:
+              $ref: '#/components/schemas/Currency'
+        - type: object
+          required:
+          - claims
+          properties:
+            claims:
+              type: array
+              items:
+                $ref: '#/components/schemas/Claim'
+        - type: object
+          required:
+          - debtors
+          properties:
+            debtors:
+              type: array
+              items:
+                $ref: '#/components/schemas/Debtor'
+    Product:
+      type: object
+      description: A product is a service or item used to give context to the Claim or Ledger Entry
+      required:
+      - productReference
+      properties:
+        productReference:
+          $ref: '#/components/schemas/ProductReference'
+        paymentReference:
+          $ref: '#/components/schemas/PaymentReference'
+        type:
+          type: string
+          minLength: 1
+          example: Computer
+          description: Type of product
+        name:
+          type: string
+          minLength: 1
+          example: Macbook Pro
+          description: Product name
+        code:
+          type: string
+          minLength: 1
+          example: 111-22222-3333
+          description: Product code
+        meta:
+          $ref: '#/components/schemas/Metadata'
+    LedgerEntryReference:
+      type: string
+      example: INVOICE_LEDGER_ENTRY_REFERENCE_002
+      description: Reference of the Ledger Entry (unique per Account)
+    Account:
+      type: object
+      description: A formal business arrangement providing for regular dealings or services (such as banking, advertising, or store credit) and involving the establishment and maintenance of an Account.
+      properties:
+        meta:
+          $ref: '#/components/schemas/Metadata'
+        paymentReference:
+          $ref: '#/components/schemas/PaymentReference'
+        portfolioReference:
+          $ref: '#/components/schemas/PortfolioReference'
+        currency:
+          $ref: '#/components/schemas/Currency'
+        scores:
+          type: array
+          description: List of provided scores related with the Account.
+          items:
+            $ref: '#/components/schemas/AccountScore'
+        debtors:
+          type: array
+          description: List of debtors related with the Account.
+          items:
+            $ref: '#/components/schemas/Debtor'
+        products:
+          type: array
+          description: List of products related with the Account.
+          items:
+            $ref: '#/components/schemas/Product'
+        ledgerEntries:
+          type: array
+          description: Ledger used to create Managed Claims.
+          items:
+            $ref: '#/components/schemas/LedgerEntry'
+      example:
+        currency: EUR
+        paymentReference: paymentReference1
+        meta:
+          invoiceExternalNumber: 111
+        scores:
+        - type: INTERNAL
+          value: V1
+        debtors:
+        - lastName: LAST_NAME_1
+          firstName: FIRST_NAME_1
+          debtorReference: EXTERNAL_DEBTOR_REF_001
+          contactInformation:
+            country: DE
+            email: first.last@acme.com
+        products:
+        - productReference: PRODUCT_REFERENCE_1
+          paymentReference: PRODUCT_PAYMENT_REFERENCE_1
+        - productReference: PRODUCT_REFERENCE_2
+          paymentReference: PRODUCT_PAYMENT_REFERENCE_2
+        ledgerEntries:
+        - ledgerEntryReference: INVOICE_LEDGER_ENTRY_REFERENCE_002_1
+          invoiceDetails:
+            amount: 100000
+            dueDate: '2022-01-08'
+            paymentReference: INVOICE_PAYMENT_REFERENCE_1
+          context:
+            productReference: PRODUCT_REFERENCE_1
+    ReportingLedgerEntry:
+      deprecated: true
+      type: object
+      required:
+      - ledgerEntryReference
+      - reportingDetails
+      - context
+      properties:
+        ledgerEntryReference:
+          type: string
+          description: Reference of the Reporting Ledger Entry
+        reportingDetails:
+          type: object
+          additionalProperties: false
+          required:
+          - amount
+          properties:
+            amount:
+              $ref: '#/components/schemas/Amount'
+            createdAt:
+              type: integer
+              example: 1621536535901
+              description: Timestamp when the ledger entry was created in milliseconds
+            meta:
+              $ref: '#/components/schemas/Metadata'
+        context:
+          type: object
+          description: Describes the specific context of the entry
+          properties:
+            productReference:
+              $ref: '#/components/schemas/ProductReference'
+  parameters:
+    SequentialParameter:
+      name: sequential
+      in: query
+      required: false
+      description: The request body items are executed one after another one
+      schema:
+        type: boolean
+    AsyncParameter:
+      name: async
+      in: query
+      required: false
+      description: The request is added to the queue without expecting the response
+      schema:
+        type: boolean
+    ClientIdParameter:
+      name: clientId
+      in: path
+      required: true
+      description: 'A Receive system identifier that will be assigned automatically.
+
+        It will be used for situations like Support related interventions or data segmentation.
+
+        '
+      example: ec702157-705b-42a0-b70e-a60a63dd24ab
+      schema:
+        type: string
+        format: uuid
+    AuthorizationParameter:
+      in: header
+      name: Authorization
+      required: true
+      description: 'OAuth2 Token (obtained from /oauth2/token )
+
+        Reference: https://docs.indebted.co/docs/receive/integration/use-cases/authentication-use-case
+
+        '
+      example: Bearer <access_token>
+      schema:
+        type: string
+    MinorVersionParameter:
+      name: minorVersion
+      in: query
+      required: false
+      description: Optional minor version identifier for message versioning. This value is passed as additional metadata with emitted messages.
+      schema:
+        type: string
+    TriggerNameParameter:
+      name: triggerName
+      in: query
+      required: false
+      description: This is name of Custom Trigger that should be triggered when this API is called.
+      schema:
+        type: string
+      example: customTrigger1
+    AccountReferenceParameter:
+      name: accountReference
+      in: query
+      required: true
+      example: ACC
+      description: Account reference in your system
+      schema:
+        type: string
+  responses:
+    403Forbidden:
+      description: Access is denied
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Forbidden
+    500InternalError:
+      description: Internal error occured
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Internal error
+    200Success:
+      description: Request was successful
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties:
+              $ref: '#/components/schemas/ActionResponse'
+          example:
+            REFERENCE_1:
+              success: true
+              messages:
+              - Successfully processed action
+              messageIds:
+              - e66d62ed-2331-4ced-8c03-5e729e984adc
+    200SuccessAddAccountLedgerEntries:
+      description: Response when adding account ledger entries is successful
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties:
+              $ref: '#/components/schemas/LedgerEntryResponse'
+            example:
+              ACCOUNT_REFERENCE_002:
+                success: true
+                data:
+                - accountReference: ACCOUNT_REFERENCE_002
+                  context: {}
+                  invoiceDetails:
+                    amount: 13025
+                    dueDate: '2020-01-01'
+                    meta: {}
+                  ledgerEntryReference: INVOICE_LEDGER_ENTRY_REFERENCE_002_2
+                messageIds:
+                - cddddeb1-f352-46f3-a59d-0008a84e9bd5
+                messages:
+                - 'Successfully added Ledger Entries: INVOICE_LEDGER_ENTRY_REFERENCE_002_2'
+    200SuccessGetDebtorAccountsAndClaims:
+      description: Request for get_debtor_accounts_and_claims is successful
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/DebtorAccountsAndClaims'
+          example:
+          - accountReference: ACC-DE-5567
+            currency: EUR
+            meta:
+              status: active
+            debtors:
+            - debtorReference: CUST-88213
+              type: natural
+              firstName: Anke
+              lastName: Weber
+              contactInformation:
+                email: anke.weber@example.de
+                country: DE
+            claims:
+            - claimReference: INV-2024-0042
+              accountReference: ACC-DE-5567
+              productReference: BROADBAND_PLAN_A
+              amount: 30000
+              totalFees: 2000
+              currency: EUR
+              currentDueDate: '2024-05-01'
+              fees: []
+    200SuccessAllocateAccountPayment:
+      description: Response for allocating the payment across the account's claims
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties:
+              $ref: '#/components/schemas/AllocateAccountPayment'
+          example:
+            ACC-DE-5567:
+              success: true
+              messages:
+              - Successfully allocated payment for account ACC-DE-5567
+              messageIds:
+              - a1b2c3d4-0000-4a8b-9c6d-2e5f8a1b0c43
+    200SuccessMatchAccountPayment:
+      description: Response for matching the payment with the account
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties:
+              $ref: '#/components/schemas/MatchAccountPayment'
+          example:
+            ACC-DE-5567:
+              success: true
+              messages:
+              - Successfully matched payment for account ACC-DE-5567
+              messageIds:
+              - a1b2c3d4-0000-4a8b-9c6d-2e5f8a1b0c43
+    200SuccessDebtorResponse:
+      description: Response for debtor add/update account debtor request is successful
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties:
+              $ref: '#/components/schemas/DebtorResponse'
+          example:
+            ACC-DE-5567:
+              success: true
+              messages:
+              - Successfully updated debtors for account ACC-DE-5567
+              messageIds:
+              - a1b2c3d4-0000-4a8b-9c6d-2e5f8a1b0c41
+    200SuccessGetAccountClaims:
+      description: Request of get_account_claims is Successfull
+      content:
+        application/json:
+          schema:
+            oneOf:
+            - type: array
+              items:
+                $ref: '#/components/schemas/ClaimResponse'
+            - type: object
+              properties:
+                results:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/ClaimResponse'
+                limit:
+                  type: integer
+                  description: amount of claims per current page
+                  example: 1000
+                paginationId:
+                  type: integer
+                  description: pagination id to fetch the claims pagewise
+                  example: 1
+                numberOfPages:
+                  type: integer
+                  description: amount of pages with limit that is given for that request
+                  example: 2
+          examples:
+            withoutPagination:
+              summary: No limit set — all claims returned as a flat array
+              value:
+              - claimReference: INV-2024-0042
+                accountReference: ACC-DE-5567
+                amount: 149900
+                currency: EUR
+                status: active
+                currentDueDate: '2024-05-01'
+                originalDueDate: '2024-05-01'
+                primaryDebtor:
+                  debtorReference: CUST-88213
+                  firstName: Anke
+                  lastName: Weber
+            withPagination:
+              summary: limit set — claims wrapped in a paginated object
+              description: Returned when the `limit` query param is present. Pass the returned `paginationId` back to fetch the next page.
+              value:
+                paginationId: 1
+                numberOfPages: 2
+                results:
+                - claimReference: INV-2024-0042
+                  accountReference: ACC-DE-5567
+                  amount: 149900
+                  currency: EUR
+                  status: active
+                  currentDueDate: '2024-05-01'
+                  originalDueDate: '2024-05-01'
+                  primaryDebtor:
+                    debtorReference: CUST-88213
+                    firstName: Anke
+                    lastName: Weber
+    200SuccessCreateAccounts:
+      description: Response for matching the payment with the account
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties:
+              $ref: '#/components/schemas/CreateAccounts'
+            example:
+              ACCOUNT_REFERENCE_002:
+                messages:
+                - Successfully created Account ACCOUNT_REFERENCE_002
+                success: true
+                data:
+                  currency: EUR
+                  paymentReference: ACCOUNT_PAYMENT_REFERENCE
+                  meta:
+                    accountMetaKey002: value002
+                    invoiceExternalNumber: 111
+                  scores:
+                  - type: INTERNAL
+                    value: V1
+                  debtors:
+                  - lastName: LAST_NAME_1
+                    firstName: FIRST_NAME
+                    debtorReference: EXTERNAL_DEBTOR_REF_002
+                    contactInformation:
+                      country: NL
+                      email: first.last@acme.com
+                  products:
+                  - productReference: PRODUCT_REFERENCE_1
+                    paymentReference: PRODUCT_PAYMENT_REFERENCE_1
+                  - productReference: PRODUCT_REFERENCE_2
+                    paymentReference: PRODUCT_PAYMENT_REFERENCE_2
+                  ledgerEntries:
+                  - ledgerEntryReference: INVOICE_LEDGER_ENTRY_REFERENCE_002_1
+                    invoiceDetails:
+                      amount: 100000
+                      dueDate: '2022-01-08'
+                      paymentReference: INVOICE_PAYMENT_REFERENCE_1
+                    context:
+                      productReference: PRODUCT_REFERENCE_1
+                messageIds:
+                - ef61c1b5-fd4a-41df-a1a3-bc4e4e4ca11a
+    200SuccessAccountProductResponse:
+      description: Request for add/update account product is successful
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties:
+              $ref: '#/components/schemas/AccountProductResponse'
+            example:
+              ACCOUNT_REFERENCE_002:
+                success: true
+                data:
+                - accountReference: ACCOUNT_REFERENCE_002
+                  productReference: PRODUCT_REFERENCE_002_2
+                  type: Computer
+                  name: MacBook Air
+                  code: '2022'
+                  meta: {}
+                messageIds:
+                - 931120dd-06bf-4ec9-9f44-2167585e76d1
+                messages:
+                - Successfully added Product PRODUCT_REFERENCE_002_2
+    401Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
+    200SuccessGetAccount:
+      description: Request for get_account is successful
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Account'
+    400BadRequest:
+      description: Incorrectly formed request
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: 'Missing required request parameters: [Authorization]'
+    429LimitsReached:
+      description: Request was throttled
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Too Many Requests
+    200SuccessUpdateAccountLedgerEntriesAmounts:
+      description: Request for update_account_ledger_entries_amounts is successful
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties:
+              $ref: '#/components/schemas/UpdateAccountLedgerEntriesAmounts'
+          example:
+            ACC-DE-5567:
+              success: true
+              messages:
+              - Successfully updated ledger entry amounts for account ACC-DE-5567
+              messageIds:
+              - a1b2c3d4-0000-4a8b-9c6d-2e5f8a1b0c40
+    200SuccessSetAccountScore:
+      description: Request for set_account_score is successful
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties:
+              $ref: '#/components/schemas/AccountScoreResponse'
+          example:
+            ACC-DE-5567:
+              success: true
+              messages:
+              - Successfully set scores for account ACC-DE-5567
+              messageIds:
+              - a1b2c3d4-0000-4a8b-9c6d-2e5f8a1b0c42
+  securitySchemes:
+    api_key:
+      type: apiKey
+      name: Authorization
+      in: header

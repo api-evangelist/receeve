@@ -1,0 +1,661 @@
+openapi: 3.0.3
+info:
+  title: InDebted Receive API Documentation Account Finance Settlements API
+  description: 'This is the API definition for interacting with InDebted''s Receive debt servicing platform. For more details please visit the [Integration Documentation](https://docs.indebted.co/docs/receive/receive-knowledge-base).
+
+
+    **Using this spec in code generators, Postman, or other tooling?** Fetch the raw document at [https://receive-api.indebted.co/openapi/apiSchema.yaml](https://receive-api.indebted.co/openapi/apiSchema.yaml) — that is the canonical OpenAPI file. Prefer it over the in-page download button, which re-serialises the document and can alter value types (e.g. date-formatted strings).'
+  contact:
+    email: techteam@indebted.co
+  version: 1.53.1
+servers:
+- url: /
+  description: API base path
+tags:
+- name: Finance Settlements
+paths:
+  /finance/v1/{clientId}/set_settlement_definition:
+    post:
+      tags:
+      - Finance Settlements
+      summary: Create or Update a Settlement Definition
+      description: 'Create or upsert a settlement definition (a template combining a discount
+
+        rule and a selector). A settlement definition materialises a settlement
+
+        instance on a Promise-to-Pay or Instalment Plan, or is applied directly.
+
+        '
+      operationId: setSettlementDefinition
+      parameters:
+      - $ref: '#/components/parameters/ClientIdParameter'
+      - $ref: '#/components/parameters/AuthorizationParameter'
+      - $ref: '#/components/parameters/TriggerNameParameter'
+      - $ref: '#/components/parameters/AsyncParameter'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SettlementDefinitionInput'
+            example:
+              id: WINTER_CAMPAIGN_30
+              version: 1
+              discount:
+                type: PERCENTAGE
+                percentage: 30
+              selector:
+                type: DIRECT
+              enabled: true
+      responses:
+        '200':
+          description: Successfully set settlement definition
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SetSettlementDefinition'
+              example:
+                success: true
+                messageIds:
+                - a1b2c3d4-0000-4a8b-9c6d-2e5f8a1b0d01
+                messages:
+                - Successfully set settlement definition
+                data:
+                  id: WINTER_CAMPAIGN_30
+                  version: 1
+                  discount:
+                    type: PERCENTAGE
+                    percentage: 30
+                  selector:
+                    type: DIRECT
+                  enabled: true
+        '400':
+          $ref: '#/components/responses/400BadRequest'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '403':
+          $ref: '#/components/responses/403Forbidden'
+        '429':
+          $ref: '#/components/responses/429LimitsReached'
+        '500':
+          $ref: '#/components/responses/500InternalError'
+      security:
+      - api_key: []
+  /finance/v1/{clientId}/apply_settlement:
+    post:
+      tags:
+      - Finance Settlements
+      summary: Apply a DIRECT Settlement
+      description: 'Apply a DIRECT settlement definition to one or more claims of an account,
+
+        typically driven by an agent on a call. The applicationRef acts as an
+
+        idempotency key.
+
+        '
+      operationId: applySettlement
+      parameters:
+      - $ref: '#/components/parameters/ClientIdParameter'
+      - $ref: '#/components/parameters/AuthorizationParameter'
+      - $ref: '#/components/parameters/TriggerNameParameter'
+      - $ref: '#/components/parameters/AsyncParameter'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApplySettlementInput'
+            example:
+              definitionId: WINTER_CAMPAIGN_30
+              accountReference: ACC-DE-5567
+              externalClaimRefs:
+              - INV-2024-0042
+              applicationRef: apply-6f1e-0001
+      responses:
+        '200':
+          description: Successfully applied settlement
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActionResponse'
+              example:
+                success: true
+                messageIds:
+                - a1b2c3d4-0000-4a8b-9c6d-2e5f8a1b0d02
+                messages:
+                - Successfully applied settlement
+        '400':
+          $ref: '#/components/responses/400BadRequest'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '403':
+          $ref: '#/components/responses/403Forbidden'
+        '429':
+          $ref: '#/components/responses/429LimitsReached'
+        '500':
+          $ref: '#/components/responses/500InternalError'
+      security:
+      - api_key: []
+  /finance/v1/{clientId}/withdraw_settlement:
+    post:
+      tags:
+      - Finance Settlements
+      summary: Withdraw a Settlement
+      description: 'Withdraw an existing settlement instance by id, optionally recording a reason.
+
+        '
+      operationId: withdrawSettlement
+      parameters:
+      - $ref: '#/components/parameters/ClientIdParameter'
+      - $ref: '#/components/parameters/AuthorizationParameter'
+      - $ref: '#/components/parameters/TriggerNameParameter'
+      - $ref: '#/components/parameters/AsyncParameter'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WithdrawSettlementInput'
+            example:
+              settlementId: 8f2b0c14-0000-4a8b-9c6d-2e5f8a1b0d03
+              reason: Agreed with debtor over the phone
+      responses:
+        '200':
+          description: Successfully withdrew settlement
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActionResponse'
+              example:
+                success: true
+                messageIds:
+                - a1b2c3d4-0000-4a8b-9c6d-2e5f8a1b0d04
+                messages:
+                - Successfully withdrew settlement
+        '400':
+          $ref: '#/components/responses/400BadRequest'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '403':
+          $ref: '#/components/responses/403Forbidden'
+        '429':
+          $ref: '#/components/responses/429LimitsReached'
+        '500':
+          $ref: '#/components/responses/500InternalError'
+      security:
+      - api_key: []
+  /finance/v1/{clientId}/settlement:
+    get:
+      tags:
+      - Finance Settlements
+      summary: Get a Settlement by id
+      description: 'Retrieve a single settlement instance by its id.
+
+        '
+      operationId: getSettlement
+      parameters:
+      - $ref: '#/components/parameters/ClientIdParameter'
+      - $ref: '#/components/parameters/AuthorizationParameter'
+      - $ref: '#/components/parameters/TriggerNameParameter'
+      - name: settlementId
+        in: query
+        required: true
+        description: Identifier of the settlement instance to retrieve
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Successfully retrieved settlement
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetSettlement'
+              example:
+                success: true
+                messageIds:
+                - a1b2c3d4-0000-4a8b-9c6d-2e5f8a1b0d05
+                messages:
+                - Successfully retrieved settlement
+                data:
+                  id: 8f2b0c14-0000-4a8b-9c6d-2e5f8a1b0d03
+                  definitionId: WINTER_CAMPAIGN_30
+                  clientId: ec702157-705b-42a0-b70e-a60a63dd24ab
+                  accountId: ACC-DE-5567
+                  currency: EUR
+                  instrumentType: DIRECT
+                  instrumentRef: apply-6f1e-0001
+                  claims:
+                  - externalClaimRef: INV-2024-0042
+                    computedDiscount: 3000
+                  status: ACTIVE
+                  createdAt: '2024-05-01T10:00:00.000Z'
+        '400':
+          $ref: '#/components/responses/400BadRequest'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '403':
+          $ref: '#/components/responses/403Forbidden'
+        '429':
+          $ref: '#/components/responses/429LimitsReached'
+        '500':
+          $ref: '#/components/responses/500InternalError'
+      security:
+      - api_key: []
+  /finance/v1/{clientId}/settlements:
+    get:
+      tags:
+      - Finance Settlements
+      summary: List Settlements for an Account
+      description: 'Retrieve all settlement instances for a specific client and account.
+
+        '
+      operationId: getSettlements
+      parameters:
+      - $ref: '#/components/parameters/ClientIdParameter'
+      - $ref: '#/components/parameters/AuthorizationParameter'
+      - $ref: '#/components/parameters/TriggerNameParameter'
+      - name: accountReference
+        in: query
+        required: true
+        description: Account reference in the client's system
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Successfully retrieved settlements
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetSettlements'
+              example:
+                success: true
+                messageIds:
+                - a1b2c3d4-0000-4a8b-9c6d-2e5f8a1b0d06
+                messages:
+                - Successfully retrieved settlements
+                data:
+                - id: 8f2b0c14-0000-4a8b-9c6d-2e5f8a1b0d03
+                  definitionId: WINTER_CAMPAIGN_30
+                  clientId: ec702157-705b-42a0-b70e-a60a63dd24ab
+                  accountId: ACC-DE-5567
+                  currency: EUR
+                  instrumentType: DIRECT
+                  instrumentRef: apply-6f1e-0001
+                  claims:
+                  - externalClaimRef: INV-2024-0042
+                    computedDiscount: 3000
+                  status: ACTIVE
+                  createdAt: '2024-05-01T10:00:00.000Z'
+        '400':
+          $ref: '#/components/responses/400BadRequest'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '403':
+          $ref: '#/components/responses/403Forbidden'
+        '429':
+          $ref: '#/components/responses/429LimitsReached'
+        '500':
+          $ref: '#/components/responses/500InternalError'
+      security:
+      - api_key: []
+components:
+  schemas:
+    Settlement:
+      type: object
+      required:
+      - id
+      - definitionId
+      - clientId
+      - accountId
+      - currency
+      - instrumentType
+      - instrumentRef
+      - claims
+      - status
+      properties:
+        id:
+          type: string
+        definitionId:
+          type: string
+        clientId:
+          type: string
+          format: uuid
+        accountId:
+          type: string
+        currency:
+          type: string
+          pattern: ^[A-Z]{3}$
+          description: 3-digit currency code (ISO 4217)
+        instrumentType:
+          type: string
+          enum:
+          - PROMISE_TO_PAY
+          - INSTALMENT_PLAN
+          - DIRECT
+        instrumentRef:
+          type: string
+        claims:
+          type: array
+          items:
+            type: object
+            required:
+            - externalClaimRef
+            - computedDiscount
+            properties:
+              externalClaimRef:
+                type: string
+              computedDiscount:
+                type: integer
+                description: Computed discount amount in minor units (cents)
+        status:
+          type: string
+          enum:
+          - ACTIVE
+          - FULFILLED
+          - BREACHED
+          - WITHDRAWN
+        createdAt:
+          type: string
+          format: date-time
+        fulfilledAt:
+          type: string
+          format: date-time
+        breachedAt:
+          type: string
+          format: date-time
+        withdrawnAt:
+          type: string
+          format: date-time
+    GetSettlement:
+      allOf:
+      - $ref: '#/components/schemas/ActionResponse'
+      - type: object
+        properties:
+          data:
+            $ref: '#/components/schemas/Settlement'
+    SettlementSelector:
+      description: What the settlement definition materialises against.
+      oneOf:
+      - type: object
+        required:
+        - type
+        - promiseToPayId
+        properties:
+          type:
+            type: string
+            enum:
+            - PROMISE_TO_PAY_INSTANCE
+          promiseToPayId:
+            type: string
+      - type: object
+        required:
+        - type
+        - instalmentPlanDefinitionIds
+        properties:
+          type:
+            type: string
+            enum:
+            - INSTALMENT_PLAN_DEFINITION
+          instalmentPlanDefinitionIds:
+            type: array
+            items:
+              type: string
+      - type: object
+        required:
+        - type
+        properties:
+          type:
+            type: string
+            enum:
+            - DIRECT
+    GetSettlements:
+      allOf:
+      - $ref: '#/components/schemas/ActionResponse'
+      - type: object
+        properties:
+          data:
+            type: array
+            items:
+              $ref: '#/components/schemas/Settlement'
+    WithdrawSettlementInput:
+      type: object
+      required:
+      - settlementId
+      properties:
+        settlementId:
+          type: string
+          description: Identifier of the settlement instance to withdraw
+        reason:
+          type: string
+          description: Optional human-readable reason for the withdrawal
+    SettlementDiscount:
+      description: The discount rule a settlement applies.
+      oneOf:
+      - type: object
+        required:
+        - type
+        - percentage
+        properties:
+          type:
+            type: string
+            enum:
+            - PERCENTAGE
+          percentage:
+            type: number
+            minimum: 0
+            maximum: 100
+      - type: object
+        required:
+        - type
+        - amount
+        properties:
+          type:
+            type: string
+            enum:
+            - FIXED
+          amount:
+            type: integer
+            description: Fixed discount amount in minor units (cents)
+      - type: object
+        required:
+        - type
+        - script
+        properties:
+          type:
+            type: string
+            enum:
+            - PROGRAMMATIC
+          script:
+            type: string
+          form:
+            type: object
+            additionalProperties: true
+    SettlementDefinitionInput:
+      type: object
+      required:
+      - id
+      - version
+      - discount
+      - selector
+      - enabled
+      properties:
+        id:
+          type: string
+          description: Client-provided identifier of the settlement definition
+        version:
+          type: integer
+          minimum: 1
+          description: Monotonic version of the definition
+        discount:
+          $ref: '#/components/schemas/SettlementDiscount'
+        selector:
+          $ref: '#/components/schemas/SettlementSelector'
+        guards:
+          type: object
+          properties:
+            maxDiscountPercentage:
+              type: number
+        enabled:
+          type: boolean
+    SetSettlementDefinition:
+      allOf:
+      - $ref: '#/components/schemas/ActionResponse'
+      - type: object
+        properties:
+          data:
+            $ref: '#/components/schemas/SettlementDefinitionInput'
+    ActionResponse:
+      type: object
+      description: Response of any action that causes any side effect in the platform (e.g. create, update, delete)
+      required:
+      - success
+      - messages
+      - messageIds
+      properties:
+        success:
+          type: boolean
+          example: false
+          description: Status of the action
+        messages:
+          type: array
+          items:
+            type: string
+            example: Successfully created claim claim1
+            description: Human-friendly message about the action
+        messageIds:
+          type: array
+          description: Identifier of the messages (used for tracing)
+          items:
+            type: string
+            format: uuid
+            example: 32638681-bb15-400d-acc8-15bf8e38661e
+      example:
+        success: true
+        messages:
+        - Successfully processed action
+        messageIds:
+        - e66d62ed-2331-4ced-8c03-5e729e984adc
+    ApplySettlementInput:
+      type: object
+      required:
+      - definitionId
+      - accountReference
+      - externalClaimRefs
+      - applicationRef
+      properties:
+        definitionId:
+          type: string
+          description: Identifier of the DIRECT settlement definition to apply
+        accountReference:
+          type: string
+          description: Account reference identifier
+        externalClaimRefs:
+          type: array
+          minItems: 1
+          items:
+            type: string
+          description: Client claim references the settlement is applied to
+        applicationRef:
+          type: string
+          description: Idempotency key for this application
+        form:
+          type: object
+          additionalProperties: true
+          description: Form data for programmatic discounts
+  responses:
+    403Forbidden:
+      description: Access is denied
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Forbidden
+    500InternalError:
+      description: Internal error occured
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Internal error
+    401Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
+    400BadRequest:
+      description: Incorrectly formed request
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: 'Missing required request parameters: [Authorization]'
+    429LimitsReached:
+      description: Request was throttled
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Too Many Requests
+  parameters:
+    AsyncParameter:
+      name: async
+      in: query
+      required: false
+      description: The request is added to the queue without expecting the response
+      schema:
+        type: boolean
+    ClientIdParameter:
+      name: clientId
+      in: path
+      required: true
+      description: 'A Receive system identifier that will be assigned automatically.
+
+        It will be used for situations like Support related interventions or data segmentation.
+
+        '
+      example: ec702157-705b-42a0-b70e-a60a63dd24ab
+      schema:
+        type: string
+        format: uuid
+    AuthorizationParameter:
+      in: header
+      name: Authorization
+      required: true
+      description: 'OAuth2 Token (obtained from /oauth2/token )
+
+        Reference: https://docs.indebted.co/docs/receive/integration/use-cases/authentication-use-case
+
+        '
+      example: Bearer <access_token>
+      schema:
+        type: string
+    TriggerNameParameter:
+      name: triggerName
+      in: query
+      required: false
+      description: This is name of Custom Trigger that should be triggered when this API is called.
+      schema:
+        type: string
+      example: customTrigger1
+  securitySchemes:
+    api_key:
+      type: apiKey
+      name: Authorization
+      in: header

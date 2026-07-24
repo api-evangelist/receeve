@@ -1,0 +1,1184 @@
+openapi: 3.0.3
+info:
+  title: InDebted Receive API Documentation Account Finance Instalments V2 API
+  description: 'This is the API definition for interacting with InDebted''s Receive debt servicing platform. For more details please visit the [Integration Documentation](https://docs.indebted.co/docs/receive/receive-knowledge-base).
+
+
+    **Using this spec in code generators, Postman, or other tooling?** Fetch the raw document at [https://receive-api.indebted.co/openapi/apiSchema.yaml](https://receive-api.indebted.co/openapi/apiSchema.yaml) — that is the canonical OpenAPI file. Prefer it over the in-page download button, which re-serialises the document and can alter value types (e.g. date-formatted strings).'
+  contact:
+    email: techteam@indebted.co
+  version: 1.53.1
+servers:
+- url: /
+  description: API base path
+tags:
+- name: Finance Instalments V2
+paths:
+  /finance/v1/{clientId}/instalment_plan_definitions:
+    get:
+      tags:
+      - Finance Instalments V2
+      summary: List Instalment Plan Definitions
+      description: 'Retrieve available instalment plan templates for the client.
+
+        This endpoint returns a list of instalment plan definitions that can be used
+
+        to create payment plans for debtors.
+
+        '
+      operationId: getInstalmentPlanDefinitions
+      parameters:
+      - $ref: '#/components/parameters/ClientIdParameter'
+      - $ref: '#/components/parameters/AuthorizationParameter'
+      - $ref: '#/components/parameters/TriggerNameParameter'
+      - name: limit
+        in: query
+        required: false
+        description: Maximum number of results to return
+        schema:
+          type: integer
+          minimum: 2
+          maximum: 1000
+      - name: paginationId
+        in: query
+        required: false
+        description: Pagination token for retrieving the next page of results
+        schema:
+          type: string
+      - name: filters
+        in: query
+        required: false
+        description: JSON string of filters to apply (e.g., {"enabled":true,"types":["CHOICE"]})
+        schema:
+          type: string
+      - name: fields
+        in: query
+        required: false
+        description: Comma-separated list of fields to retrieve (e.g., "id,type,description")
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Successfully retrieved instalment plan definitions with pagination support
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetInstalmentPlanDefinitions'
+              example:
+                success: true
+                messageIds:
+                - a1b2c3d4-0000-4a8b-9c6d-2e5f8a1b0c46
+                messages:
+                - Successfully retrieved instalment plan definitions
+                data:
+                  results:
+                  - id: 11111111-1111-1111-1111-111111111111
+                    type: percentageAmounts
+                    version: '1'
+                    enabled: true
+                    selectable: true
+                    description:
+                      en_US: Example percentage-based instalment plan with 3 instalments
+                    configuration:
+                    - date: '2024-04-01'
+                      percentage: 30
+                    - date: '2024-05-01'
+                      percentage: 40
+                    - date: '2024-06-01'
+                      percentage: 30
+                    rules:
+                    - id: 22222222-2222-2222-2222-222222222222
+                      type: featureToggle
+                      version: 1
+                      enabled: true
+                      description:
+                        en_US: Allow changing dates and amounts on the instalments
+                      configuration:
+                        features:
+                        - ALLOW_INSTALMENT_DATE_UPDATES
+                        - ALLOW_INSTALMENT_AMOUNT_UPDATES
+                        targets:
+                        - SYSTEM
+                        - CLIENT
+                        - DEBTOR
+        '400':
+          $ref: '#/components/responses/400BadRequest'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '403':
+          $ref: '#/components/responses/403Forbidden'
+        '429':
+          $ref: '#/components/responses/429LimitsReached'
+        '500':
+          $ref: '#/components/responses/500InternalError'
+      security:
+      - api_key: []
+  /finance/v1/{clientId}/compute_instalment_plan_definition:
+    post:
+      tags:
+      - Finance Instalments V2
+      summary: Compute Instalment Plan Definition
+      description: "Dynamic wizard for generating computed instalment plan definitions. Returns different \ntypes based on computation results (programmatic, choice, fixedAmounts, percentageAmounts, null).\n\nEach definition expects different `formData`, so there is no single fixed request schema —\nsend the fields that definition requires. Compute is iterative: call it repeatedly, feeding\neach result forward, until it returns a final state. Then pass the `id` from that last\ncompute response to create_instalment_plan.\n"
+      operationId: computeInstalmentPlanDefinition
+      parameters:
+      - $ref: '#/components/parameters/ClientIdParameter'
+      - $ref: '#/components/parameters/AuthorizationParameter'
+      - $ref: '#/components/parameters/TriggerNameParameter'
+      - $ref: '#/components/parameters/AsyncParameter'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ComputeInstalmentPlanDefinitionInput'
+            example:
+              instalmentPlanDefinitionId: STANDARD_6M
+              accountReference: ACC-DE-5567
+              externalClaimReferences:
+              - INV-2024-0042
+              formData: {}
+      responses:
+        '200':
+          description: Successfully computed instalment plan definition (polymorphic response based on computation type)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ComputeInstalmentPlanDefinitions'
+              example:
+                success: true
+                messageIds:
+                - a1b2c3d4-0000-4a8b-9c6d-2e5f8a1b0c48
+                messages:
+                - Successfully computed instalment plan definition
+                data:
+                  id: 3824e25a-e29d-4fbf-ac85-fac012912740
+                  type: programmatic
+                  version: 1
+                  final: true
+                  enabled: true
+                  selectable: false
+                  accountId: ACC-DE-5567
+                  computedAt: '2024-05-01T10:00:00.000Z'
+        '400':
+          $ref: '#/components/responses/400BadRequest'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '403':
+          $ref: '#/components/responses/403Forbidden'
+        '429':
+          $ref: '#/components/responses/429LimitsReached'
+        '500':
+          $ref: '#/components/responses/500InternalError'
+      security:
+      - api_key: []
+  /finance/v1/{clientId}/create_instalment_plan:
+    post:
+      tags:
+      - Finance Instalments V2
+      summary: Create Instalment Plan
+      description: 'Generate actual instalment plans from computed definitions.
+
+        This endpoint creates an executable payment plan based on a computed definition.
+
+        Use the `id` returned by the final compute_instalment_plan_definition call.
+
+        '
+      operationId: createInstalmentPlan
+      parameters:
+      - $ref: '#/components/parameters/ClientIdParameter'
+      - $ref: '#/components/parameters/AuthorizationParameter'
+      - $ref: '#/components/parameters/TriggerNameParameter'
+      - $ref: '#/components/parameters/AsyncParameter'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateInstalmentPlanInput'
+            example:
+              instalmentPlanDefinitionId: STANDARD_6M
+              accountReference: ACC-DE-5567
+      responses:
+        '200':
+          description: Successfully created instalment plan
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateInstalmentPlans'
+              example:
+                success: true
+                messageIds:
+                - a1b2c3d4-0000-4a8b-9c6d-2e5f8a1b0c49
+                messages:
+                - Successfully created instalment plan
+                data:
+                  id: de668b64-a47d-4f31-92e4-fa1818dc1137
+                  status: ACTIVE
+        '400':
+          $ref: '#/components/responses/400BadRequest'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '403':
+          $ref: '#/components/responses/403Forbidden'
+        '429':
+          $ref: '#/components/responses/429LimitsReached'
+        '500':
+          $ref: '#/components/responses/500InternalError'
+      security:
+      - api_key: []
+  /finance/v1/{clientId}/update_instalment_plan:
+    post:
+      tags:
+      - Finance Instalments V2
+      summary: Update Instalment Plan
+      description: 'Modify existing instalment plans with updated parameters.
+
+        This endpoint allows updating various aspects of an existing instalment plan.
+
+        '
+      operationId: updateInstalmentPlan
+      parameters:
+      - $ref: '#/components/parameters/ClientIdParameter'
+      - $ref: '#/components/parameters/AuthorizationParameter'
+      - $ref: '#/components/parameters/TriggerNameParameter'
+      - $ref: '#/components/parameters/AsyncParameter'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateInstalmentPlanInput'
+            example:
+              instalmentPlanId: IP-2024-0042
+              accountReference: ACC-DE-5567
+              instalmentPlan:
+                currency: EUR
+                status: ACTIVE
+                instalments:
+                - id: INST-1
+                  dueDate: '2024-06-01'
+                  amount: 25000
+                  currency: EUR
+                  status: CREATED
+      responses:
+        '200':
+          description: Successfully updated instalment plan
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActionResponse'
+        '400':
+          $ref: '#/components/responses/400BadRequest'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '403':
+          $ref: '#/components/responses/403Forbidden'
+        '429':
+          $ref: '#/components/responses/429LimitsReached'
+        '500':
+          $ref: '#/components/responses/500InternalError'
+      security:
+      - api_key: []
+  /finance/v1/{clientId}/instalment_plans:
+    get:
+      tags:
+      - Finance Instalments V2
+      summary: Get Instalment Plans
+      description: 'Retrieve instalment plans for a specific client and account.
+
+        Supports filtering by status, specific plan IDs, field selection, and pagination.
+
+        '
+      operationId: getInstalmentPlans
+      parameters:
+      - $ref: '#/components/parameters/ClientIdParameter'
+      - $ref: '#/components/parameters/AuthorizationParameter'
+      - $ref: '#/components/parameters/TriggerNameParameter'
+      - name: accountReference
+        in: query
+        required: true
+        description: Account reference in the client's system
+        schema:
+          type: string
+      - name: limit
+        in: query
+        required: false
+        description: Maximum number of results to return
+        schema:
+          type: integer
+          minimum: 2
+          maximum: 1000
+      - name: paginationId
+        in: query
+        required: false
+        description: Pagination token for retrieving the next page of results
+        schema:
+          type: string
+      - name: filters
+        in: query
+        required: false
+        description: JSON string of filters to apply (e.g., {"status":["CREATED"],"id":["uuid1","uuid2"]})
+        schema:
+          type: string
+      - name: fields
+        in: query
+        required: false
+        description: Comma-separated list of fields to retrieve (e.g., "id,status,accountId")
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Successfully retrieved instalment plans with pagination support
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetInstalmentPlans'
+              example:
+                success: true
+                messageIds:
+                - a1b2c3d4-0000-4a8b-9c6d-2e5f8a1b0c47
+                messages:
+                - Successfully retrieved instalment plans
+                data:
+                  results:
+                  - id: de668b64-a47d-4f31-92e4-fa1818dc1137
+                    status: ACTIVE
+                    accountId: ACC-DE-5567
+                    currency: EUR
+                    type: fixedAmounts
+                    totalAmount: 143523
+                    paidAmount: 0
+                    createdAt: '2024-05-01T10:00:00.000Z'
+                    updatedAt: '2024-05-01T10:00:00.000Z'
+                    configuration:
+                    - date: '2024-06-10'
+                      amount: 28704
+                    scope:
+                      numberOfInstalments: 5
+                      scheduleType: firstAndFifteenth
+                      definition:
+                        id: f3303079-d764-44e4-ba65-aebd54757235
+                        version: '1'
+                        description:
+                          en_US: Pay in full with enhanced penalty discount
+                    instalments:
+                    - id: 2f6674ff-ccdd-44c6-8518-39def26b8589
+                      dueDate: '2024-06-10'
+                      startDate: '2024-05-01'
+                      amount: 28704
+                      currency: EUR
+                      status: CREATED
+                    metadata:
+                      __instalmentPlanDefinitionId__: 3a900246-ec20-4185-85d9-cfeb5ea2d534
+        '400':
+          $ref: '#/components/responses/400BadRequest'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '403':
+          $ref: '#/components/responses/403Forbidden'
+        '429':
+          $ref: '#/components/responses/429LimitsReached'
+        '500':
+          $ref: '#/components/responses/500InternalError'
+      security:
+      - api_key: []
+components:
+  schemas:
+    ComputedInstalmentPlanDefinitionPercentageAmountsV2:
+      type: object
+      required:
+      - id
+      - type
+      - version
+      - enabled
+      - selectable
+      - description
+      - computedAt
+      - percentages
+      - currency
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the computed definition
+        type:
+          type: string
+          enum:
+          - percentageAmounts
+          description: Indicates percentage amounts computed definition
+        version:
+          type: string
+          description: Version of the definition
+        enabled:
+          type: boolean
+          description: Whether the definition is enabled
+        selectable:
+          type: boolean
+          description: Whether the definition can be selected
+        description:
+          type: object
+          description: Localized description
+        computedAt:
+          type: string
+          format: date-time
+          description: When the definition was computed
+        percentages:
+          type: array
+          items:
+            type: number
+            format: float
+          description: Percentage payment amounts
+        currency:
+          type: string
+          description: Currency code (ISO 4217)
+    ComputedInstalmentPlanDefinitionChoiceV2:
+      type: object
+      required:
+      - id
+      - type
+      - version
+      - enabled
+      - selectable
+      - description
+      - computedAt
+      - choices
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the computed definition
+        type:
+          type: string
+          enum:
+          - choice
+          description: Indicates choice computed definition
+        version:
+          type: string
+          description: Version of the definition
+        enabled:
+          type: boolean
+          description: Whether the definition is enabled
+        selectable:
+          type: boolean
+          description: Whether the definition can be selected
+        description:
+          type: object
+          description: Localized description
+        computedAt:
+          type: string
+          format: date-time
+          description: When the definition was computed
+        choices:
+          type: array
+          items:
+            type: object
+          description: Available choices for the user
+        defaultChoice:
+          type: string
+          description: Default choice if none selected
+    ComputeInstalmentPlanDefinitions:
+      allOf:
+      - $ref: '#/components/schemas/ActionResponse'
+      - type: object
+        properties:
+          data:
+            oneOf:
+            - $ref: '#/components/schemas/ComputedInstalmentPlanDefinitionProgrammaticV2'
+            - $ref: '#/components/schemas/ComputedInstalmentPlanDefinitionChoiceV2'
+            - $ref: '#/components/schemas/ComputedInstalmentPlanDefinitionFixedAmountsV2'
+            - $ref: '#/components/schemas/ComputedInstalmentPlanDefinitionPercentageAmountsV2'
+            - $ref: '#/components/schemas/ComputedInstalmentPlanDefinitionNullV2'
+    InstalmentPlanBaseV2:
+      type: object
+      description: Base structure for an instalment plan
+      properties:
+        meta:
+          type: object
+          description: Metadata of the instalment plan
+          additionalProperties: true
+        currency:
+          type: string
+          pattern: ^[A-Z]{3}$
+          description: 3-digit currency code (ISO 4217)
+          example: EUR
+        status:
+          $ref: '#/components/schemas/InstalmentPlanStatusV2'
+        instalments:
+          type: array
+          items:
+            $ref: '#/components/schemas/InstalmentV2'
+        transactions:
+          type: array
+          description: List of transactions associated with this instalment plan
+          items:
+            $ref: '#/components/schemas/InstalmentTransactionV2'
+    InstalmentTransactionV2:
+      allOf:
+      - $ref: '#/components/schemas/InstalmentTransactionBaseV2'
+      - type: object
+        properties:
+          type:
+            type: string
+            enum:
+            - payment
+            - chargeback
+    ComputedInstalmentPlanDefinitionNullV2:
+      type: object
+      required:
+      - id
+      - type
+      - version
+      - enabled
+      - selectable
+      - description
+      - computedAt
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the computed definition
+        type:
+          type: string
+          enum:
+          - 'null'
+          description: Indicates null computed definition
+        version:
+          type: string
+          description: Version of the definition
+        enabled:
+          type: boolean
+          description: Whether the definition is enabled
+        selectable:
+          type: boolean
+          description: Whether the definition can be selected
+        description:
+          type: object
+          description: Localized description
+        computedAt:
+          type: string
+          format: date-time
+          description: When the definition was computed
+    PaginatedInstalmentPlans:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/InstalmentPlanV2'
+          description: Array of instalment plans
+        paginationId:
+          type: string
+          description: Token for retrieving the next page of results
+      required:
+      - results
+    InstalmentPlanDefinitionV2:
+      type: object
+      required:
+      - id
+      - type
+      - version
+      - enabled
+      - selectable
+      - description
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the definition
+        type:
+          type: string
+          description: The type of instalment plan definition
+        version:
+          type: string
+          description: Version of the definition
+        enabled:
+          type: boolean
+          description: Whether the definition is enabled
+        selectable:
+          type: boolean
+          description: Whether the definition can be selected by users
+        description:
+          type: object
+          description: Localized description of the definition
+        configuration:
+          type: array
+          items:
+            type: object
+          description: Configuration objects for the definition
+        rules:
+          type: array
+          items:
+            type: object
+          description: Business rules for the definition
+        context:
+          type: object
+          description: Additional context data
+        computedAt:
+          type: string
+          format: date-time
+          description: When the definition was computed (for computed definitions)
+    GetInstalmentPlans:
+      allOf:
+      - $ref: '#/components/schemas/ActionResponse'
+      - type: object
+        properties:
+          data:
+            $ref: '#/components/schemas/PaginatedInstalmentPlans'
+    GetInstalmentPlanDefinitions:
+      allOf:
+      - $ref: '#/components/schemas/ActionResponse'
+      - type: object
+        properties:
+          data:
+            $ref: '#/components/schemas/PaginatedInstalmentPlanDefinitions'
+    InstalmentV2:
+      type: object
+      required:
+      - id
+      - dueDate
+      - amount
+      - currency
+      - status
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the instalment
+        dueDate:
+          type: string
+          format: date
+          description: When the instalment is due
+        startDate:
+          type: string
+          format: date
+          description: When the instalment period starts
+        amount:
+          type: number
+          format: float
+          minimum: 0
+          description: Amount due for this instalment
+        paidAmount:
+          type: number
+          format: float
+          minimum: 0
+          description: Amount that has been paid for this instalment
+        currency:
+          type: string
+          description: Currency code (ISO 4217)
+        status:
+          type: string
+          enum:
+          - CREATED
+          - RESOLVED
+          - INVALIDATED
+          - STARTED
+          - CANCELLED
+          description: Current status of the instalment
+        createdAt:
+          type: string
+          format: date-time
+          description: When the instalment was created
+        updatedAt:
+          type: string
+          format: date-time
+          description: When the instalment was last updated
+    ComputedInstalmentPlanDefinitionFixedAmountsV2:
+      type: object
+      required:
+      - id
+      - type
+      - version
+      - enabled
+      - selectable
+      - description
+      - computedAt
+      - amounts
+      - currency
+      - accountId
+      - clientId
+      - correlationId
+      - parentInstalmentPlanId
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the computed definition
+        type:
+          type: string
+          enum:
+          - fixedAmounts
+          description: Indicates fixed amounts computed definition
+        version:
+          type: string
+          description: Version of the definition
+        enabled:
+          type: boolean
+          description: Whether the definition is enabled
+        selectable:
+          type: boolean
+          description: Whether the definition can be selected
+        description:
+          type: object
+          description: Localized description
+        computedAt:
+          type: string
+          format: date-time
+          description: When the definition was computed
+        amounts:
+          type: array
+          items:
+            type: number
+            format: float
+          description: Fixed payment amounts
+        currency:
+          type: string
+          description: Currency code (ISO 4217)
+        final:
+          type: boolean
+          description: Whether this is the final computed definition
+        accountId:
+          type: string
+          description: Account identifier for the computed definition
+        clientId:
+          type: string
+          format: uuid
+          description: Client identifier for the computed definition
+        correlationId:
+          type: string
+          description: Correlation ID linking to the original definition
+        parentInstalmentPlanId:
+          type: string
+          description: Parent instalment plan definition ID
+        configuration:
+          type: array
+          items:
+            type: object
+          description: Computed configuration for the instalment plan
+        context:
+          type: object
+          description: Computation context including claim references
+        rules:
+          type: array
+          items:
+            type: object
+          description: Business rules applied during computation
+        TTL:
+          type: number
+          description: Time to live for the computed definition
+    ComputedInstalmentPlanDefinitionProgrammaticV2:
+      type: object
+      required:
+      - id
+      - type
+      - version
+      - enabled
+      - selectable
+      - description
+      - computedAt
+      - rules
+      - configuration
+      - context
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the computed definition
+        type:
+          type: string
+          enum:
+          - programmatic
+          description: Indicates programmatic computed definition
+        version:
+          type: string
+          description: Version of the definition
+        enabled:
+          type: boolean
+          description: Whether the definition is enabled
+        selectable:
+          type: boolean
+          description: Whether the definition can be selected
+        description:
+          type: object
+          description: Localized description
+        computedAt:
+          type: string
+          format: date-time
+          description: When the definition was computed
+        rules:
+          type: array
+          items:
+            type: object
+          description: Programmatic rules to apply
+        configuration:
+          type: array
+          items:
+            type: object
+          description: Configuration for the programmatic logic
+        context:
+          type: object
+          description: Computation context including claim references
+        accountId:
+          type: string
+          description: Account identifier for the computed definition
+        clientId:
+          type: string
+          format: uuid
+          description: Client identifier for the computed definition
+        correlationId:
+          type: string
+          description: Correlation ID linking to the original definition
+        parentInstalmentPlanId:
+          type: string
+          description: Parent instalment plan definition ID
+        TTL:
+          type: number
+          description: Time to live for the computed definition
+    ActionResponse:
+      type: object
+      description: Response of any action that causes any side effect in the platform (e.g. create, update, delete)
+      required:
+      - success
+      - messages
+      - messageIds
+      properties:
+        success:
+          type: boolean
+          example: false
+          description: Status of the action
+        messages:
+          type: array
+          items:
+            type: string
+            example: Successfully created claim claim1
+            description: Human-friendly message about the action
+        messageIds:
+          type: array
+          description: Identifier of the messages (used for tracing)
+          items:
+            type: string
+            format: uuid
+            example: 32638681-bb15-400d-acc8-15bf8e38661e
+      example:
+        success: true
+        messages:
+        - Successfully processed action
+        messageIds:
+        - e66d62ed-2331-4ced-8c03-5e729e984adc
+    ComputeInstalmentPlanDefinitionInput:
+      type: object
+      required:
+      - instalmentPlanDefinitionId
+      properties:
+        instalmentPlanDefinitionId:
+          type: string
+          description: ID of the instalment plan definition to compute
+        accountReference:
+          type: string
+          description: Account reference identifier
+        externalClaimReferences:
+          type: array
+          items:
+            type: string
+          description: External claim references to include in the computation
+        formData:
+          type: object
+          description: Form data for iterative computation
+      additionalProperties: true
+      description: Input for computing instalment plan definition. Supports additional dynamic context properties.
+    InstalmentPlanV2:
+      type: object
+      required:
+      - id
+      - definitionId
+      - status
+      - createdAt
+      - instalments
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the instalment plan
+        definitionId:
+          type: string
+          description: Reference to the definition used to create this plan
+        status:
+          type: string
+          enum:
+          - ACTIVE
+          - RESOLVED
+          - INVALIDATED
+          - CANCELLED
+          description: Current status of the plan
+        createdAt:
+          type: string
+          format: date-time
+          description: When the plan was created
+        updatedAt:
+          type: string
+          format: date-time
+          description: When the plan was last updated
+        statusCheckedAt:
+          type: string
+          format: date-time
+          description: When the status was last checked and computed values updated
+        clientId:
+          type: string
+          description: Client identifier associated with the plan
+        accountId:
+          type: string
+          description: Account identifier associated with the plan
+        currency:
+          type: string
+          description: Currency code (ISO 4217)
+        type:
+          type: string
+          description: Type of the instalment plan (e.g., fixedAmounts, percentageAmounts)
+        totalAmount:
+          type: number
+          description: Total amount of the instalment plan computed from instalments
+        paidAmount:
+          type: number
+          description: Total amount paid for this instalment plan computed from transactions
+        externalClaimRef:
+          type: string
+          description: External claim reference for this instalment plan
+        configuration:
+          oneOf:
+          - type: array
+            items:
+              type: object
+          - type: object
+          description: Configuration used to create this plan (object or array depending on plan type)
+        scope:
+          type: object
+          description: Scope information for the instalment plan
+          properties:
+            externalClaimReferences:
+              type: array
+              items:
+                type: string
+              description: List of external claim references
+            externalClaimAmounts:
+              type: array
+              items:
+                type: object
+                properties:
+                  amount:
+                    type: number
+                    description: Amount in cents
+                  totalFees:
+                    type: number
+                    description: Sum of all fees in cents
+                  fees:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                          description: Name of the fee
+                        amount:
+                          type: number
+                          description: Amount of the fee in cents
+              description: Amounts and fees per external claim reference
+        rules:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                description: Rule identifier
+              type:
+                type: string
+                description: Type of rule
+              description:
+                type: object
+                description: Localized descriptions
+              enabled:
+                type: boolean
+                description: Whether the rule is enabled
+              configuration:
+                type: object
+                description: Rule configuration
+          description: Business rules associated with this plan
+        instalments:
+          type: array
+          items:
+            $ref: '#/components/schemas/InstalmentV2'
+          description: List of instalments in the plan
+        metadata:
+          type: object
+          description: Additional metadata for the plan
+    PaginatedInstalmentPlanDefinitions:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/InstalmentPlanDefinitionV2'
+          description: Array of instalment plan definitions
+        paginationId:
+          type: string
+          description: Token for retrieving the next page of results
+      required:
+      - results
+    InstalmentTransactionBaseV2:
+      type: object
+      required:
+      - id
+      - amount
+      - context
+      properties:
+        id:
+          type: string
+          description: identifier of the Instalment Transaction entry
+        amount:
+          type: number
+          description: amount of instalment transaction [cents], can be positive or negative
+        context:
+          type: object
+          description: Additional context information for the instalment transaction
+          additionalProperties: true
+        createdAt:
+          type: string
+          format: date-time
+          description: Date that the instalment transaction was created [COMPUTED]
+        updatedAt:
+          type: string
+          format: date-time
+          description: Last date that the instalment transaction was updated [COMPUTED]
+    InstalmentPlanStatusV2:
+      type: string
+      enum:
+      - ACTIVE
+      - RESOLVED
+      - INVALIDATED
+      - CANCELLED
+      description: Status of the instalment plan
+    CreateInstalmentPlans:
+      allOf:
+      - $ref: '#/components/schemas/ActionResponse'
+      - type: object
+        properties:
+          data:
+            $ref: '#/components/schemas/InstalmentPlanV2'
+    UpdateInstalmentPlanInput:
+      type: object
+      required:
+      - instalmentPlanId
+      - instalmentPlan
+      - accountReference
+      properties:
+        instalmentPlanId:
+          type: string
+          format: uuid
+          description: ID of the instalment plan to update
+        instalmentPlan:
+          $ref: '#/components/schemas/InstalmentPlanBaseV2'
+        accountReference:
+          type: string
+          description: Account reference identifier
+        context:
+          type: object
+          description: Additional context for plan update
+    CreateInstalmentPlanInput:
+      type: object
+      required:
+      - instalmentPlanDefinitionId
+      properties:
+        instalmentPlanDefinitionId:
+          type: string
+          description: ID of the computed instalment plan definition to create plan from
+        accountReference:
+          type: string
+          description: Account reference identifier
+  responses:
+    403Forbidden:
+      description: Access is denied
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Forbidden
+    500InternalError:
+      description: Internal error occured
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Internal error
+    401Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
+    400BadRequest:
+      description: Incorrectly formed request
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: 'Missing required request parameters: [Authorization]'
+    429LimitsReached:
+      description: Request was throttled
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Too Many Requests
+  parameters:
+    AsyncParameter:
+      name: async
+      in: query
+      required: false
+      description: The request is added to the queue without expecting the response
+      schema:
+        type: boolean
+    ClientIdParameter:
+      name: clientId
+      in: path
+      required: true
+      description: 'A Receive system identifier that will be assigned automatically.
+
+        It will be used for situations like Support related interventions or data segmentation.
+
+        '
+      example: ec702157-705b-42a0-b70e-a60a63dd24ab
+      schema:
+        type: string
+        format: uuid
+    AuthorizationParameter:
+      in: header
+      name: Authorization
+      required: true
+      description: 'OAuth2 Token (obtained from /oauth2/token )
+
+        Reference: https://docs.indebted.co/docs/receive/integration/use-cases/authentication-use-case
+
+        '
+      example: Bearer <access_token>
+      schema:
+        type: string
+    TriggerNameParameter:
+      name: triggerName
+      in: query
+      required: false
+      description: This is name of Custom Trigger that should be triggered when this API is called.
+      schema:
+        type: string
+      example: customTrigger1
+  securitySchemes:
+    api_key:
+      type: apiKey
+      name: Authorization
+      in: header
