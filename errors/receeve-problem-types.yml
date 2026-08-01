@@ -1,0 +1,42 @@
+generated: '2026-07-21'
+method: derived
+source: openapi/receeve-openapi-original.yml
+format: json
+envelope:
+  description: >-
+    HTTP-transport errors return application/json with a single `message` field
+    (not RFC 9457 problem+json). Business-level failures are instead returned on
+    a 200 response with a per-entity `{ success: false, messageIds: [], messages: [] }`
+    envelope — see errors/receeve-error-codes.yml.
+  shape: '{ "message": "string" }'
+problems:
+- status: 400
+  title: Incorrectly formed request
+  description: Missing mandatory fields or wrong values in the JSON payload.
+  content_type: application/json
+  component: 400BadRequest
+- status: 401
+  title: Unauthorized
+  description: Missing, expired, or invalid Bearer access token.
+  content_type: application/json
+  component: 401Unauthorized
+- status: 403
+  title: Access is denied
+  description: The authenticated client lacks permission for the resource or clientId.
+  content_type: application/json
+  component: 403Forbidden
+- status: 404
+  title: Not found
+  description: The requested resource (account, claim, settlement) does not exist.
+  content_type: application/json
+  component: 404NotFound
+- status: 429
+  title: Request was throttled
+  description: Rate limit reached; back off and retry.
+  content_type: application/json
+  component: 429LimitsReached
+- status: 500
+  title: Internal error occurred
+  description: Unexpected server-side error.
+  content_type: application/json
+  component: 500InternalError

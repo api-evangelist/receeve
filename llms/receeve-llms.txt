@@ -1,0 +1,33 @@
+# Receive (Receeve) Client API
+
+> Receeve is a no-code debt collection and receivables-management SaaS platform (founded in Hamburg, backed by Speedinvest, acquired by InDebted and now operating as the "Receive" product). The Receive Client API is an OpenAPI 3.0 REST API secured with OAuth2 client-credentials (Bearer tokens) that manages accounts, claims, debtors, ledger entries, dunning journeys, multi-channel communications, hosted debtor landing pages, promises-to-pay, instalment plans and settlements, and emits a large catalog of signed webhook events.
+
+## APIs
+- [Receive Client API reference](https://api.receeve.com/api-reference): Interactive Scalar reference (46 operations across Account, Claim, Journey, Message, LandingPage, Finance and Files domains).
+- [Canonical OpenAPI spec](https://receive-api.indebted.co/openapi/apiSchema.yaml): OpenAPI 3.0.3, version 1.53.1.
+
+## Authentication
+- [Authentication use case](https://docs.indebted.co/docs/receive/integration/use-cases/authentication-use-case): OAuth2 client-credentials — POST /v1/oauth2/token with HTTP Basic client_id:client_secret, receive a Bearer access_token (expires_in 3600s), send it as `Authorization: Bearer <token>`.
+
+## Specs & artifacts (this repo)
+- OpenAPI: openapi/receeve-openapi-original.yml
+- Webhooks (AsyncAPI 2.6, 76 signed events): asyncapi/receeve-webhooks-asyncapi.yml
+- Authentication profile: authentication/receeve-authentication.yml
+- Conventions (auth/idempotency/versioning/errors): conventions/receeve-conventions.yml
+- Error catalog: errors/receeve-problem-types.yml, errors/receeve-error-codes.yml
+- Data model / ERD: data-model/receeve-data-model.yml
+- Conformance: conformance/receeve-conformance.yml
+- Lifecycle: lifecycle/receeve-lifecycle.yml
+- Sandbox: sandbox/receeve-sandbox.yml
+- Agent skills: skills/_index.yml
+
+## Docs
+- [Integration overview](https://docs.indebted.co/docs/receive/integration/)
+- [Getting started (TL;DR)](https://docs.indebted.co/docs/receive/integration/tl-dr)
+- [List of webhooks](https://docs.indebted.co/docs/receive/integration/list-of-webhooks)
+- [Webhook validation](https://docs.indebted.co/docs/receive/integration/use-cases/webhook-validation-use-case)
+- [API status and error codes](https://docs.indebted.co/docs/receive/integration/api-status-and-error-codes/)
+
+## Company
+- [Receeve product page (InDebted)](https://www.indebted.co/solution/receeve/)
+- [Trust Center](https://trust.indebted.co/)

@@ -1,0 +1,16 @@
+generated: '2026-07-21'
+method: generated
+source: openapi/receeve-openapi-original.yml
+skills:
+- file: receeve-authenticate.md
+  name: Authenticate to the Receive Client API
+  api: openapi/receeve-openapi-original.yml
+  operations: [getOauth2Token]
+- file: receeve-create-and-resolve-claim.md
+  name: Create, track and resolve a collections claim
+  api: openapi/receeve-openapi-original.yml
+  operations: [createAccounts, createClaims, getAccountClaims, resolveClaims]
+- file: receeve-collect-payment.md
+  name: Offer instalments or a settlement and collect payment
+  api: openapi/receeve-openapi-original.yml
+  operations: [getInstalmentPlanDefinitions, createInstalmentPlan, setSettlementDefinition, applySettlement, MatchAccountPayment]

@@ -1,0 +1,40 @@
+{
+  "provider": "receeve",
+  "sources": [
+    "receeve-account-api-openapi.yml",
+    "receeve-accountmandate-api-openapi.yml",
+    "receeve-claim-api-openapi.yml",
+    "receeve-customtriggers-api-openapi.yml",
+    "receeve-debtor-api-openapi.yml",
+    "receeve-event-api-openapi.yml",
+    "receeve-files-api-openapi.yml",
+    "receeve-finance-instalments-v2-api-openapi.yml",
+    "receeve-finance-settlements-api-openapi.yml",
+    "receeve-journey-api-openapi.yml",
+    "receeve-landingpage-api-openapi.yml",
+    "receeve-message-api-openapi.yml",
+    "receeve-promisetopay-api-openapi.yml",
+    "receeve-security-api-openapi.yml"
+  ],
+  "outputs": [
+    "receeve-account-api-openapi.yml",
+    "receeve-accountmandate-api-openapi.yml",
+    "receeve-claim-api-openapi.yml",
+    "receeve-customtriggers-api-openapi.yml",
+    "receeve-debtor-api-openapi.yml",
+    "receeve-event-api-openapi.yml",
+    "receeve-files-api-openapi.yml",
+    "receeve-finance-instalments-v2-api-openapi.yml",
+    "receeve-finance-settlements-api-openapi.yml",
+    "receeve-journey-api-openapi.yml",
+    "receeve-landingpage-api-openapi.yml",
+    "receeve-message-api-openapi.yml",
+    "receeve-promisetopay-api-openapi.yml",
+    "receeve-security-api-openapi.yml"
+  ],
+  "archived": [],
+  "errors": [],
+  "warnings": [],
+  "notes": [],
+  "skipped": []
+}

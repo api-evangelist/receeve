@@ -1,0 +1,24 @@
+generated: '2026-07-21'
+method: searched
+source: openapi/receeve-openapi-original.yml
+docs: https://docs.indebted.co/docs/receive/
+versioning:
+  scheme: uri-path
+  current: v1
+  spec_version: 1.53.1
+  event_versioning: >-
+    Selected webhook payloads carry an explicit .v1 suffix (e.g.
+    event.claimTotalAmount.updated.v1) so new event shapes can be added without
+    breaking existing consumers.
+deprecation:
+  policy_url: null
+  sunset_header: false
+  notes: No public deprecation policy or RFC 8594 Sunset/Deprecation header support found.
+sla:
+  url: null
+status_page: null
+deprecated_operations: []
+notes: >-
+  Receive (Receeve) publishes no dedicated public status page, changelog, or SLA
+  document; the OpenAPI is served with a semantic version (1.53.1) and the docs are
+  the source of truth for lifecycle.

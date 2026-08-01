@@ -1,0 +1,46 @@
+generated: '2026-07-21'
+method: searched
+source: https://docs.indebted.co/docs/receive/integration/api-status-and-error-codes/
+docs:
+- https://docs.indebted.co/docs/receive/integration/api-status-and-error-codes/claims
+- https://docs.indebted.co/docs/receive/integration/api-status-and-error-codes/accounts
+- https://docs.indebted.co/docs/receive/integration/api-status-and-error-codes/account-operations
+- https://docs.indebted.co/docs/receive/integration/api-status-and-error-codes/financial-operations
+- https://docs.indebted.co/docs/receive/integration/api-status-and-error-codes/strategy-triggers
+- https://docs.indebted.co/docs/receive/integration/api-status-and-error-codes/get-query
+description: >-
+  Receive returns two error surfaces. HTTP-transport errors (400/401/403/404/429/500)
+  carry a `{ message }` body — see errors/receeve-problem-types.yml. Business-logic
+  failures on write operations (create/update/import/resolve claims, ledger, payments)
+  are returned on a 200 response with a `success: false` envelope and one or more coded
+  messages of the form `[<code>] <ErrorClass>: <detail>`.
+envelope:
+  batch: '{ "messages": [...], "messageIds": [...], "success": false }'
+  per_entity: '{ "<ENTITY_ID>": { "success": false, "messageIds": [], "messages": [...] } }'
+error_categories:
+- claims
+- accounts
+- account-operations
+- financial-operations
+- strategy-triggers
+- get-query
+error_codes:
+- code: '4002'
+  class: ParameterInputError
+  message: Claim already exists in the system
+  area: claims
+  operations: [createClaims, importClaims, recreateClaims]
+enumerated_constraints:
+- operations: [createClaims, importClaims, recreateClaims]
+  required_fields: [currency, originalDueDate, currentDueDate, amount, primaryDebtor, country]
+- operations: [debitClaims, creditClaims]
+  required_fields: [currency, originator, amount]
+  valid_values:
+    originator: [DCA, CLIENT]
+- operations: [resolveClaims]
+  required_fields: [ref, reason]
+  valid_values:
+    reason: [CLAIM_SOLD, CLAIM_PAID, FRAUDULENT, CLAIM_DISCARDED, CLAIM_DISCHARGED, CLAIM_INVALIDATED]
+processing_error_examples:
+- 'Error processing message "cmd.claim.update.v1"'
+- 'Error processing message "cmd.claim.import.v1"'

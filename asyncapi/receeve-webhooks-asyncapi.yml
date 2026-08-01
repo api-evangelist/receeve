@@ -1,0 +1,769 @@
+asyncapi: 2.6.0
+info:
+  title: Receive (Receeve) Webhook Events
+  version: 1.53.1
+  description: Signed outbound webhook event catalog for InDebted's Receive (formerly Receeve) debt servicing
+    platform. Every event is delivered as an HTTP POST with a common envelope and an RSA/SHA-256 signature
+    (base64) computed over payloadAsString using the publicKey InDebted provides. Verify signatures before
+    trusting a payload; use messageId for idempotent de-duplication. Captured from the published webhook
+    reference.
+  contact:
+    name: InDebted Receive
+    url: https://docs.indebted.co/docs/receive/integration/list-of-webhooks
+defaultContentType: application/json
+channels:
+  event.accountAmountTotalFees.updated:
+    description: Account total amount and fees were updated
+    subscribe:
+      operationId: onAccountamounttotalfeesUpdated
+      summary: Account total amount and fees were updated
+      tags:
+      - name: Account
+      message:
+        $ref: '#/components/messages/ReceiveWebhookEvent'
+  event.accountDebtor.updated:
+    description: Account debtor information was updated
+    subscribe:
+      operationId: onAccountdebtorUpdated
+      summary: Account debtor information was updated
+      tags:
+      - name: Account
+      message:
+        $ref: '#/components/messages/ReceiveWebhookEvent'
+  event.accountDebtorUpdate.failed:
+    description: Error occurred while updating debtor details
+    subscribe:
+      operationId: onAccountdebtorupdateFailed
+      summary: Error occurred while updating debtor details
+      tags:
+      - name: Account
+      message:
+        $ref: '#/components/messages/ReceiveWebhookEvent'
+  event.accountInvoiceLedgerEntriesDueDateUpdate.failed:
+    description: Error updating ledger entry due dates
+    subscribe:
+      operationId: onAccountinvoiceledgerentriesduedateupdateFailed
+      summary: Error updating ledger entry due dates
+      tags:
+      - name: Account
+      message:
+        $ref: '#/components/messages/ReceiveWebhookEvent'
+  event.accountLedgerEntries.added:
+    description: New ledger entries were added to account
+    subscribe:
+      operationId: onAccountledgerentriesAdded
+      summary: New ledger entries were added to account
+      tags:
+      - name: Account
+      message:
+        $ref: '#/components/messages/ReceiveWebhookEvent'
+  event.accountLedgerEntriesAdding.failed:
+    description: Error occurred adding ledger entries
+    subscribe:
+      operationId: onAccountledgerentriesaddingFailed
+      summary: Error occurred adding ledger entries
+      tags:
+      - name: Account
+      message:
+        $ref: '#/components/messages/ReceiveWebhookEvent'
+  event.accountMeta.set:
+    description: Account metadata fields were updated
+    subscribe:
+      operationId: onAccountmetaSet
+      summary: Account metadata fields were updated
+      tags:
+      - name: Account
+      message:
+        $ref: '#/components/messages/ReceiveWebhookEvent'
+  event.accountMetaSet.failed:
+    description: Error occurred updating account metadata
+    subscribe:
+      operationId: onAccountmetasetFailed
+      summary: Error occurred updating account metadata
+      tags:
+      - name: Account
+      message:
+        $ref: '#/components/messages/ReceiveWebhookEvent'
+  webhook.accountMeta.changed:
+    description: Change detected in account meta field
+    subscribe:
+      operationId: onAccountmetaChanged
+      summary: Change detected in account meta field
+      tags:
+      - name: Account
+      message:
+        $ref: '#/components/messages/ReceiveWebhookEvent'
+  event.claim.created:
+    description: Claim was created
+    subscribe:
+      operationId: onClaimCreated
+      summary: Claim was created
+      tags:
+      - name: Claim
+      message:
+        $ref: '#/components/messages/ReceiveWebhookEvent'
+  event.claim.resolved:
+    description: Claim was resolved
+    subscribe:
+      operationId: onClaimResolved
+      summary: Claim was resolved
+      tags:
+      - name: Claim
+      message:
+        $ref: '#/components/messages/ReceiveWebhookEvent'
+  event.claimDebtPayment.processing:
+    description: Payment accepted and being processed
+    subscribe:
+      operationId: onClaimdebtpaymentProcessing
+      summary: Payment accepted and being processed
+      tags:
+      - name: Claim
+      message:
+        $ref: '#/components/messages/ReceiveWebhookEvent'
+  event.claimDebtPayment.settled:
+    description: Payment provider confirmed settlement
+    subscribe:
+      operationId: onClaimdebtpaymentSettled
+      summary: Payment provider confirmed settlement
+      tags:
+      - name: Claim
+      message:
+        $ref: '#/components/messages/ReceiveWebhookEvent'
+  event.multiClaimDebtPayment.settled.v1:
+    description: Multiple claims settled via single payment
+    subscribe:
+      operationId: onMulticlaimdebtpaymentSettledV1
+      summary: Multiple claims settled via single payment
+      tags:
+      - name: Claim
+      message:
+        $ref: '#/components/messages/ReceiveWebhookEvent'
+  event.multiClaimDebtPayment.processing.v1:
+    description: Multiple claims payment processing
+    subscribe:
+      operationId: onMulticlaimdebtpaymentProcessingV1
+      summary: Multiple claims payment processing
+      tags:
+      - name: Claim
+      message:
+        $ref: '#/components/messages/ReceiveWebhookEvent'
+  event.multiClaimDebtPayment.canceled.v1:
+    description: Multiple claims payment canceled
+    subscribe:
+      operationId: onMulticlaimdebtpaymentCanceledV1
+      summary: Multiple claims payment canceled
+      tags:
+      - name: Claim
+      message:
+        $ref: '#/components/messages/ReceiveWebhookEvent'
+  event.multiClaimDebtPayment.declined:
+    description: Multiple claims payment declined
+    subscribe:
+      operationId: onMulticlaimdebtpaymentDeclined
+      summary: Multiple claims payment declined
+      tags:
+      - name: Claim
+      message:
+        $ref: '#/components/messages/ReceiveWebhookEvent'
+  event.multiClaimDebtPayment.disputed:
+    description: Multiple claims payment disputed
+    subscribe:
+      operationId: onMulticlaimdebtpaymentDisputed
+      summary: Multiple claims payment disputed
+      tags:
+      - name: Claim
+      message:
+        $ref: '#/components/messages/ReceiveWebhookEvent'
+  event.claimMeta.updated:
+    description: Claim metadata was updated
+    subscribe:
+      operationId: onClaimmetaUpdated
+      summary: Claim metadata was updated
+      tags:
+      - name: Claim
+      message:
+        $ref: '#/components/messages/ReceiveWebhookEvent'
+  event.customClaimTrigger.executed:
+    description: Custom trigger executed via ClientAPI
+    subscribe:
+      operationId: onCustomclaimtriggerExecuted
+      summary: Custom trigger executed via ClientAPI
+      tags:
+      - name: Claim
+      message:
+        $ref: '#/components/messages/ReceiveWebhookEvent'
+  event.partnerClaimExternalStatus.changed:
+    description: External system status changed
+    subscribe:
+      operationId: onPartnerclaimexternalstatusChanged
+      summary: External system status changed
+      tags:
+      - name: Claim
+      message:
+        $ref: '#/components/messages/ReceiveWebhookEvent'
+  event.claimTotalAmount.updated.v1:
+    description: Claim amount was updated
+    subscribe:
+      operationId: onClaimtotalamountUpdatedV1
+      summary: Claim amount was updated
+      tags:
+      - name: Claim
+      message:
+        $ref: '#/components/messages/ReceiveWebhookEvent'
+  event.debtorEmail.delivered:
+    description: Email received in debtor inbox
+    subscribe:
+      operationId: onDebtoremailDelivered
+      summary: Email received in debtor inbox
+      tags:
+      - name: CommunicationEmail
+      message:
+        $ref: '#/components/messages/ReceiveWebhookEvent'
+  event.debtorEmail.opened:
+    description: Debtor opened email
+    subscribe:
+      operationId: onDebtoremailOpened
+      summary: Debtor opened email
+      tags:
+      - name: CommunicationEmail
+      message:
+        $ref: '#/components/messages/ReceiveWebhookEvent'
+  event.debtorEmail.queued:
+    description: Email queued with provider
+    subscribe:
+      operationId: onDebtoremailQueued
+      summary: Email queued with provider
+      tags:
+      - name: CommunicationEmail
+      message:
+        $ref: '#/components/messages/ReceiveWebhookEvent'
+  event.debtorEmailCommunicationResolution.received:
+    description: Email resolution received
+    subscribe:
+      operationId: onDebtoremailcommunicationresolutionReceived
+      summary: Email resolution received
+      tags:
+      - name: CommunicationEmail
+      message:
+        $ref: '#/components/messages/ReceiveWebhookEvent'
+  event.debtorEmailDelivery.failed:
+    description: Email delivery failed
+    subscribe:
+      operationId: onDebtoremaildeliveryFailed
+      summary: Email delivery failed
+      tags:
+      - name: CommunicationEmail
+      message:
+        $ref: '#/components/messages/ReceiveWebhookEvent'
+  event.debtorEmailDelivery.interrupted:
+    description: Email delivery interrupted by provider error
+    subscribe:
+      operationId: onDebtoremaildeliveryInterrupted
+      summary: Email delivery interrupted by provider error
+      tags:
+      - name: CommunicationEmail
+      message:
+        $ref: '#/components/messages/ReceiveWebhookEvent'
+  event.debtorEmailProcessing.failed:
+    description: Email processing failed (template issues)
+    subscribe:
+      operationId: onDebtoremailprocessingFailed
+      summary: Email processing failed (template issues)
+      tags:
+      - name: CommunicationEmail
+      message:
+        $ref: '#/components/messages/ReceiveWebhookEvent'
+  event.debtorEmailUnsubscribe.requested:
+    description: Debtor clicked unsubscribe link
+    subscribe:
+      operationId: onDebtoremailunsubscribeRequested
+      summary: Debtor clicked unsubscribe link
+      tags:
+      - name: CommunicationEmail
+      message:
+        $ref: '#/components/messages/ReceiveWebhookEvent'
+  event.debtorSMS.delivered:
+    description: SMS delivered to debtor
+    subscribe:
+      operationId: onDebtorsmsDelivered
+      summary: SMS delivered to debtor
+      tags:
+      - name: CommunicationSMS
+      message:
+        $ref: '#/components/messages/ReceiveWebhookEvent'
+  event.debtorSMS.queued:
+    description: SMS queued with provider
+    subscribe:
+      operationId: onDebtorsmsQueued
+      summary: SMS queued with provider
+      tags:
+      - name: CommunicationSMS
+      message:
+        $ref: '#/components/messages/ReceiveWebhookEvent'
+  event.debtorSMSCommunicationResolution.received:
+    description: SMS resolution received
+    subscribe:
+      operationId: onDebtorsmscommunicationresolutionReceived
+      summary: SMS resolution received
+      tags:
+      - name: CommunicationSMS
+      message:
+        $ref: '#/components/messages/ReceiveWebhookEvent'
+  event.debtorSMSDelivery.failed:
+    description: SMS delivery failed
+    subscribe:
+      operationId: onDebtorsmsdeliveryFailed
+      summary: SMS delivery failed
+      tags:
+      - name: CommunicationSMS
+      message:
+        $ref: '#/components/messages/ReceiveWebhookEvent'
+  event.debtorSMSDelivery.temporaryFailed:
+    description: SMS temporary delivery failure
+    subscribe:
+      operationId: onDebtorsmsdeliveryTemporaryfailed
+      summary: SMS temporary delivery failure
+      tags:
+      - name: CommunicationSMS
+      message:
+        $ref: '#/components/messages/ReceiveWebhookEvent'
+  event.debtorSMSProcessing.failed:
+    description: SMS processing failed (template issues)
+    subscribe:
+      operationId: onDebtorsmsprocessingFailed
+      summary: SMS processing failed (template issues)
+      tags:
+      - name: CommunicationSMS
+      message:
+        $ref: '#/components/messages/ReceiveWebhookEvent'
+  event.debtorLetter.generated:
+    description: Letter generated successfully
+    subscribe:
+      operationId: onDebtorletterGenerated
+      summary: Letter generated successfully
+      tags:
+      - name: CommunicationLetter
+      message:
+        $ref: '#/components/messages/ReceiveWebhookEvent'
+  event.debtorLetterProcessing.failed:
+    description: Letter processing failed
+    subscribe:
+      operationId: onDebtorletterprocessingFailed
+      summary: Letter processing failed
+      tags:
+      - name: CommunicationLetter
+      message:
+        $ref: '#/components/messages/ReceiveWebhookEvent'
+  event.inboundCall.answered:
+    description: Debtor answered inbound call
+    subscribe:
+      operationId: onInboundcallAnswered
+      summary: Debtor answered inbound call
+      tags:
+      - name: CommunicationCall
+      message:
+        $ref: '#/components/messages/ReceiveWebhookEvent'
+  event.inboundCall.finished:
+    description: Debtor finished inbound call
+    subscribe:
+      operationId: onInboundcallFinished
+      summary: Debtor finished inbound call
+      tags:
+      - name: CommunicationCall
+      message:
+        $ref: '#/components/messages/ReceiveWebhookEvent'
+  event.outboundCall.answered:
+    description: Debtor answered outbound call
+    subscribe:
+      operationId: onOutboundcallAnswered
+      summary: Debtor answered outbound call
+      tags:
+      - name: CommunicationCall
+      message:
+        $ref: '#/components/messages/ReceiveWebhookEvent'
+  event.outboundCall.finished:
+    description: Debtor finished outbound call
+    subscribe:
+      operationId: onOutboundcallFinished
+      summary: Debtor finished outbound call
+      tags:
+      - name: CommunicationCall
+      message:
+        $ref: '#/components/messages/ReceiveWebhookEvent'
+  event.debtorCallCommunicationResolution.received:
+    description: Call resolution received
+    subscribe:
+      operationId: onDebtorcallcommunicationresolutionReceived
+      summary: Call resolution received
+      tags:
+      - name: CommunicationCall
+      message:
+        $ref: '#/components/messages/ReceiveWebhookEvent'
+  event.debtorMessageCommunicationResolution.received:
+    description: Message resolution received
+    subscribe:
+      operationId: onDebtormessagecommunicationresolutionReceived
+      summary: Message resolution received
+      tags:
+      - name: CommunicationCall
+      message:
+        $ref: '#/components/messages/ReceiveWebhookEvent'
+  event.promiseToPay.created:
+    description: Promise to pay created
+    subscribe:
+      operationId: onPromisetopayCreated
+      summary: Promise to pay created
+      tags:
+      - name: FinancePromiseToPay
+      message:
+        $ref: '#/components/messages/ReceiveWebhookEvent'
+  event.promiseToPay.expired:
+    description: Promise to pay not paid by due date
+    subscribe:
+      operationId: onPromisetopayExpired
+      summary: Promise to pay not paid by due date
+      tags:
+      - name: FinancePromiseToPay
+      message:
+        $ref: '#/components/messages/ReceiveWebhookEvent'
+  event.promiseToPay.invalidated:
+    description: Promise to pay no longer needed
+    subscribe:
+      operationId: onPromisetopayInvalidated
+      summary: Promise to pay no longer needed
+      tags:
+      - name: FinancePromiseToPay
+      message:
+        $ref: '#/components/messages/ReceiveWebhookEvent'
+  event.promiseToPay.resolved:
+    description: Promise to pay successfully paid
+    subscribe:
+      operationId: onPromisetopayResolved
+      summary: Promise to pay successfully paid
+      tags:
+      - name: FinancePromiseToPay
+      message:
+        $ref: '#/components/messages/ReceiveWebhookEvent'
+  event.instalmentPlan.created:
+    description: Instalment plan created
+    subscribe:
+      operationId: onInstalmentplanCreated
+      summary: Instalment plan created
+      tags:
+      - name: FinanceInstalmentPlan
+      message:
+        $ref: '#/components/messages/ReceiveWebhookEvent'
+  event.instalmentPlan.cancelled:
+    description: Plan cancelled by agent/system
+    subscribe:
+      operationId: onInstalmentplanCancelled
+      summary: Plan cancelled by agent/system
+      tags:
+      - name: FinanceInstalmentPlan
+      message:
+        $ref: '#/components/messages/ReceiveWebhookEvent'
+  event.instalmentPlan.deleted:
+    description: Plan deleted from system
+    subscribe:
+      operationId: onInstalmentplanDeleted
+      summary: Plan deleted from system
+      tags:
+      - name: FinanceInstalmentPlan
+      message:
+        $ref: '#/components/messages/ReceiveWebhookEvent'
+  event.instalmentPlan.disabled:
+    description: Plan processing suspended
+    subscribe:
+      operationId: onInstalmentplanDisabled
+      summary: Plan processing suspended
+      tags:
+      - name: FinanceInstalmentPlan
+      message:
+        $ref: '#/components/messages/ReceiveWebhookEvent'
+  event.instalmentPlan.enabled:
+    description: Plan active and ready
+    subscribe:
+      operationId: onInstalmentplanEnabled
+      summary: Plan active and ready
+      tags:
+      - name: FinanceInstalmentPlan
+      message:
+        $ref: '#/components/messages/ReceiveWebhookEvent'
+  event.instalmentPlan.invalidated:
+    description: Agreed amount not fully covered
+    subscribe:
+      operationId: onInstalmentplanInvalidated
+      summary: Agreed amount not fully covered
+      tags:
+      - name: FinanceInstalmentPlan
+      message:
+        $ref: '#/components/messages/ReceiveWebhookEvent'
+  event.instalmentPlan.resolved:
+    description: Plan completed successfully
+    subscribe:
+      operationId: onInstalmentplanResolved
+      summary: Plan completed successfully
+      tags:
+      - name: FinanceInstalmentPlan
+      message:
+        $ref: '#/components/messages/ReceiveWebhookEvent'
+  event.instalmentPlan.updated:
+    description: Plan updated (payment/chargeback received)
+    subscribe:
+      operationId: onInstalmentplanUpdated
+      summary: Plan updated (payment/chargeback received)
+      tags:
+      - name: FinanceInstalmentPlan
+      message:
+        $ref: '#/components/messages/ReceiveWebhookEvent'
+  event.landingPageFullContent.generated:
+    description: Landing page generated without errors
+    subscribe:
+      operationId: onLandingpagefullcontentGenerated
+      summary: Landing page generated without errors
+      tags:
+      - name: LandingPage
+      message:
+        $ref: '#/components/messages/ReceiveWebhookEvent'
+  event.landingPageGetVerificationFields.failed:
+    description: Verification failed
+    subscribe:
+      operationId: onLandingpagegetverificationfieldsFailed
+      summary: Verification failed
+      tags:
+      - name: LandingPage
+      message:
+        $ref: '#/components/messages/ReceiveWebhookEvent'
+  event.landingPageInstalment.confirmed:
+    description: Debtor confirmed instalment plan
+    subscribe:
+      operationId: onLandingpageinstalmentConfirmed
+      summary: Debtor confirmed instalment plan
+      tags:
+      - name: LandingPage
+      message:
+        $ref: '#/components/messages/ReceiveWebhookEvent'
+  event.landingPageInstalment.selected:
+    description: Debtor selected instalment option
+    subscribe:
+      operationId: onLandingpageinstalmentSelected
+      summary: Debtor selected instalment option
+      tags:
+      - name: LandingPage
+      message:
+        $ref: '#/components/messages/ReceiveWebhookEvent'
+  event.landingPageLanguage.changed:
+    description: Language preference changed
+    subscribe:
+      operationId: onLandingpagelanguageChanged
+      summary: Language preference changed
+      tags:
+      - name: LandingPage
+      message:
+        $ref: '#/components/messages/ReceiveWebhookEvent'
+  event.landingPagePayLater.canceled:
+    description: Debtor closed after selecting pay later
+    subscribe:
+      operationId: onLandingpagepaylaterCanceled
+      summary: Debtor closed after selecting pay later
+      tags:
+      - name: LandingPage
+      message:
+        $ref: '#/components/messages/ReceiveWebhookEvent'
+  event.landingPagePayLater.selected:
+    description: Debtor selected pay later option
+    subscribe:
+      operationId: onLandingpagepaylaterSelected
+      summary: Debtor selected pay later option
+      tags:
+      - name: LandingPage
+      message:
+        $ref: '#/components/messages/ReceiveWebhookEvent'
+  event.landingPagePayment.failed:
+    description: Payment failed (no processing triggered)
+    subscribe:
+      operationId: onLandingpagepaymentFailed
+      summary: Payment failed (no processing triggered)
+      tags:
+      - name: LandingPage
+      message:
+        $ref: '#/components/messages/ReceiveWebhookEvent'
+  event.landingPagePayment.interrupted:
+    description: Debtor closed during payment
+    subscribe:
+      operationId: onLandingpagepaymentInterrupted
+      summary: Debtor closed during payment
+      tags:
+      - name: LandingPage
+      message:
+        $ref: '#/components/messages/ReceiveWebhookEvent'
+  event.landingPagePayment.succeeded:
+    description: Payment completed successfully
+    subscribe:
+      operationId: onLandingpagepaymentSucceeded
+      summary: Payment completed successfully
+      tags:
+      - name: LandingPage
+      message:
+        $ref: '#/components/messages/ReceiveWebhookEvent'
+  event.landingPagePaymentInit.failed:
+    description: Payment provider initialization failed
+    subscribe:
+      operationId: onLandingpagepaymentinitFailed
+      summary: Payment provider initialization failed
+      tags:
+      - name: LandingPage
+      message:
+        $ref: '#/components/messages/ReceiveWebhookEvent'
+  event.landingPagePaymentInit.succeeded:
+    description: Payment provider initialized
+    subscribe:
+      operationId: onLandingpagepaymentinitSucceeded
+      summary: Payment provider initialized
+      tags:
+      - name: LandingPage
+      message:
+        $ref: '#/components/messages/ReceiveWebhookEvent'
+  event.landingPageVerification.succeeded:
+    description: Landing page verification passed
+    subscribe:
+      operationId: onLandingpageverificationSucceeded
+      summary: Landing page verification passed
+      tags:
+      - name: LandingPage
+      message:
+        $ref: '#/components/messages/ReceiveWebhookEvent'
+  event.note.created:
+    description: Agent/user added note to claim
+    subscribe:
+      operationId: onNoteCreated
+      summary: Agent/user added note to claim
+      tags:
+      - name: BackofficeDiary
+      message:
+        $ref: '#/components/messages/ReceiveWebhookEvent'
+  event.note.deleted:
+    description: Agent/user removed note from claim
+    subscribe:
+      operationId: onNoteDeleted
+      summary: Agent/user removed note from claim
+      tags:
+      - name: BackofficeDiary
+      message:
+        $ref: '#/components/messages/ReceiveWebhookEvent'
+  event.strategy.assigned:
+    description: Default strategy assigned to claim
+    subscribe:
+      operationId: onStrategyAssigned
+      summary: Default strategy assigned to claim
+      tags:
+      - name: Strategy
+      message:
+        $ref: '#/components/messages/ReceiveWebhookEvent'
+  event.strategy.finished:
+    description: Claim ran out of strategy steps
+    subscribe:
+      operationId: onStrategyFinished
+      summary: Claim ran out of strategy steps
+      tags:
+      - name: Strategy
+      message:
+        $ref: '#/components/messages/ReceiveWebhookEvent'
+  event.strategy.paused:
+    description: Strategy paused (resumable)
+    subscribe:
+      operationId: onStrategyPaused
+      summary: Strategy paused (resumable)
+      tags:
+      - name: Strategy
+      message:
+        $ref: '#/components/messages/ReceiveWebhookEvent'
+  event.strategy.resumed:
+    description: Strategy resumed after pause
+    subscribe:
+      operationId: onStrategyResumed
+      summary: Strategy resumed after pause
+      tags:
+      - name: Strategy
+      message:
+        $ref: '#/components/messages/ReceiveWebhookEvent'
+  event.strategy.stopped:
+    description: Strategy stopped (non-resumable)
+    subscribe:
+      operationId: onStrategyStopped
+      summary: Strategy stopped (non-resumable)
+      tags:
+      - name: Strategy
+      message:
+        $ref: '#/components/messages/ReceiveWebhookEvent'
+components:
+  messages:
+    ReceiveWebhookEvent:
+      name: ReceiveWebhookEvent
+      title: Receive webhook event
+      summary: Common signed webhook envelope for all Receive events.
+      contentType: application/json
+      payload:
+        $ref: '#/components/schemas/WebhookEnvelope'
+  schemas:
+    WebhookEnvelope:
+      type: object
+      required:
+      - payload
+      - signature
+      properties:
+        payload:
+          type: object
+          properties:
+            details:
+              type: object
+              description: Event-specific fields plus the messageType discriminator.
+              properties:
+                messageType:
+                  type: string
+                  description: The event type, e.g. event.claim.created
+                accountReference:
+                  type: string
+                  description: Account identifier in the external system
+                claimRef:
+                  type: string
+                  description: Claim identifier in the external system
+                receiveClaimRef:
+                  type: string
+                  description: Internal claim identifier in Receive
+                externalDebtorRef:
+                  type: string
+                  description: Debtor identifier in the external system
+            messageId:
+              type: string
+              description: Unique id for webhook de-duplication
+            timestamp:
+              type: string
+              format: date-time
+              description: ISO 8601 event timestamp
+            user:
+              type: object
+              properties:
+                id:
+                  type: string
+                poolId:
+                  type: string
+                originator:
+                  type: string
+        payloadAsString:
+          type: string
+          description: Canonical string form of payload used as the signed data
+        signature:
+          type: string
+          description: base64 RSA/SHA-256 signature over payloadAsString, verified with the InDebted publicKey
+x-provenance:
+  generated: '2026-07-21'
+  method: searched
+  source: https://docs.indebted.co/docs/receive/integration/list-of-webhooks
+  validation: https://docs.indebted.co/docs/receive/integration/use-cases/webhook-validation-use-case
+  event_count: 76
+  signature:
+    algorithm: RSA SHA-256
+    encoding: base64
+    signed_field: payloadAsString
+    key: publicKey provided by InDebted

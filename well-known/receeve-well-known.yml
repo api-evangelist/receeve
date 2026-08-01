@@ -1,0 +1,21 @@
+generated: '2026-07-21'
+method: probed
+source: live probes of the Receive API/docs hosts
+note: >-
+  api.receeve.com and receive-api.indebted.co are Docusaurus/S3 static docs hosts
+  that return the SPA shell (HTTP 200 with an HTML doctype) for every path, so all
+  /.well-known/ probes are soft-404s — no genuine well-known documents are served.
+  The apex receeve.com 301-redirects to indebted.co. No SecurityTxt / OIDC / OAuth
+  metadata / api-catalog / ai-plugin document was found.
+hosts:
+- host: https://api.receeve.com
+  documents:
+  - {path: /.well-known/security.txt, status: 200, present: false, note: soft-404 SPA shell}
+  - {path: /.well-known/openid-configuration, status: 200, present: false, note: soft-404 SPA shell}
+  - {path: /.well-known/oauth-authorization-server, status: 200, present: false, note: soft-404 SPA shell}
+  - {path: /.well-known/api-catalog, status: 200, present: false, note: soft-404 SPA shell}
+  - {path: /.well-known/ai-plugin.json, status: 200, present: false, note: soft-404 SPA shell}
+- host: https://receive-api.indebted.co
+  documents:
+  - {path: /.well-known/security.txt, status: 200, present: false, note: soft-404 SPA shell}
+  - {path: /.well-known/openid-configuration, status: 200, present: false, note: soft-404 SPA shell}

@@ -1,0 +1,28 @@
+generated: '2026-07-21'
+method: searched
+source: https://docs.indebted.co/docs/receive/integration/use-cases/authentication-use-case
+environments:
+- name: demo
+  description: >-
+    Published demo/sandbox environment used throughout the integration docs and
+    authentication examples.
+  api_host: https://api.receive-demo.com
+  token_endpoint: https://api.receive-demo.com/v1/oauth2/token
+- name: production
+  description: >-
+    Production Receive environment; customer-specific host provisioned by InDebted
+    (not publicly resolvable). Same OpenAPI contract as demo.
+  api_host: null
+credentials:
+  model: >-
+    A demo client_id and client_secret are issued by InDebted; exchange them at the
+    demo token endpoint via HTTP Basic to obtain a short-lived (3600s) Bearer token.
+  note: No self-serve public test credentials are published; provisioned by InDebted.
+test_values:
+  note: >-
+    Receive does not publish magic test card numbers or fixture identifiers; sandbox
+    testing uses real demo accounts/claims created through the Client API against the
+    demo host. No verbatim test values were published to capture.
+webhook_validation:
+  public_key: publicKey provided by InDebted per environment
+  see: asyncapi/receeve-webhooks-asyncapi.yml

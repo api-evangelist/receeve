@@ -1,22 +1,390 @@
 aid: receeve
 name: Receeve
-description: Receeve is a company surfaced as a portfolio company of speedinvest and added to the API
-  Evangelist network as a stub for enrichment. This profile is a lead awaiting the enrichment pipeline.
+description: >-
+  Receeve is a no-code debt collection and receivables management SaaS platform,
+  founded in Hamburg, Germany and backed by Speedinvest. It was acquired by
+  InDebted and now operates as the "Receive" product — a debt servicing platform
+  that lets creditors, banks, lenders, utilities and collection agencies
+  automate the full collections lifecycle: importing accounts and claims,
+  running configurable dunning strategies and journeys, sending multi-channel
+  communications (email, SMS, letters, calls), generating hosted debtor landing
+  pages, and reconciling payments, promises-to-pay, instalment plans and
+  settlements. The Receive Client API is an OpenAPI 3.0 REST API secured with
+  OAuth2 client-credentials (Bearer tokens) and emits an extensive catalog of
+  signed webhooks for account, claim, communication, finance, landing-page and
+  strategy events.
 url: https://raw.githubusercontent.com/api-evangelist/receeve/refs/heads/main/apis.yml
 x-type: company
 x-source: vc-portfolio
 x-backed-by:
 - speedinvest
-x-tier: stub
-x-tier-reason: portfolio-lead
+x-acquired-by: indebted
+x-tier: profile
+x-tier-reason: enriched-from-live-api
+accessModel:
+  pricing: unknown
+  onboarding: self-serve
+  trial: false
+  try_now: false
+  public: false
+  label: Self-serve signup
+  confidence: medium
+  source:
+  - authentication
+  generated: '2026-07-22'
+  method: derived
 specificationVersion: '0.20'
 created: '2026-07-17'
-modified: '2026-07-17'
+modified: '2026-07-21'
+image: https://www.indebted.co/favicon.ico
 tags:
 - Company
-apis: []
+- Debt Collection
+- Receivables Management
+- Debt Servicing
+- Collections
+- Fintech
+- Payments
+- Webhooks
+- Financial Services
+- Dunning
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
 - FN: APIs.json
   email: info@apis.io
+apis:
+- aid: receeve:receeve-account-api
+  name: Receeve Account API
+  description: >-
+    A formal business arrangement providing for regular dealings or services (such as banking, advertising,
+    or store credit) and involving the establishment and maintenance of an account
+  humanURL: https://api.receeve.com/api-reference
+  baseURL: https://api.receive-demo.com
+  tags:
+  - Account
+  properties:
+  - type: OpenAPI
+    url: openapi/receeve-account-api-openapi.yml
+  - type: Documentation
+    url: https://docs.indebted.co/docs/receive/
+  - type: APIReference
+    url: https://api.receeve.com/api-reference
+  - type: GettingStarted
+    url: https://docs.indebted.co/docs/receive/integration/tl-dr
+  - type: Authentication
+    url: authentication/receeve-authentication.yml
+  - type: Webhooks
+    url: asyncapi/receeve-webhooks-asyncapi.yml
+- aid: receeve:receeve-accountmandate-api
+  name: Receeve AccountMandate API
+  description: The AccountMandate API from Receeve — 3 operation(s) for accountmandate.
+  humanURL: https://api.receeve.com/api-reference
+  baseURL: https://api.receive-demo.com
+  tags:
+  - AccountMandate
+  properties:
+  - type: OpenAPI
+    url: openapi/receeve-accountmandate-api-openapi.yml
+  - type: Documentation
+    url: https://docs.indebted.co/docs/receive/
+  - type: APIReference
+    url: https://api.receeve.com/api-reference
+  - type: GettingStarted
+    url: https://docs.indebted.co/docs/receive/integration/tl-dr
+  - type: Authentication
+    url: authentication/receeve-authentication.yml
+  - type: Webhooks
+    url: asyncapi/receeve-webhooks-asyncapi.yml
+- aid: receeve:receeve-claim-api
+  name: Receeve Claim API
+  description: >-
+    A claim is an outstanding payment that is owed. You can always update this balance if multiple payments
+    are missed and you want to aggregate the amounts.
+  humanURL: https://api.receeve.com/api-reference
+  baseURL: https://api.receive-demo.com
+  tags:
+  - Claim
+  properties:
+  - type: OpenAPI
+    url: openapi/receeve-claim-api-openapi.yml
+  - type: Documentation
+    url: https://docs.indebted.co/docs/receive/
+  - type: APIReference
+    url: https://api.receeve.com/api-reference
+  - type: GettingStarted
+    url: https://docs.indebted.co/docs/receive/integration/tl-dr
+  - type: Authentication
+    url: authentication/receeve-authentication.yml
+  - type: Webhooks
+    url: asyncapi/receeve-webhooks-asyncapi.yml
+- aid: receeve:receeve-customtriggers-api
+  name: Receeve CustomTriggers API
+  description: The CustomTriggers API from Receeve — 1 operation(s) for customtriggers.
+  humanURL: https://api.receeve.com/api-reference
+  baseURL: https://api.receive-demo.com
+  tags:
+  - CustomTriggers
+  properties:
+  - type: OpenAPI
+    url: openapi/receeve-customtriggers-api-openapi.yml
+  - type: Documentation
+    url: https://docs.indebted.co/docs/receive/
+  - type: APIReference
+    url: https://api.receeve.com/api-reference
+  - type: GettingStarted
+    url: https://docs.indebted.co/docs/receive/integration/tl-dr
+  - type: Authentication
+    url: authentication/receeve-authentication.yml
+  - type: Webhooks
+    url: asyncapi/receeve-webhooks-asyncapi.yml
+- aid: receeve:receeve-debtor-api
+  name: Receeve Debtor API
+  description: The Debtor API from Receeve — 1 operation(s) for debtor.
+  humanURL: https://api.receeve.com/api-reference
+  baseURL: https://api.receive-demo.com
+  tags:
+  - Debtor
+  properties:
+  - type: OpenAPI
+    url: openapi/receeve-debtor-api-openapi.yml
+  - type: Documentation
+    url: https://docs.indebted.co/docs/receive/
+  - type: APIReference
+    url: https://api.receeve.com/api-reference
+  - type: GettingStarted
+    url: https://docs.indebted.co/docs/receive/integration/tl-dr
+  - type: Authentication
+    url: authentication/receeve-authentication.yml
+  - type: Webhooks
+    url: asyncapi/receeve-webhooks-asyncapi.yml
+- aid: receeve:receeve-event-api
+  name: Receeve Event API
+  description: Event that happened in Receive systems, for example, claim created or email delivered.
+  humanURL: https://api.receeve.com/api-reference
+  baseURL: https://api.receive-demo.com
+  tags:
+  - Event
+  properties:
+  - type: OpenAPI
+    url: openapi/receeve-event-api-openapi.yml
+  - type: Documentation
+    url: https://docs.indebted.co/docs/receive/
+  - type: APIReference
+    url: https://api.receeve.com/api-reference
+  - type: GettingStarted
+    url: https://docs.indebted.co/docs/receive/integration/tl-dr
+  - type: Authentication
+    url: authentication/receeve-authentication.yml
+  - type: Webhooks
+    url: asyncapi/receeve-webhooks-asyncapi.yml
+- aid: receeve:receeve-files-api
+  name: Receeve Files API
+  description: The Files API from Receeve — 1 operation(s) for files.
+  humanURL: https://api.receeve.com/api-reference
+  baseURL: https://api.receive-demo.com
+  tags:
+  - Files
+  properties:
+  - type: OpenAPI
+    url: openapi/receeve-files-api-openapi.yml
+  - type: Documentation
+    url: https://docs.indebted.co/docs/receive/
+  - type: APIReference
+    url: https://api.receeve.com/api-reference
+  - type: GettingStarted
+    url: https://docs.indebted.co/docs/receive/integration/tl-dr
+  - type: Authentication
+    url: authentication/receeve-authentication.yml
+  - type: Webhooks
+    url: asyncapi/receeve-webhooks-asyncapi.yml
+- aid: receeve:receeve-finance-instalments-v2-api
+  name: Receeve Finance Instalments V2 API
+  description: The Finance Instalments V2 API from Receeve — 5 operation(s) for finance instalments v2.
+  humanURL: https://api.receeve.com/api-reference
+  baseURL: https://api.receive-demo.com
+  tags:
+  - Finance Instalments V2
+  properties:
+  - type: OpenAPI
+    url: openapi/receeve-finance-instalments-v2-api-openapi.yml
+  - type: Documentation
+    url: https://docs.indebted.co/docs/receive/
+  - type: APIReference
+    url: https://api.receeve.com/api-reference
+  - type: GettingStarted
+    url: https://docs.indebted.co/docs/receive/integration/tl-dr
+  - type: Authentication
+    url: authentication/receeve-authentication.yml
+  - type: Webhooks
+    url: asyncapi/receeve-webhooks-asyncapi.yml
+- aid: receeve:receeve-finance-settlements-api
+  name: Receeve Finance Settlements API
+  description: The Finance Settlements API from Receeve — 5 operation(s) for finance settlements.
+  humanURL: https://api.receeve.com/api-reference
+  baseURL: https://api.receive-demo.com
+  tags:
+  - Finance Settlements
+  properties:
+  - type: OpenAPI
+    url: openapi/receeve-finance-settlements-api-openapi.yml
+  - type: Documentation
+    url: https://docs.indebted.co/docs/receive/
+  - type: APIReference
+    url: https://api.receeve.com/api-reference
+  - type: GettingStarted
+    url: https://docs.indebted.co/docs/receive/integration/tl-dr
+  - type: Authentication
+    url: authentication/receeve-authentication.yml
+  - type: Webhooks
+    url: asyncapi/receeve-webhooks-asyncapi.yml
+- aid: receeve:receeve-journey-api
+  name: Receeve Journey API
+  description: This is the overall strategy to resolve the outstanding payment or debt.
+  humanURL: https://api.receeve.com/api-reference
+  baseURL: https://api.receive-demo.com
+  tags:
+  - Journey
+  properties:
+  - type: OpenAPI
+    url: openapi/receeve-journey-api-openapi.yml
+  - type: Documentation
+    url: https://docs.indebted.co/docs/receive/
+  - type: APIReference
+    url: https://api.receeve.com/api-reference
+  - type: GettingStarted
+    url: https://docs.indebted.co/docs/receive/integration/tl-dr
+  - type: Authentication
+    url: authentication/receeve-authentication.yml
+  - type: Webhooks
+    url: asyncapi/receeve-webhooks-asyncapi.yml
+- aid: receeve:receeve-landingpage-api
+  name: Receeve LandingPage API
+  description: The Landing Page of the Debtor, used to display, pay the Claims (or other use cases).
+  humanURL: https://api.receeve.com/api-reference
+  baseURL: https://api.receive-demo.com
+  tags:
+  - LandingPage
+  properties:
+  - type: OpenAPI
+    url: openapi/receeve-landingpage-api-openapi.yml
+  - type: Documentation
+    url: https://docs.indebted.co/docs/receive/
+  - type: APIReference
+    url: https://api.receeve.com/api-reference
+  - type: GettingStarted
+    url: https://docs.indebted.co/docs/receive/integration/tl-dr
+  - type: Authentication
+    url: authentication/receeve-authentication.yml
+  - type: Webhooks
+    url: asyncapi/receeve-webhooks-asyncapi.yml
+- aid: receeve:receeve-message-api
+  name: Receeve Message API
+  description: Communication message in .eml format that was sent to Debtor.
+  humanURL: https://api.receeve.com/api-reference
+  baseURL: https://api.receive-demo.com
+  tags:
+  - Message
+  properties:
+  - type: OpenAPI
+    url: openapi/receeve-message-api-openapi.yml
+  - type: Documentation
+    url: https://docs.indebted.co/docs/receive/
+  - type: APIReference
+    url: https://api.receeve.com/api-reference
+  - type: GettingStarted
+    url: https://docs.indebted.co/docs/receive/integration/tl-dr
+  - type: Authentication
+    url: authentication/receeve-authentication.yml
+  - type: Webhooks
+    url: asyncapi/receeve-webhooks-asyncapi.yml
+- aid: receeve:receeve-promisetopay-api
+  name: Receeve PromiseToPay API
+  description: The PromiseToPay API from Receeve — 1 operation(s) for promisetopay.
+  humanURL: https://api.receeve.com/api-reference
+  baseURL: https://api.receive-demo.com
+  tags:
+  - PromiseToPay
+  properties:
+  - type: OpenAPI
+    url: openapi/receeve-promisetopay-api-openapi.yml
+  - type: Documentation
+    url: https://docs.indebted.co/docs/receive/
+  - type: APIReference
+    url: https://api.receeve.com/api-reference
+  - type: GettingStarted
+    url: https://docs.indebted.co/docs/receive/integration/tl-dr
+  - type: Authentication
+    url: authentication/receeve-authentication.yml
+  - type: Webhooks
+    url: asyncapi/receeve-webhooks-asyncapi.yml
+- aid: receeve:receeve-security-api
+  name: Receeve Security API
+  description: The Security API from Receeve — 1 operation(s) for security.
+  humanURL: https://api.receeve.com/api-reference
+  baseURL: https://api.receive-demo.com
+  tags:
+  - Security
+  properties:
+  - type: OpenAPI
+    url: openapi/receeve-security-api-openapi.yml
+  - type: Documentation
+    url: https://docs.indebted.co/docs/receive/
+  - type: APIReference
+    url: https://api.receeve.com/api-reference
+  - type: GettingStarted
+    url: https://docs.indebted.co/docs/receive/integration/tl-dr
+  - type: Authentication
+    url: authentication/receeve-authentication.yml
+  - type: Webhooks
+    url: asyncapi/receeve-webhooks-asyncapi.yml
+common:
+- type: DomainSecurity
+  url: security/receeve-domain-security.yml
+- type: AgenticAccess
+  url: agentic-access/receeve-agentic-access.yml
+- type: DeveloperPortal
+  url: https://api.receeve.com/
+- type: Documentation
+  url: https://docs.indebted.co/docs/receive/
+- type: APIReference
+  url: https://api.receeve.com/api-reference
+- type: GettingStarted
+  url: https://docs.indebted.co/docs/receive/integration/tl-dr
+- type: TrustCenter
+  url: https://trust.indebted.co/
+- type: Authentication
+  url: authentication/receeve-authentication.yml
+- type: AsyncAPI
+  url: asyncapi/receeve-webhooks-asyncapi.yml
+- type: Webhooks
+  url: asyncapi/receeve-webhooks-asyncapi.yml
+- type: MCPServer
+  url: mcp/receeve-mcp.yml
+- type: LLMsTxt
+  url: llms/receeve-llms.txt
+- type: Overlay
+  url: overlays/receeve-openapi-overlay.yaml
+- type: Conformance
+  url: conformance/receeve-conformance.yml
+- type: ErrorCatalog
+  url: errors/receeve-problem-types.yml
+- type: ErrorCatalog
+  url: errors/receeve-error-codes.yml
+- type: Lifecycle
+  url: lifecycle/receeve-lifecycle.yml
+- type: Conventions
+  url: conventions/receeve-conventions.yml
+- type: Idempotency
+  url: conventions/receeve-conventions.yml
+- type: DataModel
+  url: data-model/receeve-data-model.yml
+- type: Sandbox
+  url: sandbox/receeve-sandbox.yml
+- type: AgentSkill
+  url: skills/_index.yml
+x-enrichment:
+  date: '2026-07-21'
+  status: enriched
+  artifacts_added: 18
+  pass: local-v1

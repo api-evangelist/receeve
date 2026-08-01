@@ -1,0 +1,151 @@
+generated: '2026-07-21'
+method: derived
+status: candidate
+source: openapi/receeve-openapi-original.yml
+note: "No official hosted/remote MCP server was found for Receive (Receeve). This is a DERIVED candidate\
+  \ tool list \u2014 one tool per OpenAPI operation \u2014 for a future MCP server. Not published by the\
+  \ provider."
+server:
+  name: receeve
+  transport: stdio
+tools:
+- name: getOauth2Token
+  description: Get OAuth2 token
+  source_operation: openapi/receeve-openapi-original.yml#getOauth2Token
+- name: getAccount
+  description: It retrieves the Account information
+  source_operation: openapi/receeve-openapi-original.yml#getAccount
+- name: createAccounts
+  description: Create Accounts in Receive
+  source_operation: openapi/receeve-openapi-original.yml#createAccounts
+- name: updateAccountMeta
+  description: Update Account Meta
+  source_operation: openapi/receeve-openapi-original.yml#updateAccountMeta
+- name: addAccountLedgerEntries
+  description: Add account ledger entries
+  source_operation: openapi/receeve-openapi-original.yml#addAccountLedgerEntries
+- name: addAccountProducts
+  description: Add Account Products
+  source_operation: openapi/receeve-openapi-original.yml#addAccountProducts
+- name: updateAccountProducts
+  description: Update Account Products
+  source_operation: openapi/receeve-openapi-original.yml#updateAccountProducts
+- name: addAccountDebtors
+  description: Add Account Debtors
+  source_operation: openapi/receeve-openapi-original.yml#addAccountDebtors
+- name: updateAccountDebtors
+  description: Update Account Debtors
+  source_operation: openapi/receeve-openapi-original.yml#updateAccountDebtors
+- name: getAccountClaims
+  description: It retrieves the claims from a given account
+  source_operation: openapi/receeve-openapi-original.yml#getAccountClaims
+- name: SetAccountScores
+  description: Set Account Scores
+  source_operation: openapi/receeve-openapi-original.yml#SetAccountScores
+- name: MatchAccountPayment
+  description: Register a payment for an account
+  source_operation: openapi/receeve-openapi-original.yml#MatchAccountPayment
+- name: AllocateAccountPayment
+  description: Allocate a payment across an account's claims
+  source_operation: openapi/receeve-openapi-original.yml#AllocateAccountPayment
+- name: updateAccountLedgerEntriesAmounts
+  description: Updates the amounts of Account ledger entries
+  source_operation: openapi/receeve-openapi-original.yml#updateAccountLedgerEntriesAmounts
+- name: getDebtorAccountsAndClaims
+  description: It retrieves information about a debtor's accounts and claims
+  source_operation: openapi/receeve-openapi-original.yml#getDebtorAccountsAndClaims
+- name: createClaims
+  description: Create claims in Receive
+  source_operation: openapi/receeve-openapi-original.yml#createClaims
+- name: recreateClaims
+  description: Recreate claims in Receive, applicable for already deleted claims.
+  source_operation: openapi/receeve-openapi-original.yml#recreateClaims
+- name: updateClaims
+  description: Update claims in the platform
+  source_operation: openapi/receeve-openapi-original.yml#updateClaims
+- name: importClaims
+  description: Insert or Update Claims in the platform
+  source_operation: openapi/receeve-openapi-original.yml#importClaims
+- name: resolveClaims
+  description: Resolves Claims with a reason
+  source_operation: openapi/receeve-openapi-original.yml#resolveClaims
+- name: creditClaims
+  description: Credit claims
+  source_operation: openapi/receeve-openapi-original.yml#creditClaims
+- name: debitClaims
+  description: Debit claims
+  source_operation: openapi/receeve-openapi-original.yml#debitClaims
+- name: setLinkClaims
+  description: Set link claims
+  source_operation: openapi/receeve-openapi-original.yml#setLinkClaims
+- name: pauseJourneys
+  description: Pause Journeys for particular claims. You may restart them at a later date if you choose.
+    It will resume where it left o
+  source_operation: openapi/receeve-openapi-original.yml#pauseJourneys
+- name: resumeJourneys
+  description: Resume Journeys for particular claims.
+  source_operation: openapi/receeve-openapi-original.yml#resumeJourneys
+- name: stopJourneys
+  description: Stop Journeys for particular claims. This ends all processing on those claims.
+  source_operation: openapi/receeve-openapi-original.yml#stopJourneys
+- name: getEvents
+  description: Get events by event type and timeframe. Paginated.
+  source_operation: openapi/receeve-openapi-original.yml#getEvents
+- name: getMessage
+  description: Get message in .eml format.
+  source_operation: openapi/receeve-openapi-original.yml#getMessage
+- name: getCommunicationMessageURLs
+  description: Get communication message URLs by communication type, timeframe. Paginated.
+  source_operation: openapi/receeve-openapi-original.yml#getCommunicationMessageURLs
+- name: getLandingPageURL
+  description: Get Landing Page URL
+  source_operation: openapi/receeve-openapi-original.yml#getLandingPageURL
+- name: createPromisesToPay
+  description: Create promises to pay, a Promise to Pay enables a debt to be paid partially by a certain
+    minimum amount and by a partic
+  source_operation: openapi/receeve-openapi-original.yml#createPromisesToPay
+- name: executeCustomTriggers
+  description: Execute custom triggers that can be configured in Reactions
+  source_operation: openapi/receeve-openapi-original.yml#executeCustomTriggers
+- name: createAccountMandates
+  description: Create account mandates in the platform
+  source_operation: openapi/receeve-openapi-original.yml#createAccountMandates
+- name: deleteAccountMandates
+  description: Delete account mandates in the platform
+  source_operation: openapi/receeve-openapi-original.yml#deleteAccountMandates
+- name: getAccountMandates
+  description: Get account mandates
+  source_operation: openapi/receeve-openapi-original.yml#getAccountMandates
+- name: uploadFiles
+  description: It upload the files corresponding to the account
+  source_operation: openapi/receeve-openapi-original.yml#uploadFiles
+- name: getInstalmentPlanDefinitions
+  description: List Instalment Plan Definitions
+  source_operation: openapi/receeve-openapi-original.yml#getInstalmentPlanDefinitions
+- name: computeInstalmentPlanDefinition
+  description: Compute Instalment Plan Definition
+  source_operation: openapi/receeve-openapi-original.yml#computeInstalmentPlanDefinition
+- name: createInstalmentPlan
+  description: Create Instalment Plan
+  source_operation: openapi/receeve-openapi-original.yml#createInstalmentPlan
+- name: updateInstalmentPlan
+  description: Update Instalment Plan
+  source_operation: openapi/receeve-openapi-original.yml#updateInstalmentPlan
+- name: getInstalmentPlans
+  description: Get Instalment Plans
+  source_operation: openapi/receeve-openapi-original.yml#getInstalmentPlans
+- name: setSettlementDefinition
+  description: Create or Update a Settlement Definition
+  source_operation: openapi/receeve-openapi-original.yml#setSettlementDefinition
+- name: applySettlement
+  description: Apply a DIRECT Settlement
+  source_operation: openapi/receeve-openapi-original.yml#applySettlement
+- name: withdrawSettlement
+  description: Withdraw a Settlement
+  source_operation: openapi/receeve-openapi-original.yml#withdrawSettlement
+- name: getSettlement
+  description: Get a Settlement by id
+  source_operation: openapi/receeve-openapi-original.yml#getSettlement
+- name: getSettlements
+  description: List Settlements for an Account
+  source_operation: openapi/receeve-openapi-original.yml#getSettlements

@@ -1,0 +1,96 @@
+generated: '2026-07-21'
+method: derived
+source: openapi/receeve-openapi-original.yml
+docs: https://docs.indebted.co/docs/receive/integration/
+notes: >-
+  Entity graph derived from the Receive Client API operations, request/response
+  schemas and the reference fields used across webhooks (accountReference, claimRef,
+  receiveClaimRef, externalDebtorRef). All records are scoped to a Client (tenant)
+  via the {clientId} path segment.
+entities:
+- name: Client
+  description: Tenant / creditor organisation; addressed by clientId in every path.
+- name: Account
+  description: A debtor account holding balances, ledger entries, products, debtors and scores.
+  references: [accountReference]
+- name: Debtor
+  description: The person or business who owes; belongs to an account, has communications.
+  references: [externalDebtorRef]
+- name: Claim
+  description: A collectible debt raised against an account; the core collections unit.
+  references: [claimRef, receiveClaimRef]
+- name: LedgerEntry
+  description: An invoice/charge/credit line on an account.
+- name: Product
+  description: A product/service line associated with an account.
+- name: Journey
+  description: A running strategy execution over a claim (pause/resume/stop).
+- name: Strategy
+  description: The configured dunning workflow assigned to claims.
+- name: Message
+  description: An outbound communication (email/SMS/letter/call) to a debtor.
+- name: LandingPage
+  description: A hosted debtor self-service page (verify, pay, select instalment).
+- name: PromiseToPay
+  description: A debtor commitment to pay by a date.
+- name: InstalmentPlan
+  description: A multi-payment plan against one or more claims.
+- name: Settlement
+  description: A negotiated reduced payoff applied to a claim.
+- name: Mandate
+  description: A payment mandate (e.g. direct debit authorisation) on an account.
+- name: Event
+  description: An audit/event record retrievable via get_events and emitted as webhooks.
+relationships:
+- from: Account
+  to: Client
+  type: belongs_to
+  via: clientId
+- from: Claim
+  to: Account
+  type: belongs_to
+  via: accountReference
+- from: Account
+  to: Debtor
+  type: has_many
+  via: debtors
+- from: Account
+  to: LedgerEntry
+  type: has_many
+  via: ledgerEntries
+- from: Account
+  to: Product
+  type: has_many
+  via: products
+- from: Account
+  to: Mandate
+  type: has_many
+  via: mandates
+- from: Claim
+  to: Journey
+  type: has_one
+  via: strategy assignment
+- from: Journey
+  to: Strategy
+  type: belongs_to
+  via: strategyId
+- from: Claim
+  to: PromiseToPay
+  type: has_many
+  via: claimRef
+- from: Claim
+  to: InstalmentPlan
+  type: has_many
+  via: claimRef
+- from: Claim
+  to: Settlement
+  type: has_one
+  via: claimRef
+- from: Message
+  to: Debtor
+  type: belongs_to
+  via: debtor
+- from: LandingPage
+  to: Claim
+  type: belongs_to
+  via: claimRef

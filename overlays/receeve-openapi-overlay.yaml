@@ -1,0 +1,23 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for Receive (Receeve) Client API
+  version: 1.0.0
+extends: openapi/receeve-openapi-original.yml
+actions:
+- target: $.info
+  update:
+    x-apievangelist-provider: receeve
+    x-apievangelist-acquired-by: indebted
+    x-apievangelist-auth: oauth2-client-credentials
+    x-apievangelist-webhooks: asyncapi/receeve-webhooks-asyncapi.yml
+    x-apievangelist-canonical-spec: https://receive-api.indebted.co/openapi/apiSchema.yaml
+- target: $.servers
+  update:
+  - url: https://api.receive-demo.com
+    description: Demo / sandbox environment (documented base host)
+- target: $.tags
+  update:
+  - name: Webhooks
+    description: >-
+      Outbound signed webhook events (76 event types) — captured in
+      asyncapi/receeve-webhooks-asyncapi.yml. Not part of the request/response spec.

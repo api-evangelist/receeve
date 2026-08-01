@@ -1,0 +1,47 @@
+generated: '2026-07-21'
+method: searched
+source: openapi/receeve-openapi-original.yml
+docs: https://docs.indebted.co/docs/receive/integration/use-cases/authentication-use-case
+summary:
+  types:
+  - oauth2
+  - apiKey
+  api_key_in:
+  - header
+  oauth2_flows:
+  - clientCredentials
+  notes: >-
+    Authentication is a two-step OAuth2 client-credentials flow. The OpenAPI spec
+    declares a single apiKey security scheme (Authorization header) because the
+    same Authorization header carries the issued Bearer token on every call; the
+    token itself is obtained from the getOauth2Token operation using HTTP Basic
+    credentials.
+schemes:
+- name: oauth2_client_credentials
+  type: oauth2
+  flow: clientCredentials
+  token_operation: getOauth2Token
+  token_endpoint: https://api.receive-demo.com/v1/oauth2/token
+  token_request_auth: >-
+    HTTP Basic — Authorization: Basic base64(client_id:client_secret),
+    Content-Type: application/x-www-form-urlencoded
+  token_response_fields:
+  - access_token
+  - expires_in
+  - token_type
+  token_ttl_seconds: 3600
+  token_type: Bearer
+  bearer_header: 'Authorization: Bearer <access_token>'
+  reusable: true
+  sources:
+  - openapi/receeve-openapi-original.yml
+  - https://docs.indebted.co/docs/receive/integration/use-cases/authentication-use-case
+- name: api_key
+  type: apiKey
+  in: header
+  parameter: Authorization
+  description: >-
+    The Authorization header on all resource operations carries the OAuth2 Bearer
+    access token obtained from getOauth2Token (not a static long-lived key).
+  sources:
+  - openapi/receeve-openapi-original.yml

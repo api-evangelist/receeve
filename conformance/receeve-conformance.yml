@@ -1,0 +1,30 @@
+generated: '2026-07-21'
+method: derived
+source: openapi/receeve-openapi-original.yml
+standards:
+- id: oauth2
+  conforms: true
+  evidence: >-
+    Client-credentials flow via /v1/oauth2/token issuing Bearer tokens (HTTP Basic
+    client_id:client_secret); token then sent in the Authorization header.
+- id: oauth2-client-credentials
+  conforms: true
+  evidence: docs authentication-use-case describes RFC 6749 client-credentials grant
+- id: openapi-3.0
+  conforms: true
+  evidence: openapi 3.0.3 document published at receive-api.indebted.co/openapi/apiSchema.yaml
+- id: rfc9457-problem-details
+  conforms: false
+  evidence: error bodies use a plain { message } object, not application/problem+json
+- id: webhooks-signed
+  conforms: true
+  evidence: outbound webhooks carry an RSA/SHA-256 base64 signature over payloadAsString
+- id: rfc8594-sunset-header
+  conforms: false
+  evidence: no Sunset/Deprecation header support documented
+- id: json-api
+  conforms: false
+- id: fhir-r4
+  conforms: false
+- id: scim2
+  conforms: false

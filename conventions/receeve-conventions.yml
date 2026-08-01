@@ -1,0 +1,66 @@
+generated: '2026-07-21'
+method: searched
+source: https://docs.indebted.co/docs/receive/integration/
+docs:
+- https://docs.indebted.co/docs/receive/integration/tl-dr
+- https://docs.indebted.co/docs/receive/integration/use-cases/authentication-use-case
+- https://docs.indebted.co/docs/receive/integration/webhooks-in-detail
+authentication:
+  style: oauth2-client-credentials
+  token_endpoint: /v1/oauth2/token
+  bearer_header: 'Authorization: Bearer <access_token>'
+  token_ttl_seconds: 3600
+  see: authentication/receeve-authentication.yml
+resource_scoping:
+  note: >-
+    Almost every operation is scoped to a client (tenant) via the `{clientId}` path
+    segment, e.g. /v1/{clientId}/create_claims. External systems address records by
+    reference fields (accountReference, claimRef, receiveClaimRef, externalDebtorRef).
+idempotency:
+  supported: true
+  scope: partial
+  mechanisms:
+  - kind: request-key
+    field: applicationRef
+    where: ApplySettlementInput (applySettlement operation)
+    description: >-
+      Idempotency key for a settlement application — repeat requests with the same
+      applicationRef are treated as the same application.
+  - kind: event-dedup
+    field: messageId
+    where: inbound webhook envelope
+    description: >-
+      Every webhook carries a unique messageId; consumers must de-duplicate on it
+      since delivery is at-least-once.
+  see: conventions
+versioning:
+  scheme: uri-path
+  current: v1
+  spec_version: 1.53.1
+  notes: >-
+    Resource paths are prefixed /v1/ (and /finance/v1/, /files/v1/). Some event
+    payloads are independently versioned with a .v1 suffix (e.g.
+    event.multiClaimDebtPayment.settled.v1).
+error_handling:
+  transport_envelope: '{ "message": "string" }'
+  business_envelope: '{ "success": false, "messageIds": [], "messages": [] }'
+  see:
+  - errors/receeve-problem-types.yml
+  - errors/receeve-error-codes.yml
+webhooks:
+  supported: true
+  delivery: at-least-once
+  signature:
+    algorithm: RSA SHA-256
+    encoding: base64
+    signed_field: payloadAsString
+    key: publicKey provided by InDebted
+  see: asyncapi/receeve-webhooks-asyncapi.yml
+rate_limiting:
+  signal: HTTP 429 (429LimitsReached)
+  notes: No documented numeric limit or reset header; back off on 429.
+pagination:
+  note: >-
+    Not a documented cross-cutting cursor/offset scheme; list operations
+    (get_account_claims, get_events, get_instalment_plans, get_settlements) are
+    filter-scoped rather than page-cursored in the published spec.
