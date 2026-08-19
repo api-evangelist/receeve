@@ -1,0 +1,85 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "InDebted Receive API Documentation Account Files API",
+    "version": "1.53.1"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Files",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "It upload the files corresponding to the account",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "/files/v1/:clientId/upload_files",
+            "headers": [
+              {
+                "name": "Authorization",
+                "value": "Bearer <access_token>"
+              }
+            ],
+            "params": [
+              {
+                "name": "clientId",
+                "value": "ec702157-705b-42a0-b70e-a60a63dd24ab",
+                "type": "path",
+                "description": "A Receive system identifier that will be assigned automatically.\nIt will be used for situations like Support related interventions or data segmentation.\n"
+              },
+              {
+                "name": "triggerName",
+                "value": "customTrigger1",
+                "type": "query",
+                "description": "This is name of Custom Trigger that should be triggered when this API is called."
+              }
+            ],
+            "body": {
+              "type": "multipart-form",
+              "data": [
+                {
+                  "name": "file",
+                  "type": "text",
+                  "value": ""
+                },
+                {
+                  "name": "accountId",
+                  "type": "text",
+                  "value": ""
+                },
+                {
+                  "name": "documentType",
+                  "type": "text",
+                  "value": ""
+                },
+                {
+                  "name": "externalClaimRef",
+                  "type": "text",
+                  "value": ""
+                },
+                {
+                  "name": "productReference",
+                  "type": "text",
+                  "value": ""
+                }
+              ]
+            },
+            "auth": {
+              "type": "apikey",
+              "key": "Authorization",
+              "value": "{{Authorization}}",
+              "placement": "header"
+            }
+          },
+          "docs": "It upload the files corresponding to the account"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

@@ -1,0 +1,814 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "InDebted Receive API Documentation Account API",
+    "version": "1.53.1"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Account",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "It retrieves the Account information",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/v1/:clientId/get_account",
+            "headers": [
+              {
+                "name": "Authorization",
+                "value": "Bearer <access_token>"
+              }
+            ],
+            "params": [
+              {
+                "name": "clientId",
+                "value": "ec702157-705b-42a0-b70e-a60a63dd24ab",
+                "type": "path",
+                "description": "A Receive system identifier that will be assigned automatically.\nIt will be used for situations like Support related interventions or data segmentation.\n"
+              },
+              {
+                "name": "triggerName",
+                "value": "customTrigger1",
+                "type": "query",
+                "description": "This is name of Custom Trigger that should be triggered when this API is called."
+              },
+              {
+                "name": "accountReference",
+                "value": "ACC",
+                "type": "query",
+                "description": "Account reference in your system"
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "Authorization",
+              "value": "{{Authorization}}",
+              "placement": "header"
+            }
+          },
+          "docs": "It retrieves the Account information"
+        },
+        {
+          "info": {
+            "name": "Create Accounts in Receive",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "/v1/:clientId/create_accounts",
+            "headers": [
+              {
+                "name": "Authorization",
+                "value": "Bearer <access_token>"
+              }
+            ],
+            "params": [
+              {
+                "name": "clientId",
+                "value": "ec702157-705b-42a0-b70e-a60a63dd24ab",
+                "type": "path",
+                "description": "A Receive system identifier that will be assigned automatically.\nIt will be used for situations like Support related interventions or data segmentation.\n"
+              },
+              {
+                "name": "triggerName",
+                "value": "customTrigger1",
+                "type": "query",
+                "description": "This is name of Custom Trigger that should be triggered when this API is called."
+              },
+              {
+                "name": "async",
+                "value": "",
+                "type": "query",
+                "description": "The request is added to the queue without expecting the response"
+              },
+              {
+                "name": "minorVersion",
+                "value": "",
+                "type": "query",
+                "description": "Optional minor version identifier for message versioning. This value is passed as additional metadata with emitted messages."
+              },
+              {
+                "name": "sequential",
+                "value": "",
+                "type": "query",
+                "description": "The request body items are executed one after another one"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "apikey",
+              "key": "Authorization",
+              "value": "{{Authorization}}",
+              "placement": "header"
+            }
+          },
+          "docs": "The intetion of this endpoint is to create an Account in the platform, and it offer the possibility to include other related entities like the Debtor, the Account Score, Products, etc. But all those other sub-entities are optional and can be included in subsequent calls.\nFor more details about the Account, and the relationship with the other entities please visit the [Account](https://docs.indebted.co/docs/receive/integration/account-claims) page.\n"
+        },
+        {
+          "info": {
+            "name": "Update Account Meta",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "/v1/:clientId/update_account_meta",
+            "headers": [
+              {
+                "name": "Authorization",
+                "value": "Bearer <access_token>"
+              }
+            ],
+            "params": [
+              {
+                "name": "clientId",
+                "value": "ec702157-705b-42a0-b70e-a60a63dd24ab",
+                "type": "path",
+                "description": "A Receive system identifier that will be assigned automatically.\nIt will be used for situations like Support related interventions or data segmentation.\n"
+              },
+              {
+                "name": "triggerName",
+                "value": "customTrigger1",
+                "type": "query",
+                "description": "This is name of Custom Trigger that should be triggered when this API is called."
+              },
+              {
+                "name": "async",
+                "value": "",
+                "type": "query",
+                "description": "The request is added to the queue without expecting the response"
+              },
+              {
+                "name": "minorVersion",
+                "value": "",
+                "type": "query",
+                "description": "Optional minor version identifier for message versioning. This value is passed as additional metadata with emitted messages."
+              },
+              {
+                "name": "sequential",
+                "value": "",
+                "type": "query",
+                "description": "The request body items are executed one after another one"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "apikey",
+              "key": "Authorization",
+              "value": "{{Authorization}}",
+              "placement": "header"
+            }
+          },
+          "docs": "The intetion of this endpoint is to update the Account level metadata, the given information is merged with the previous data.\nNotice that the metadata that is provided in the Account level, is inherited by the Claims that are created for that Account.\nFor more details about the Account, and the relationship with the other entities please visit the [Account](https://docs.indebted.co/docs/receive/integration/account-claims) page.\n"
+        },
+        {
+          "info": {
+            "name": "Add account ledger entries",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "/v1/:clientId/add_account_ledger_entries",
+            "headers": [
+              {
+                "name": "Authorization",
+                "value": "Bearer <access_token>"
+              }
+            ],
+            "params": [
+              {
+                "name": "clientId",
+                "value": "ec702157-705b-42a0-b70e-a60a63dd24ab",
+                "type": "path",
+                "description": "A Receive system identifier that will be assigned automatically.\nIt will be used for situations like Support related interventions or data segmentation.\n"
+              },
+              {
+                "name": "triggerName",
+                "value": "customTrigger1",
+                "type": "query",
+                "description": "This is name of Custom Trigger that should be triggered when this API is called."
+              },
+              {
+                "name": "async",
+                "value": "",
+                "type": "query",
+                "description": "The request is added to the queue without expecting the response"
+              },
+              {
+                "name": "minorVersion",
+                "value": "",
+                "type": "query",
+                "description": "Optional minor version identifier for message versioning. This value is passed as additional metadata with emitted messages."
+              },
+              {
+                "name": "sequential",
+                "value": "",
+                "type": "query",
+                "description": "The request body items are executed one after another one"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "apikey",
+              "key": "Authorization",
+              "value": "{{Authorization}}",
+              "placement": "header"
+            }
+          },
+          "docs": "The intetion of this endpoint is to add Ledger Entries to the Account.\nThose Entries are used to create or update the Claims that are associated with the Account.\nFor more details about the Account, and the relationship with the other entities please visit the [Account](https://docs.indebted.co/docs/receive/integration/account-claims) page.\n"
+        },
+        {
+          "info": {
+            "name": "Add Account Products",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "/v1/:clientId/add_account_products",
+            "headers": [
+              {
+                "name": "Authorization",
+                "value": "Bearer <access_token>"
+              }
+            ],
+            "params": [
+              {
+                "name": "clientId",
+                "value": "ec702157-705b-42a0-b70e-a60a63dd24ab",
+                "type": "path",
+                "description": "A Receive system identifier that will be assigned automatically.\nIt will be used for situations like Support related interventions or data segmentation.\n"
+              },
+              {
+                "name": "triggerName",
+                "value": "customTrigger1",
+                "type": "query",
+                "description": "This is name of Custom Trigger that should be triggered when this API is called."
+              },
+              {
+                "name": "async",
+                "value": "",
+                "type": "query",
+                "description": "The request is added to the queue without expecting the response"
+              },
+              {
+                "name": "minorVersion",
+                "value": "",
+                "type": "query",
+                "description": "Optional minor version identifier for message versioning. This value is passed as additional metadata with emitted messages."
+              },
+              {
+                "name": "sequential",
+                "value": "",
+                "type": "query",
+                "description": "The request body items are executed one after another one"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "apikey",
+              "key": "Authorization",
+              "value": "{{Authorization}}",
+              "placement": "header"
+            }
+          },
+          "docs": "The intetion of this endpoint is to Add Products to the Account.\nThe products are used as contextual information to the Claims that are created for that Account. And can be used for further Use Cases within the platform.\nFor more details about the Account, and the relationship with the other entities please visit the [Account](https://docs.indebted.co/docs/receive/integration/account-claims) page.\n"
+        },
+        {
+          "info": {
+            "name": "Update Account Products",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "/v1/:clientId/update_account_products",
+            "headers": [
+              {
+                "name": "Authorization",
+                "value": "Bearer <access_token>"
+              }
+            ],
+            "params": [
+              {
+                "name": "clientId",
+                "value": "ec702157-705b-42a0-b70e-a60a63dd24ab",
+                "type": "path",
+                "description": "A Receive system identifier that will be assigned automatically.\nIt will be used for situations like Support related interventions or data segmentation.\n"
+              },
+              {
+                "name": "triggerName",
+                "value": "customTrigger1",
+                "type": "query",
+                "description": "This is name of Custom Trigger that should be triggered when this API is called."
+              },
+              {
+                "name": "async",
+                "value": "",
+                "type": "query",
+                "description": "The request is added to the queue without expecting the response"
+              },
+              {
+                "name": "minorVersion",
+                "value": "",
+                "type": "query",
+                "description": "Optional minor version identifier for message versioning. This value is passed as additional metadata with emitted messages."
+              },
+              {
+                "name": "sequential",
+                "value": "",
+                "type": "query",
+                "description": "The request body items are executed one after another one"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "apikey",
+              "key": "Authorization",
+              "value": "{{Authorization}}",
+              "placement": "header"
+            }
+          },
+          "docs": "The intetion of this endpoint is to update existing Products of the Account.\nThe products are used as contextual information to the Claims that are created for that Account. And can be used for further Use Cases within the platform.\nFor more details about the Account, and the relationship with the other entities please visit the [Account](https://docs.indebted.co/docs/receive/integration/account-claims) page.\n"
+        },
+        {
+          "info": {
+            "name": "Add Account Debtors",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "/v1/:clientId/add_account_debtors",
+            "headers": [
+              {
+                "name": "Authorization",
+                "value": "Bearer <access_token>"
+              }
+            ],
+            "params": [
+              {
+                "name": "clientId",
+                "value": "ec702157-705b-42a0-b70e-a60a63dd24ab",
+                "type": "path",
+                "description": "A Receive system identifier that will be assigned automatically.\nIt will be used for situations like Support related interventions or data segmentation.\n"
+              },
+              {
+                "name": "triggerName",
+                "value": "customTrigger1",
+                "type": "query",
+                "description": "This is name of Custom Trigger that should be triggered when this API is called."
+              },
+              {
+                "name": "async",
+                "value": "",
+                "type": "query",
+                "description": "The request is added to the queue without expecting the response"
+              },
+              {
+                "name": "minorVersion",
+                "value": "",
+                "type": "query",
+                "description": "Optional minor version identifier for message versioning. This value is passed as additional metadata with emitted messages."
+              },
+              {
+                "name": "sequential",
+                "value": "",
+                "type": "query",
+                "description": "The request body items are executed one after another one"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "apikey",
+              "key": "Authorization",
+              "value": "{{Authorization}}",
+              "placement": "header"
+            }
+          },
+          "docs": "The intetion of this endpoint is to Add Debtors to the Account.\nThe Debtor represents the entity that owes money described by the Account.\nFor more details about the Account, and the relationship with the other entities please visit the [Account](https://docs.indebted.co/docs/receive/integration/account-claims) page.\n"
+        },
+        {
+          "info": {
+            "name": "Update Account Debtors",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "/v1/:clientId/update_account_debtors",
+            "headers": [
+              {
+                "name": "Authorization",
+                "value": "Bearer <access_token>"
+              }
+            ],
+            "params": [
+              {
+                "name": "clientId",
+                "value": "ec702157-705b-42a0-b70e-a60a63dd24ab",
+                "type": "path",
+                "description": "A Receive system identifier that will be assigned automatically.\nIt will be used for situations like Support related interventions or data segmentation.\n"
+              },
+              {
+                "name": "triggerName",
+                "value": "customTrigger1",
+                "type": "query",
+                "description": "This is name of Custom Trigger that should be triggered when this API is called."
+              },
+              {
+                "name": "async",
+                "value": "",
+                "type": "query",
+                "description": "The request is added to the queue without expecting the response"
+              },
+              {
+                "name": "minorVersion",
+                "value": "",
+                "type": "query",
+                "description": "Optional minor version identifier for message versioning. This value is passed as additional metadata with emitted messages."
+              },
+              {
+                "name": "sequential",
+                "value": "",
+                "type": "query",
+                "description": "The request body items are executed one after another one"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "apikey",
+              "key": "Authorization",
+              "value": "{{Authorization}}",
+              "placement": "header"
+            }
+          },
+          "docs": "The intetion of this endpoint is to Update Debtors to the Account.\nThe Debtor represents the entity that owes money described by the Account.\nFor more details about the Account, and the relationship with the other entities please visit the [Account](https://docs.indebted.co/docs/receive/integration/account-claims) page.\n"
+        },
+        {
+          "info": {
+            "name": "It retrieves the claims from a given account",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/v1/:clientId/get_account_claims",
+            "headers": [
+              {
+                "name": "Authorization",
+                "value": "Bearer <access_token>"
+              }
+            ],
+            "params": [
+              {
+                "name": "clientId",
+                "value": "ec702157-705b-42a0-b70e-a60a63dd24ab",
+                "type": "path",
+                "description": "A Receive system identifier that will be assigned automatically.\nIt will be used for situations like Support related interventions or data segmentation.\n"
+              },
+              {
+                "name": "triggerName",
+                "value": "customTrigger1",
+                "type": "query",
+                "description": "This is name of Custom Trigger that should be triggered when this API is called."
+              },
+              {
+                "name": "accountReference",
+                "value": "ACC",
+                "type": "query",
+                "description": "Account reference in your system"
+              },
+              {
+                "name": "status",
+                "value": "",
+                "type": "query",
+                "description": "Claim Status filter"
+              },
+              {
+                "name": "paginationId",
+                "value": "",
+                "type": "query",
+                "description": "Get the Account Claims by Pagination"
+              },
+              {
+                "name": "limit",
+                "value": "1000",
+                "type": "query",
+                "description": "amount of events per page, default is 1000"
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "Authorization",
+              "value": "{{Authorization}}",
+              "placement": "header"
+            }
+          },
+          "docs": "The intetion of this endpoint is to fetch the Claims from a given Account.\nFor more details about the Account, and the relationship with the other entities please visit the [Account](https://docs.indebted.co/docs/receive/integration/account-claims) page.\n"
+        },
+        {
+          "info": {
+            "name": "Set Account Scores",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "/v1/:clientId/set_account_scores",
+            "headers": [
+              {
+                "name": "Authorization",
+                "value": "Bearer <access_token>"
+              }
+            ],
+            "params": [
+              {
+                "name": "clientId",
+                "value": "ec702157-705b-42a0-b70e-a60a63dd24ab",
+                "type": "path",
+                "description": "A Receive system identifier that will be assigned automatically.\nIt will be used for situations like Support related interventions or data segmentation.\n"
+              },
+              {
+                "name": "triggerName",
+                "value": "customTrigger1",
+                "type": "query",
+                "description": "This is name of Custom Trigger that should be triggered when this API is called."
+              },
+              {
+                "name": "sequential",
+                "value": "",
+                "type": "query",
+                "description": "The request body items are executed one after another one"
+              },
+              {
+                "name": "async",
+                "value": "",
+                "type": "query",
+                "description": "The request is added to the queue without expecting the response"
+              },
+              {
+                "name": "minorVersion",
+                "value": "",
+                "type": "query",
+                "description": "Optional minor version identifier for message versioning. This value is passed as additional metadata with emitted messages."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "apikey",
+              "key": "Authorization",
+              "value": "{{Authorization}}",
+              "placement": "header"
+            }
+          },
+          "docs": "The intention of the endpoint is to set the scores for the Account.\nThe scores provide further contextual information about the Account that can be used to improve the performance of the processes in the Collection Strategy.\nFor more details about the Account, and the relationship with the other entities please visit the [Account](https://docs.indebted.co/docs/receive/integration/account-claims) page.\n"
+        },
+        {
+          "info": {
+            "name": "Register a payment for an account",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "/v1/:clientId/match_account_payment",
+            "headers": [
+              {
+                "name": "Authorization",
+                "value": "Bearer <access_token>"
+              }
+            ],
+            "params": [
+              {
+                "name": "clientId",
+                "value": "ec702157-705b-42a0-b70e-a60a63dd24ab",
+                "type": "path",
+                "description": "A Receive system identifier that will be assigned automatically.\nIt will be used for situations like Support related interventions or data segmentation.\n"
+              },
+              {
+                "name": "triggerName",
+                "value": "customTrigger1",
+                "type": "query",
+                "description": "This is name of Custom Trigger that should be triggered when this API is called."
+              },
+              {
+                "name": "sequential",
+                "value": "",
+                "type": "query",
+                "description": "The request body items are executed one after another one"
+              },
+              {
+                "name": "async",
+                "value": "",
+                "type": "query",
+                "description": "The request is added to the queue without expecting the response"
+              },
+              {
+                "name": "minorVersion",
+                "value": "",
+                "type": "query",
+                "description": "Optional minor version identifier for message versioning. This value is passed as additional metadata with emitted messages."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "apikey",
+              "key": "Authorization",
+              "value": "{{Authorization}}",
+              "placement": "header"
+            }
+          },
+          "docs": "The intention of the endpoint is to register a payment for an account.\nThe payment amount will be matched to the different claims of the account using the indicated matching strategy.\n"
+        },
+        {
+          "info": {
+            "name": "Allocate a payment across an account's claims",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "/v1/:clientId/allocate_account_payment",
+            "headers": [
+              {
+                "name": "Authorization",
+                "value": "Bearer <access_token>"
+              }
+            ],
+            "params": [
+              {
+                "name": "clientId",
+                "value": "ec702157-705b-42a0-b70e-a60a63dd24ab",
+                "type": "path",
+                "description": "A Receive system identifier that will be assigned automatically.\nIt will be used for situations like Support related interventions or data segmentation.\n"
+              },
+              {
+                "name": "triggerName",
+                "value": "customTrigger1",
+                "type": "query",
+                "description": "This is name of Custom Trigger that should be triggered when this API is called."
+              },
+              {
+                "name": "sequential",
+                "value": "",
+                "type": "query",
+                "description": "The request body items are executed one after another one"
+              },
+              {
+                "name": "async",
+                "value": "",
+                "type": "query",
+                "description": "The request is added to the queue without expecting the response"
+              },
+              {
+                "name": "minorVersion",
+                "value": "",
+                "type": "query",
+                "description": "Optional minor version identifier for message versioning. This value is passed as additional metadata with emitted messages."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "apikey",
+              "key": "Authorization",
+              "value": "{{Authorization}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Distribute a single lump payment across an account's open claims for\naccounts that are not ledger-managed. The amount is allocated one claim\nat a time using the chosen strategy; the per-claim breakdown is published\non the event.accountPayment.allocated event.\n"
+        },
+        {
+          "info": {
+            "name": "Updates the amounts of Account ledger entries",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "/v1/:clientId/update_account_ledger_entries_amounts",
+            "headers": [
+              {
+                "name": "Authorization",
+                "value": "Bearer <access_token>"
+              }
+            ],
+            "params": [
+              {
+                "name": "clientId",
+                "value": "ec702157-705b-42a0-b70e-a60a63dd24ab",
+                "type": "path",
+                "description": "A Receive system identifier that will be assigned automatically.\nIt will be used for situations like Support related interventions or data segmentation.\n"
+              },
+              {
+                "name": "triggerName",
+                "value": "customTrigger1",
+                "type": "query",
+                "description": "This is name of Custom Trigger that should be triggered when this API is called."
+              },
+              {
+                "name": "sequential",
+                "value": "",
+                "type": "query",
+                "description": "The request body items are executed one after another one"
+              },
+              {
+                "name": "async",
+                "value": "",
+                "type": "query",
+                "description": "The request is added to the queue without expecting the response"
+              },
+              {
+                "name": "minorVersion",
+                "value": "",
+                "type": "query",
+                "description": "Optional minor version identifier for message versioning. This value is passed as additional metadata with emitted messages."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "apikey",
+              "key": "Authorization",
+              "value": "{{Authorization}}",
+              "placement": "header"
+            }
+          },
+          "docs": "The intention of the endpoint is to update the amounts of the Account ledger entries.\nThis is an abstraction over adding directly the Ledger Entries to the Account, the objective is to simplify the process of updating the amounts of the ledger entries, using the target amount in the request, instead of the individual entries.\nNotes:\n- The calculations are executed first, and the claims related to those invoices will be updated only once.\n- The `reason` field is mandatory, and it will be used to "
+        },
+        {
+          "info": {
+            "name": "It retrieves information about a debtor's accounts and claims",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/v1/:clientId/get_debtor_accounts_and_claims",
+            "headers": [
+              {
+                "name": "Authorization",
+                "value": "Bearer <access_token>"
+              }
+            ],
+            "params": [
+              {
+                "name": "clientId",
+                "value": "ec702157-705b-42a0-b70e-a60a63dd24ab",
+                "type": "path",
+                "description": "A Receive system identifier that will be assigned automatically.\nIt will be used for situations like Support related interventions or data segmentation.\n"
+              },
+              {
+                "name": "triggerName",
+                "value": "customTrigger1",
+                "type": "query",
+                "description": "This is name of Custom Trigger that should be triggered when this API is called."
+              },
+              {
+                "name": "debtorReference",
+                "value": "",
+                "type": "query",
+                "description": "Identifier of the debtor"
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "Authorization",
+              "value": "{{Authorization}}",
+              "placement": "header"
+            }
+          },
+          "docs": "The intention of the endpoint is to retrieve information about a debtor's accounts and claims.\n"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

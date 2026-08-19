@@ -1,0 +1,602 @@
+{
+  "item": [
+    {
+      "id": "df88b423-e685-4266-88c7-267bce0e40aa",
+      "name": "CustomTriggers",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "9f66dc4a-ae46-42c0-b4ec-84210ce1cb34",
+          "name": "Execute custom triggers that can be configured in Reactions",
+          "request": {
+            "name": "Execute custom triggers that can be configured in Reactions",
+            "description": {},
+            "url": {
+              "path": [
+                "v1",
+                ":clientId",
+                "execute_custom_triggers"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "sequential",
+                  "value": "<boolean>",
+                  "description": "The request body items are executed one after another one"
+                },
+                {
+                  "disabled": false,
+                  "key": "async",
+                  "value": "<boolean>",
+                  "description": "The request is added to the queue without expecting the response"
+                },
+                {
+                  "disabled": false,
+                  "key": "minorVersion",
+                  "value": "<string>",
+                  "description": "Optional minor version identifier for message versioning. This value is passed as additional metadata with emitted messages."
+                }
+              ],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<uuid>",
+                  "key": "clientId",
+                  "description": "(Required) A Receive system identifier that will be assigned automatically.\nIt will be used for situations like Support related interventions or data segmentation.\n"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "Authorization"
+                },
+                {
+                  "key": "value",
+                  "value": "{{apiKey}}"
+                },
+                {
+                  "key": "in",
+                  "value": "header"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"key_0\": \"<string>\",\n  \"key_1\": \"<string>\",\n  \"key_2\": \"<string>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "a9d9b6c7-ac6c-4ee8-822c-b27d9e7cc4cb",
+              "name": "Request was successful",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    ":clientId",
+                    "execute_custom_triggers"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "sequential",
+                      "value": "<boolean>"
+                    },
+                    {
+                      "key": "async",
+                      "value": "<boolean>"
+                    },
+                    {
+                      "key": "minorVersion",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "clientId",
+                      "description": "(Required) A Receive system identifier that will be assigned automatically.\nIt will be used for situations like Support related interventions or data segmentation.\n"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "(Required) OAuth2 Token (obtained from /oauth2/token )\nReference: https://docs.indebted.co/docs/receive/integration/use-cases/authentication-use-case\n",
+                    "key": "Authorization",
+                    "value": "Bearer <access_token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"INV-2024-0042\": \"SEND_REMINDER\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"REFERENCE_1\": {\n    \"success\": true,\n    \"messages\": [\n      \"Successfully processed action\"\n    ],\n    \"messageIds\": [\n      \"e66d62ed-2331-4ced-8c03-5e729e984adc\"\n    ]\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "cebc9367-8b98-4a43-b841-aa99059dff6a",
+              "name": "Incorrectly formed request",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    ":clientId",
+                    "execute_custom_triggers"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "sequential",
+                      "value": "<boolean>"
+                    },
+                    {
+                      "key": "async",
+                      "value": "<boolean>"
+                    },
+                    {
+                      "key": "minorVersion",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "clientId",
+                      "description": "(Required) A Receive system identifier that will be assigned automatically.\nIt will be used for situations like Support related interventions or data segmentation.\n"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "(Required) OAuth2 Token (obtained from /oauth2/token )\nReference: https://docs.indebted.co/docs/receive/integration/use-cases/authentication-use-case\n",
+                    "key": "Authorization",
+                    "value": "Bearer <access_token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"INV-2024-0042\": \"SEND_REMINDER\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"Missing required request parameters: [Authorization]\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "a3585b5b-d749-4fae-a3e1-2c0a5638b47f",
+              "name": "Unauthorized",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    ":clientId",
+                    "execute_custom_triggers"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "sequential",
+                      "value": "<boolean>"
+                    },
+                    {
+                      "key": "async",
+                      "value": "<boolean>"
+                    },
+                    {
+                      "key": "minorVersion",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "clientId",
+                      "description": "(Required) A Receive system identifier that will be assigned automatically.\nIt will be used for situations like Support related interventions or data segmentation.\n"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "(Required) OAuth2 Token (obtained from /oauth2/token )\nReference: https://docs.indebted.co/docs/receive/integration/use-cases/authentication-use-case\n",
+                    "key": "Authorization",
+                    "value": "Bearer <access_token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"INV-2024-0042\": \"SEND_REMINDER\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"Unauthorized\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "501fcbcd-7aac-4737-a354-58b05695b824",
+              "name": "Access is denied",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    ":clientId",
+                    "execute_custom_triggers"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "sequential",
+                      "value": "<boolean>"
+                    },
+                    {
+                      "key": "async",
+                      "value": "<boolean>"
+                    },
+                    {
+                      "key": "minorVersion",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "clientId",
+                      "description": "(Required) A Receive system identifier that will be assigned automatically.\nIt will be used for situations like Support related interventions or data segmentation.\n"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "(Required) OAuth2 Token (obtained from /oauth2/token )\nReference: https://docs.indebted.co/docs/receive/integration/use-cases/authentication-use-case\n",
+                    "key": "Authorization",
+                    "value": "Bearer <access_token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"INV-2024-0042\": \"SEND_REMINDER\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"Forbidden\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "35a9d800-9e84-4f8f-b4ad-ee37d37bcc26",
+              "name": "Request was throttled",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    ":clientId",
+                    "execute_custom_triggers"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "sequential",
+                      "value": "<boolean>"
+                    },
+                    {
+                      "key": "async",
+                      "value": "<boolean>"
+                    },
+                    {
+                      "key": "minorVersion",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "clientId",
+                      "description": "(Required) A Receive system identifier that will be assigned automatically.\nIt will be used for situations like Support related interventions or data segmentation.\n"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "(Required) OAuth2 Token (obtained from /oauth2/token )\nReference: https://docs.indebted.co/docs/receive/integration/use-cases/authentication-use-case\n",
+                    "key": "Authorization",
+                    "value": "Bearer <access_token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"INV-2024-0042\": \"SEND_REMINDER\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Too Many Requests",
+              "code": 429,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"Too Many Requests\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "404eb601-3234-4064-a817-ad9a3971f542",
+              "name": "Internal error occured",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    ":clientId",
+                    "execute_custom_triggers"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "sequential",
+                      "value": "<boolean>"
+                    },
+                    {
+                      "key": "async",
+                      "value": "<boolean>"
+                    },
+                    {
+                      "key": "minorVersion",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "clientId",
+                      "description": "(Required) A Receive system identifier that will be assigned automatically.\nIt will be used for situations like Support related interventions or data segmentation.\n"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "(Required) OAuth2 Token (obtained from /oauth2/token )\nReference: https://docs.indebted.co/docs/receive/integration/use-cases/authentication-use-case\n",
+                    "key": "Authorization",
+                    "value": "Bearer <access_token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"INV-2024-0042\": \"SEND_REMINDER\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"Internal error\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "/",
+      "key": "baseUrl"
+    }
+  ],
+  "info": {
+    "_postman_id": "b4c194b6-edc7-4b79-91aa-af0f48a153cd",
+    "name": "InDebted Receive API Documentation Account CustomTriggers API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "This is the API definition for interacting with InDebted's Receive debt servicing platform. For more details please visit the [Integration Documentation](https://docs.indebted.co/docs/receive/receive-knowledge-base).\n\n**Using this spec in code generators, Postman, or other tooling?** Fetch the raw document at [https://receive-api.indebted.co/openapi/apiSchema.yaml](https://receive-api.indebted.co/openapi/apiSchema.yaml) — that is the canonical OpenAPI file. Prefer it over the in-page download button, which re-serialises the document and can alter value types (e.g. date-formatted strings).\n\nContact Support:\n Email: techteam@indebted.co",
+      "type": "text/plain"
+    }
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "InDebted Receive API Documentation Account Debtor API",
+    "version": "1.53.1"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Debtor",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "It retrieves information about a debtor's accounts and claims",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/v1/:clientId/get_debtor_accounts_and_claims",
+            "headers": [
+              {
+                "name": "Authorization",
+                "value": "Bearer <access_token>"
+              }
+            ],
+            "params": [
+              {
+                "name": "clientId",
+                "value": "ec702157-705b-42a0-b70e-a60a63dd24ab",
+                "type": "path",
+                "description": "A Receive system identifier that will be assigned automatically.\nIt will be used for situations like Support related interventions or data segmentation.\n"
+              },
+              {
+                "name": "triggerName",
+                "value": "customTrigger1",
+                "type": "query",
+                "description": "This is name of Custom Trigger that should be triggered when this API is called."
+              },
+              {
+                "name": "debtorReference",
+                "value": "",
+                "type": "query",
+                "description": "Identifier of the debtor"
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "Authorization",
+              "value": "{{Authorization}}",
+              "placement": "header"
+            }
+          },
+          "docs": "The intention of the endpoint is to retrieve information about a debtor's accounts and claims.\n"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

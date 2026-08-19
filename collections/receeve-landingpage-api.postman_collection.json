@@ -1,0 +1,579 @@
+{
+  "item": [
+    {
+      "id": "36c46aa5-b30d-41dc-a49a-915bc358334c",
+      "name": "LandingPage",
+      "description": {
+        "content": "The Landing Page of the Debtor, used to display, pay the Claims (or other use cases).",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "d4d87209-5024-4d7c-a44a-8bf1c9c5fbd0",
+          "name": "Get Landing Page URL",
+          "request": {
+            "name": "Get Landing Page URL",
+            "description": {},
+            "url": {
+              "path": [
+                "v1",
+                ":clientId",
+                "get_landing_page_url"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "claimReference",
+                  "value": "<string>",
+                  "description": "(Required) Receive Claim Reference"
+                },
+                {
+                  "disabled": false,
+                  "key": "triggerName",
+                  "value": "<string>",
+                  "description": "This is name of Custom Trigger that should be triggered when this API is called."
+                }
+              ],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<uuid>",
+                  "key": "clientId",
+                  "description": "(Required) A Receive system identifier that will be assigned automatically.\nIt will be used for situations like Support related interventions or data segmentation.\n"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "Authorization"
+                },
+                {
+                  "key": "value",
+                  "value": "{{apiKey}}"
+                },
+                {
+                  "key": "in",
+                  "value": "header"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "47b4a68d-4cab-4ca5-a9e0-5adf2573c40b",
+              "name": "Request for get_landing_page_url is successful",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    ":clientId",
+                    "get_landing_page_url"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "claimReference",
+                      "value": "ACCOUNT_REFERENCE_002"
+                    },
+                    {
+                      "key": "triggerName",
+                      "value": "customTrigger1"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "clientId",
+                      "description": "(Required) A Receive system identifier that will be assigned automatically.\nIt will be used for situations like Support related interventions or data segmentation.\n"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "(Required) OAuth2 Token (obtained from /oauth2/token )\nReference: https://docs.indebted.co/docs/receive/integration/use-cases/authentication-use-case\n",
+                    "key": "Authorization",
+                    "value": "Bearer <access_token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"URL\": \"https://domain.com/c/btXXskwXX\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "f312761c-f733-4896-80b0-972129b150c4",
+              "name": "Incorrectly formed request",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    ":clientId",
+                    "get_landing_page_url"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "claimReference",
+                      "value": "ACCOUNT_REFERENCE_002"
+                    },
+                    {
+                      "key": "triggerName",
+                      "value": "customTrigger1"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "clientId",
+                      "description": "(Required) A Receive system identifier that will be assigned automatically.\nIt will be used for situations like Support related interventions or data segmentation.\n"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "(Required) OAuth2 Token (obtained from /oauth2/token )\nReference: https://docs.indebted.co/docs/receive/integration/use-cases/authentication-use-case\n",
+                    "key": "Authorization",
+                    "value": "Bearer <access_token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"Missing required request parameters: [Authorization]\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "d8b20d14-65c1-4c56-bc1b-85700b713959",
+              "name": "Unauthorized",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    ":clientId",
+                    "get_landing_page_url"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "claimReference",
+                      "value": "ACCOUNT_REFERENCE_002"
+                    },
+                    {
+                      "key": "triggerName",
+                      "value": "customTrigger1"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "clientId",
+                      "description": "(Required) A Receive system identifier that will be assigned automatically.\nIt will be used for situations like Support related interventions or data segmentation.\n"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "(Required) OAuth2 Token (obtained from /oauth2/token )\nReference: https://docs.indebted.co/docs/receive/integration/use-cases/authentication-use-case\n",
+                    "key": "Authorization",
+                    "value": "Bearer <access_token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"Unauthorized\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "5a88b4c7-c1c1-4336-9978-a519abd0cfaf",
+              "name": "Access is denied",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    ":clientId",
+                    "get_landing_page_url"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "claimReference",
+                      "value": "ACCOUNT_REFERENCE_002"
+                    },
+                    {
+                      "key": "triggerName",
+                      "value": "customTrigger1"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "clientId",
+                      "description": "(Required) A Receive system identifier that will be assigned automatically.\nIt will be used for situations like Support related interventions or data segmentation.\n"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "(Required) OAuth2 Token (obtained from /oauth2/token )\nReference: https://docs.indebted.co/docs/receive/integration/use-cases/authentication-use-case\n",
+                    "key": "Authorization",
+                    "value": "Bearer <access_token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"Forbidden\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "ddbd20a5-2481-44fc-838d-f4210370b367",
+              "name": "Not found",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    ":clientId",
+                    "get_landing_page_url"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "claimReference",
+                      "value": "ACCOUNT_REFERENCE_002"
+                    },
+                    {
+                      "key": "triggerName",
+                      "value": "customTrigger1"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "clientId",
+                      "description": "(Required) A Receive system identifier that will be assigned automatically.\nIt will be used for situations like Support related interventions or data segmentation.\n"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "(Required) OAuth2 Token (obtained from /oauth2/token )\nReference: https://docs.indebted.co/docs/receive/integration/use-cases/authentication-use-case\n",
+                    "key": "Authorization",
+                    "value": "Bearer <access_token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"Not found\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "16792de2-5941-4b14-92ef-fa34d826dec3",
+              "name": "Request was throttled",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    ":clientId",
+                    "get_landing_page_url"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "claimReference",
+                      "value": "ACCOUNT_REFERENCE_002"
+                    },
+                    {
+                      "key": "triggerName",
+                      "value": "customTrigger1"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "clientId",
+                      "description": "(Required) A Receive system identifier that will be assigned automatically.\nIt will be used for situations like Support related interventions or data segmentation.\n"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "(Required) OAuth2 Token (obtained from /oauth2/token )\nReference: https://docs.indebted.co/docs/receive/integration/use-cases/authentication-use-case\n",
+                    "key": "Authorization",
+                    "value": "Bearer <access_token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Too Many Requests",
+              "code": 429,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"Too Many Requests\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "9a148b69-d0cd-4f5b-ba52-df7bc328fe93",
+              "name": "Internal error occured",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    ":clientId",
+                    "get_landing_page_url"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "claimReference",
+                      "value": "ACCOUNT_REFERENCE_002"
+                    },
+                    {
+                      "key": "triggerName",
+                      "value": "customTrigger1"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "clientId",
+                      "description": "(Required) A Receive system identifier that will be assigned automatically.\nIt will be used for situations like Support related interventions or data segmentation.\n"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "(Required) OAuth2 Token (obtained from /oauth2/token )\nReference: https://docs.indebted.co/docs/receive/integration/use-cases/authentication-use-case\n",
+                    "key": "Authorization",
+                    "value": "Bearer <access_token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"Internal error\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "/",
+      "key": "baseUrl"
+    }
+  ],
+  "info": {
+    "_postman_id": "0c93816b-143b-4c60-9ba8-3c5197f372fe",
+    "name": "InDebted Receive API Documentation Account LandingPage API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "This is the API definition for interacting with InDebted's Receive debt servicing platform. For more details please visit the [Integration Documentation](https://docs.indebted.co/docs/receive/receive-knowledge-base).\n\n**Using this spec in code generators, Postman, or other tooling?** Fetch the raw document at [https://receive-api.indebted.co/openapi/apiSchema.yaml](https://receive-api.indebted.co/openapi/apiSchema.yaml) — that is the canonical OpenAPI file. Prefer it over the in-page download button, which re-serialises the document and can alter value types (e.g. date-formatted strings).\n\nContact Support:\n Email: techteam@indebted.co",
+      "type": "text/plain"
+    }
+  }
+}

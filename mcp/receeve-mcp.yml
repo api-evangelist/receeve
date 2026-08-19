@@ -2,9 +2,8 @@ generated: '2026-07-21'
 method: derived
 status: candidate
 source: openapi/receeve-openapi-original.yml
-note: "No official hosted/remote MCP server was found for Receive (Receeve). This is a DERIVED candidate\
-  \ tool list \u2014 one tool per OpenAPI operation \u2014 for a future MCP server. Not published by the\
-  \ provider."
+note: No official hosted/remote MCP server was found for Receive (Receeve). This is a DERIVED candidate
+  tool list — one tool per OpenAPI operation — for a future MCP server. Not published by the provider.
 server:
   name: receeve
   transport: stdio
@@ -149,3 +148,9 @@ tools:
 - name: getSettlements
   description: List Settlements for an Account
   source_operation: openapi/receeve-openapi-original.yml#getSettlements
+deployment:
+  mode: none
+  verified: derived
+  tools: 46
+  checked: '2026-08-12'
+  source: catalog MCP census

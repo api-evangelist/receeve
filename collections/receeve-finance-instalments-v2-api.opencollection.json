@@ -1,0 +1,287 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "InDebted Receive API Documentation Account Finance Instalments V2 API",
+    "version": "1.53.1"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Finance Instalments V2",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List Instalment Plan Definitions",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/finance/v1/:clientId/instalment_plan_definitions",
+            "headers": [
+              {
+                "name": "Authorization",
+                "value": "Bearer <access_token>"
+              }
+            ],
+            "params": [
+              {
+                "name": "clientId",
+                "value": "ec702157-705b-42a0-b70e-a60a63dd24ab",
+                "type": "path",
+                "description": "A Receive system identifier that will be assigned automatically.\nIt will be used for situations like Support related interventions or data segmentation.\n"
+              },
+              {
+                "name": "triggerName",
+                "value": "customTrigger1",
+                "type": "query",
+                "description": "This is name of Custom Trigger that should be triggered when this API is called."
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Maximum number of results to return"
+              },
+              {
+                "name": "paginationId",
+                "value": "",
+                "type": "query",
+                "description": "Pagination token for retrieving the next page of results"
+              },
+              {
+                "name": "filters",
+                "value": "",
+                "type": "query",
+                "description": "JSON string of filters to apply (e.g., {\"enabled\":true,\"types\":[\"CHOICE\"]})"
+              },
+              {
+                "name": "fields",
+                "value": "",
+                "type": "query",
+                "description": "Comma-separated list of fields to retrieve (e.g., \"id,type,description\")"
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "Authorization",
+              "value": "{{Authorization}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Retrieve available instalment plan templates for the client.\nThis endpoint returns a list of instalment plan definitions that can be used\nto create payment plans for debtors.\n"
+        },
+        {
+          "info": {
+            "name": "Compute Instalment Plan Definition",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "/finance/v1/:clientId/compute_instalment_plan_definition",
+            "headers": [
+              {
+                "name": "Authorization",
+                "value": "Bearer <access_token>"
+              }
+            ],
+            "params": [
+              {
+                "name": "clientId",
+                "value": "ec702157-705b-42a0-b70e-a60a63dd24ab",
+                "type": "path",
+                "description": "A Receive system identifier that will be assigned automatically.\nIt will be used for situations like Support related interventions or data segmentation.\n"
+              },
+              {
+                "name": "triggerName",
+                "value": "customTrigger1",
+                "type": "query",
+                "description": "This is name of Custom Trigger that should be triggered when this API is called."
+              },
+              {
+                "name": "async",
+                "value": "",
+                "type": "query",
+                "description": "The request is added to the queue without expecting the response"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "apikey",
+              "key": "Authorization",
+              "value": "{{Authorization}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Dynamic wizard for generating computed instalment plan definitions. Returns different \ntypes based on computation results (programmatic, choice, fixedAmounts, percentageAmounts, null).\n\nEach definition expects different `formData`, so there is no single fixed request schema —\nsend the fields that definition requires. Compute is iterative: call it repeatedly, feeding\neach result forward, until it returns a final state. Then pass the `id` from that last\ncompute response to create_instalment_plan.\n"
+        },
+        {
+          "info": {
+            "name": "Create Instalment Plan",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "/finance/v1/:clientId/create_instalment_plan",
+            "headers": [
+              {
+                "name": "Authorization",
+                "value": "Bearer <access_token>"
+              }
+            ],
+            "params": [
+              {
+                "name": "clientId",
+                "value": "ec702157-705b-42a0-b70e-a60a63dd24ab",
+                "type": "path",
+                "description": "A Receive system identifier that will be assigned automatically.\nIt will be used for situations like Support related interventions or data segmentation.\n"
+              },
+              {
+                "name": "triggerName",
+                "value": "customTrigger1",
+                "type": "query",
+                "description": "This is name of Custom Trigger that should be triggered when this API is called."
+              },
+              {
+                "name": "async",
+                "value": "",
+                "type": "query",
+                "description": "The request is added to the queue without expecting the response"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "apikey",
+              "key": "Authorization",
+              "value": "{{Authorization}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Generate actual instalment plans from computed definitions.\nThis endpoint creates an executable payment plan based on a computed definition.\nUse the `id` returned by the final compute_instalment_plan_definition call.\n"
+        },
+        {
+          "info": {
+            "name": "Update Instalment Plan",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "/finance/v1/:clientId/update_instalment_plan",
+            "headers": [
+              {
+                "name": "Authorization",
+                "value": "Bearer <access_token>"
+              }
+            ],
+            "params": [
+              {
+                "name": "clientId",
+                "value": "ec702157-705b-42a0-b70e-a60a63dd24ab",
+                "type": "path",
+                "description": "A Receive system identifier that will be assigned automatically.\nIt will be used for situations like Support related interventions or data segmentation.\n"
+              },
+              {
+                "name": "triggerName",
+                "value": "customTrigger1",
+                "type": "query",
+                "description": "This is name of Custom Trigger that should be triggered when this API is called."
+              },
+              {
+                "name": "async",
+                "value": "",
+                "type": "query",
+                "description": "The request is added to the queue without expecting the response"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "apikey",
+              "key": "Authorization",
+              "value": "{{Authorization}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Modify existing instalment plans with updated parameters.\nThis endpoint allows updating various aspects of an existing instalment plan.\n"
+        },
+        {
+          "info": {
+            "name": "Get Instalment Plans",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/finance/v1/:clientId/instalment_plans",
+            "headers": [
+              {
+                "name": "Authorization",
+                "value": "Bearer <access_token>"
+              }
+            ],
+            "params": [
+              {
+                "name": "clientId",
+                "value": "ec702157-705b-42a0-b70e-a60a63dd24ab",
+                "type": "path",
+                "description": "A Receive system identifier that will be assigned automatically.\nIt will be used for situations like Support related interventions or data segmentation.\n"
+              },
+              {
+                "name": "triggerName",
+                "value": "customTrigger1",
+                "type": "query",
+                "description": "This is name of Custom Trigger that should be triggered when this API is called."
+              },
+              {
+                "name": "accountReference",
+                "value": "",
+                "type": "query",
+                "description": "Account reference in the client's system"
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Maximum number of results to return"
+              },
+              {
+                "name": "paginationId",
+                "value": "",
+                "type": "query",
+                "description": "Pagination token for retrieving the next page of results"
+              },
+              {
+                "name": "filters",
+                "value": "",
+                "type": "query",
+                "description": "JSON string of filters to apply (e.g., {\"status\":[\"CREATED\"],\"id\":[\"uuid1\",\"uuid2\"]})"
+              },
+              {
+                "name": "fields",
+                "value": "",
+                "type": "query",
+                "description": "Comma-separated list of fields to retrieve (e.g., \"id,status,accountId\")"
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "Authorization",
+              "value": "{{Authorization}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Retrieve instalment plans for a specific client and account.\nSupports filtering by status, specific plan IDs, field selection, and pagination.\n"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

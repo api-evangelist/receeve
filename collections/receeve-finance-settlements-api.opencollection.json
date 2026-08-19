@@ -1,0 +1,245 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "InDebted Receive API Documentation Account Finance Settlements API",
+    "version": "1.53.1"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Finance Settlements",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Create or Update a Settlement Definition",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "/finance/v1/:clientId/set_settlement_definition",
+            "headers": [
+              {
+                "name": "Authorization",
+                "value": "Bearer <access_token>"
+              }
+            ],
+            "params": [
+              {
+                "name": "clientId",
+                "value": "ec702157-705b-42a0-b70e-a60a63dd24ab",
+                "type": "path",
+                "description": "A Receive system identifier that will be assigned automatically.\nIt will be used for situations like Support related interventions or data segmentation.\n"
+              },
+              {
+                "name": "triggerName",
+                "value": "customTrigger1",
+                "type": "query",
+                "description": "This is name of Custom Trigger that should be triggered when this API is called."
+              },
+              {
+                "name": "async",
+                "value": "",
+                "type": "query",
+                "description": "The request is added to the queue without expecting the response"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "apikey",
+              "key": "Authorization",
+              "value": "{{Authorization}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Create or upsert a settlement definition (a template combining a discount\nrule and a selector). A settlement definition materialises a settlement\ninstance on a Promise-to-Pay or Instalment Plan, or is applied directly.\n"
+        },
+        {
+          "info": {
+            "name": "Apply a DIRECT Settlement",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "/finance/v1/:clientId/apply_settlement",
+            "headers": [
+              {
+                "name": "Authorization",
+                "value": "Bearer <access_token>"
+              }
+            ],
+            "params": [
+              {
+                "name": "clientId",
+                "value": "ec702157-705b-42a0-b70e-a60a63dd24ab",
+                "type": "path",
+                "description": "A Receive system identifier that will be assigned automatically.\nIt will be used for situations like Support related interventions or data segmentation.\n"
+              },
+              {
+                "name": "triggerName",
+                "value": "customTrigger1",
+                "type": "query",
+                "description": "This is name of Custom Trigger that should be triggered when this API is called."
+              },
+              {
+                "name": "async",
+                "value": "",
+                "type": "query",
+                "description": "The request is added to the queue without expecting the response"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "apikey",
+              "key": "Authorization",
+              "value": "{{Authorization}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Apply a DIRECT settlement definition to one or more claims of an account,\ntypically driven by an agent on a call. The applicationRef acts as an\nidempotency key.\n"
+        },
+        {
+          "info": {
+            "name": "Withdraw a Settlement",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "/finance/v1/:clientId/withdraw_settlement",
+            "headers": [
+              {
+                "name": "Authorization",
+                "value": "Bearer <access_token>"
+              }
+            ],
+            "params": [
+              {
+                "name": "clientId",
+                "value": "ec702157-705b-42a0-b70e-a60a63dd24ab",
+                "type": "path",
+                "description": "A Receive system identifier that will be assigned automatically.\nIt will be used for situations like Support related interventions or data segmentation.\n"
+              },
+              {
+                "name": "triggerName",
+                "value": "customTrigger1",
+                "type": "query",
+                "description": "This is name of Custom Trigger that should be triggered when this API is called."
+              },
+              {
+                "name": "async",
+                "value": "",
+                "type": "query",
+                "description": "The request is added to the queue without expecting the response"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "apikey",
+              "key": "Authorization",
+              "value": "{{Authorization}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Withdraw an existing settlement instance by id, optionally recording a reason.\n"
+        },
+        {
+          "info": {
+            "name": "Get a Settlement by id",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/finance/v1/:clientId/settlement",
+            "headers": [
+              {
+                "name": "Authorization",
+                "value": "Bearer <access_token>"
+              }
+            ],
+            "params": [
+              {
+                "name": "clientId",
+                "value": "ec702157-705b-42a0-b70e-a60a63dd24ab",
+                "type": "path",
+                "description": "A Receive system identifier that will be assigned automatically.\nIt will be used for situations like Support related interventions or data segmentation.\n"
+              },
+              {
+                "name": "triggerName",
+                "value": "customTrigger1",
+                "type": "query",
+                "description": "This is name of Custom Trigger that should be triggered when this API is called."
+              },
+              {
+                "name": "settlementId",
+                "value": "",
+                "type": "query",
+                "description": "Identifier of the settlement instance to retrieve"
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "Authorization",
+              "value": "{{Authorization}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Retrieve a single settlement instance by its id.\n"
+        },
+        {
+          "info": {
+            "name": "List Settlements for an Account",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/finance/v1/:clientId/settlements",
+            "headers": [
+              {
+                "name": "Authorization",
+                "value": "Bearer <access_token>"
+              }
+            ],
+            "params": [
+              {
+                "name": "clientId",
+                "value": "ec702157-705b-42a0-b70e-a60a63dd24ab",
+                "type": "path",
+                "description": "A Receive system identifier that will be assigned automatically.\nIt will be used for situations like Support related interventions or data segmentation.\n"
+              },
+              {
+                "name": "triggerName",
+                "value": "customTrigger1",
+                "type": "query",
+                "description": "This is name of Custom Trigger that should be triggered when this API is called."
+              },
+              {
+                "name": "accountReference",
+                "value": "",
+                "type": "query",
+                "description": "Account reference in the client's system"
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "Authorization",
+              "value": "{{Authorization}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Retrieve all settlement instances for a specific client and account.\n"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

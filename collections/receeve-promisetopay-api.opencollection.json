@@ -1,0 +1,77 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "InDebted Receive API Documentation Account PromiseToPay API",
+    "version": "1.53.1"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "PromiseToPay",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Create promises to pay, a Promise to Pay enables a debt to be paid partially by a certain minimum amount and by a particular due date.",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "/v1/:clientId/create_promises_to_pay",
+            "headers": [
+              {
+                "name": "Authorization",
+                "value": "Bearer <access_token>"
+              }
+            ],
+            "params": [
+              {
+                "name": "clientId",
+                "value": "ec702157-705b-42a0-b70e-a60a63dd24ab",
+                "type": "path",
+                "description": "A Receive system identifier that will be assigned automatically.\nIt will be used for situations like Support related interventions or data segmentation.\n"
+              },
+              {
+                "name": "triggerName",
+                "value": "customTrigger1",
+                "type": "query",
+                "description": "This is name of Custom Trigger that should be triggered when this API is called."
+              },
+              {
+                "name": "sequential",
+                "value": "",
+                "type": "query",
+                "description": "The request body items are executed one after another one"
+              },
+              {
+                "name": "async",
+                "value": "",
+                "type": "query",
+                "description": "The request is added to the queue without expecting the response"
+              },
+              {
+                "name": "minorVersion",
+                "value": "",
+                "type": "query",
+                "description": "Optional minor version identifier for message versioning. This value is passed as additional metadata with emitted messages."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "apikey",
+              "key": "Authorization",
+              "value": "{{Authorization}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Create promises to pay, a Promise to Pay enables a debt to be paid partially by a certain minimum amount and by a particular due date."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

@@ -1,0 +1,116 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "InDebted Receive API Documentation Account Message API",
+    "version": "1.53.1"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Message",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get message in .eml format.",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/v1/:clientId/get_message",
+            "headers": [
+              {
+                "name": "Authorization",
+                "value": "Bearer <access_token>"
+              }
+            ],
+            "params": [
+              {
+                "name": "clientId",
+                "value": "ec702157-705b-42a0-b70e-a60a63dd24ab",
+                "type": "path",
+                "description": "A Receive system identifier that will be assigned automatically.\nIt will be used for situations like Support related interventions or data segmentation.\n"
+              },
+              {
+                "name": "messageURL",
+                "value": "/Operations/email/Message/3b97bd7a-1c07-44d4-b33f-2250f6419e95.eml",
+                "type": "query",
+                "description": "URL of the message"
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "Authorization",
+              "value": "{{Authorization}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Get message in .eml format."
+        },
+        {
+          "info": {
+            "name": "Get communication message URLs by communication type, timeframe. Paginated.",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/v1/:clientId/get_communication_message_urls",
+            "headers": [
+              {
+                "name": "Authorization",
+                "value": "Bearer <access_token>"
+              }
+            ],
+            "params": [
+              {
+                "name": "clientId",
+                "value": "ec702157-705b-42a0-b70e-a60a63dd24ab",
+                "type": "path",
+                "description": "A Receive system identifier that will be assigned automatically.\nIt will be used for situations like Support related interventions or data segmentation.\n"
+              },
+              {
+                "name": "claimReference",
+                "value": "ACCOUNT_REFERENCE_002",
+                "type": "query",
+                "description": "Receive Claim Reference"
+              },
+              {
+                "name": "communicationType",
+                "value": "email",
+                "type": "query",
+                "description": "type of communication that happened in Receive system. Leave it unspecified to get message URLs related to all communication types."
+              },
+              {
+                "name": "startDate",
+                "value": "2019-05-28",
+                "type": "query",
+                "description": "date from which to start getting the events"
+              },
+              {
+                "name": "limit",
+                "value": "1000",
+                "type": "query",
+                "description": "amount of events per page, default is 1000"
+              },
+              {
+                "name": "page",
+                "value": "1",
+                "type": "query",
+                "description": "number of page to retrieve the events for, default is 1"
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "Authorization",
+              "value": "{{Authorization}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Get communication message URLs by communication type, timeframe. Paginated."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

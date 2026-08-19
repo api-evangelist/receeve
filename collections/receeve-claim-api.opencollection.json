@@ -1,0 +1,594 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "InDebted Receive API Documentation Account Claim API",
+    "version": "1.53.1"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Claim",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "It retrieves the claims from a given account",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/v1/:clientId/get_account_claims",
+            "headers": [
+              {
+                "name": "Authorization",
+                "value": "Bearer <access_token>"
+              }
+            ],
+            "params": [
+              {
+                "name": "clientId",
+                "value": "ec702157-705b-42a0-b70e-a60a63dd24ab",
+                "type": "path",
+                "description": "A Receive system identifier that will be assigned automatically.\nIt will be used for situations like Support related interventions or data segmentation.\n"
+              },
+              {
+                "name": "triggerName",
+                "value": "customTrigger1",
+                "type": "query",
+                "description": "This is name of Custom Trigger that should be triggered when this API is called."
+              },
+              {
+                "name": "accountReference",
+                "value": "ACC",
+                "type": "query",
+                "description": "Account reference in your system"
+              },
+              {
+                "name": "status",
+                "value": "",
+                "type": "query",
+                "description": "Claim Status filter"
+              },
+              {
+                "name": "paginationId",
+                "value": "",
+                "type": "query",
+                "description": "Get the Account Claims by Pagination"
+              },
+              {
+                "name": "limit",
+                "value": "1000",
+                "type": "query",
+                "description": "amount of events per page, default is 1000"
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "Authorization",
+              "value": "{{Authorization}}",
+              "placement": "header"
+            }
+          },
+          "docs": "The intetion of this endpoint is to fetch the Claims from a given Account.\nFor more details about the Account, and the relationship with the other entities please visit the [Account](https://docs.indebted.co/docs/receive/integration/account-claims) page.\n"
+        },
+        {
+          "info": {
+            "name": "It retrieves information about a debtor's accounts and claims",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/v1/:clientId/get_debtor_accounts_and_claims",
+            "headers": [
+              {
+                "name": "Authorization",
+                "value": "Bearer <access_token>"
+              }
+            ],
+            "params": [
+              {
+                "name": "clientId",
+                "value": "ec702157-705b-42a0-b70e-a60a63dd24ab",
+                "type": "path",
+                "description": "A Receive system identifier that will be assigned automatically.\nIt will be used for situations like Support related interventions or data segmentation.\n"
+              },
+              {
+                "name": "triggerName",
+                "value": "customTrigger1",
+                "type": "query",
+                "description": "This is name of Custom Trigger that should be triggered when this API is called."
+              },
+              {
+                "name": "debtorReference",
+                "value": "",
+                "type": "query",
+                "description": "Identifier of the debtor"
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "Authorization",
+              "value": "{{Authorization}}",
+              "placement": "header"
+            }
+          },
+          "docs": "The intention of the endpoint is to retrieve information about a debtor's accounts and claims.\n"
+        },
+        {
+          "info": {
+            "name": "Create claims in Receive",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "/v1/:clientId/create_claims",
+            "headers": [
+              {
+                "name": "Authorization",
+                "value": "Bearer <access_token>"
+              }
+            ],
+            "params": [
+              {
+                "name": "clientId",
+                "value": "ec702157-705b-42a0-b70e-a60a63dd24ab",
+                "type": "path",
+                "description": "A Receive system identifier that will be assigned automatically.\nIt will be used for situations like Support related interventions or data segmentation.\n"
+              },
+              {
+                "name": "triggerName",
+                "value": "customTrigger1",
+                "type": "query",
+                "description": "This is name of Custom Trigger that should be triggered when this API is called."
+              },
+              {
+                "name": "sequential",
+                "value": "",
+                "type": "query",
+                "description": "The request body items are executed one after another one"
+              },
+              {
+                "name": "async",
+                "value": "",
+                "type": "query",
+                "description": "The request is added to the queue without expecting the response"
+              },
+              {
+                "name": "minorVersion",
+                "value": "",
+                "type": "query",
+                "description": "Optional minor version identifier for message versioning. This value is passed as additional metadata with emitted messages."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "apikey",
+              "key": "Authorization",
+              "value": "{{Authorization}}",
+              "placement": "header"
+            }
+          },
+          "docs": "The intetion of this endpoint is to create Claims in Receive.\nNotes:\n- This endpoint throws an error if the Claim already exists (even if it was deleted).\n- The claims created with this endpoint are not managed by the Ledger.\nFor more details about the Claim, and the relationship with the other entities please visit the [Account](https://docs.indebted.co/docs/receive/integration/account-claims) page.\n"
+        },
+        {
+          "info": {
+            "name": "Recreate claims in Receive, applicable for already deleted claims.",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "/v1/:clientId/recreate_claims",
+            "headers": [
+              {
+                "name": "Authorization",
+                "value": "Bearer <access_token>"
+              }
+            ],
+            "params": [
+              {
+                "name": "clientId",
+                "value": "ec702157-705b-42a0-b70e-a60a63dd24ab",
+                "type": "path",
+                "description": "A Receive system identifier that will be assigned automatically.\nIt will be used for situations like Support related interventions or data segmentation.\n"
+              },
+              {
+                "name": "triggerName",
+                "value": "customTrigger1",
+                "type": "query",
+                "description": "This is name of Custom Trigger that should be triggered when this API is called."
+              },
+              {
+                "name": "sequential",
+                "value": "",
+                "type": "query",
+                "description": "The request body items are executed one after another one"
+              },
+              {
+                "name": "async",
+                "value": "",
+                "type": "query",
+                "description": "The request is added to the queue without expecting the response"
+              },
+              {
+                "name": "minorVersion",
+                "value": "",
+                "type": "query",
+                "description": "Optional minor version identifier for message versioning. This value is passed as additional metadata with emitted messages."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "apikey",
+              "key": "Authorization",
+              "value": "{{Authorization}}",
+              "placement": "header"
+            }
+          },
+          "docs": "The intetion of this endpoint is to recreate Claims in Receive.\nNotes:\n- This endpoint throws an error if the Claim is not deleted.\n- The claims created with this endpoint are not managed by the Ledger.\n- Recreating the claim will restart the claim lifecycle and the other related entities, this is specially important for the Collections Strategy, that will start from the beginning.\nFor more details about the Claim, and the relationship with the other entities please visit the [Account](https://d"
+        },
+        {
+          "info": {
+            "name": "Update claims in the platform",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "/v1/:clientId/update_claims",
+            "headers": [
+              {
+                "name": "Authorization",
+                "value": "Bearer <access_token>"
+              }
+            ],
+            "params": [
+              {
+                "name": "clientId",
+                "value": "ec702157-705b-42a0-b70e-a60a63dd24ab",
+                "type": "path",
+                "description": "A Receive system identifier that will be assigned automatically.\nIt will be used for situations like Support related interventions or data segmentation.\n"
+              },
+              {
+                "name": "triggerName",
+                "value": "customTrigger1",
+                "type": "query",
+                "description": "This is name of Custom Trigger that should be triggered when this API is called."
+              },
+              {
+                "name": "sequential",
+                "value": "",
+                "type": "query",
+                "description": "The request body items are executed one after another one"
+              },
+              {
+                "name": "async",
+                "value": "",
+                "type": "query",
+                "description": "The request is added to the queue without expecting the response"
+              },
+              {
+                "name": "minorVersion",
+                "value": "",
+                "type": "query",
+                "description": "Optional minor version identifier for message versioning. This value is passed as additional metadata with emitted messages."
+              },
+              {
+                "name": "forceAmountCheck",
+                "value": "",
+                "type": "query",
+                "description": "The force claim status update when amount is updated"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "apikey",
+              "key": "Authorization",
+              "value": "{{Authorization}}",
+              "placement": "header"
+            }
+          },
+          "docs": "The intetion of this endpoint is to update existing Claims in Receive.\nNotes:\n- This endpoint throws an error if the Claim does not exist.\n- The claims updated with this endpoint are not managed by the Ledger. To update Claims related with the Ledger, use the Ledger related API endpoints.\n- The payload is identical to other Claim related endpoints (like create_claims) but it can receive partial information, only the fields that are updated will be changed.\nFor more details about the Claim, and t"
+        },
+        {
+          "info": {
+            "name": "Insert or Update Claims in the platform",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "/v1/:clientId/import_claims",
+            "headers": [
+              {
+                "name": "Authorization",
+                "value": "Bearer <access_token>"
+              }
+            ],
+            "params": [
+              {
+                "name": "clientId",
+                "value": "ec702157-705b-42a0-b70e-a60a63dd24ab",
+                "type": "path",
+                "description": "A Receive system identifier that will be assigned automatically.\nIt will be used for situations like Support related interventions or data segmentation.\n"
+              },
+              {
+                "name": "triggerName",
+                "value": "customTrigger1",
+                "type": "query",
+                "description": "This is name of Custom Trigger that should be triggered when this API is called."
+              },
+              {
+                "name": "sequential",
+                "value": "",
+                "type": "query",
+                "description": "The request body items are executed one after another one"
+              },
+              {
+                "name": "async",
+                "value": "",
+                "type": "query",
+                "description": "The request is added to the queue without expecting the response"
+              },
+              {
+                "name": "minorVersion",
+                "value": "",
+                "type": "query",
+                "description": "Optional minor version identifier for message versioning. This value is passed as additional metadata with emitted messages."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "apikey",
+              "key": "Authorization",
+              "value": "{{Authorization}}",
+              "placement": "header"
+            }
+          },
+          "docs": "The intetion of this endpoint is to create/update Claims in Receive.\nIt will create a new Claim if the Claim does not exist, or update the existing Claim if it already exists (abstraction over the create_claims and update_claims endpoints).\nNotes:\n- The claims updated with this endpoint are not managed by the Ledger. To update Claims related with the Ledger, use the Ledger related API endpoints.\n- Notice that the payload is identical to other Claim related endpoints (like create_claims), and it "
+        },
+        {
+          "info": {
+            "name": "Resolves Claims with a reason",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "/v1/:clientId/resolve_claims",
+            "headers": [
+              {
+                "name": "Authorization",
+                "value": "Bearer <access_token>"
+              }
+            ],
+            "params": [
+              {
+                "name": "clientId",
+                "value": "ec702157-705b-42a0-b70e-a60a63dd24ab",
+                "type": "path",
+                "description": "A Receive system identifier that will be assigned automatically.\nIt will be used for situations like Support related interventions or data segmentation.\n"
+              },
+              {
+                "name": "triggerName",
+                "value": "customTrigger1",
+                "type": "query",
+                "description": "This is name of Custom Trigger that should be triggered when this API is called."
+              },
+              {
+                "name": "sequential",
+                "value": "",
+                "type": "query",
+                "description": "The request body items are executed one after another one"
+              },
+              {
+                "name": "async",
+                "value": "",
+                "type": "query",
+                "description": "The request is added to the queue without expecting the response"
+              },
+              {
+                "name": "minorVersion",
+                "value": "",
+                "type": "query",
+                "description": "Optional minor version identifier for message versioning. This value is passed as additional metadata with emitted messages."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "apikey",
+              "key": "Authorization",
+              "value": "{{Authorization}}",
+              "placement": "header"
+            }
+          },
+          "docs": "The intetion of this endpoint is to resolve active Claims in Receive.\nNotes:\n- The claim state will change to resolved, but it will not affect other properties of the claim like the amount, due date, etc.\n- To resolve the claim and update the amount to zero, please use the update_claims endpoint with the reason CLAIM_PAID as described in the Integration Documentation.\nFor more details about the Claim, and the relationship with the other entities please visit the [Account](https://docs.indebted.c"
+        },
+        {
+          "info": {
+            "name": "Credit claims",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "/v1/:clientId/credit_claims",
+            "headers": [
+              {
+                "name": "Authorization",
+                "value": "Bearer <access_token>"
+              }
+            ],
+            "params": [
+              {
+                "name": "clientId",
+                "value": "ec702157-705b-42a0-b70e-a60a63dd24ab",
+                "type": "path",
+                "description": "A Receive system identifier that will be assigned automatically.\nIt will be used for situations like Support related interventions or data segmentation.\n"
+              },
+              {
+                "name": "triggerName",
+                "value": "customTrigger1",
+                "type": "query",
+                "description": "This is name of Custom Trigger that should be triggered when this API is called."
+              },
+              {
+                "name": "sequential",
+                "value": "",
+                "type": "query",
+                "description": "The request body items are executed one after another one"
+              },
+              {
+                "name": "async",
+                "value": "",
+                "type": "query",
+                "description": "The request is added to the queue without expecting the response"
+              },
+              {
+                "name": "minorVersion",
+                "value": "",
+                "type": "query",
+                "description": "Optional minor version identifier for message versioning. This value is passed as additional metadata with emitted messages."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "apikey",
+              "key": "Authorization",
+              "value": "{{Authorization}}",
+              "placement": "header"
+            }
+          },
+          "docs": "The intention of this endpoint is to credit claims in Receive.\nNotes:\n  - Crediting the claim will decrease the amount of the claim.\n  - If the claim amount is zero, the claim will be resolved.\n  - When you provide fees as a number, it will reduce totalFees of the claim\n  - When you provide fees as an array, we check\n    - if a fee with same name already exists for the claim, if so, we substract incoming fee amount from existing fee amount and subtract fee.amount from totalFees of the claim\n    "
+        },
+        {
+          "info": {
+            "name": "Debit claims",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "/v1/:clientId/debit_claims",
+            "headers": [
+              {
+                "name": "Authorization",
+                "value": "Bearer <access_token>"
+              }
+            ],
+            "params": [
+              {
+                "name": "clientId",
+                "value": "ec702157-705b-42a0-b70e-a60a63dd24ab",
+                "type": "path",
+                "description": "A Receive system identifier that will be assigned automatically.\nIt will be used for situations like Support related interventions or data segmentation.\n"
+              },
+              {
+                "name": "triggerName",
+                "value": "customTrigger1",
+                "type": "query",
+                "description": "This is name of Custom Trigger that should be triggered when this API is called."
+              },
+              {
+                "name": "sequential",
+                "value": "",
+                "type": "query",
+                "description": "The request body items are executed one after another one"
+              },
+              {
+                "name": "async",
+                "value": "",
+                "type": "query",
+                "description": "The request is added to the queue without expecting the response"
+              },
+              {
+                "name": "minorVersion",
+                "value": "",
+                "type": "query",
+                "description": "Optional minor version identifier for message versioning. This value is passed as additional metadata with emitted messages."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "apikey",
+              "key": "Authorization",
+              "value": "{{Authorization}}",
+              "placement": "header"
+            }
+          },
+          "docs": "The intention of this endpoint is to debit claims in Receive.\nNotes:\n  - Debiting the claim will increase the amount and/or totalFees of the claim.\n  - When you provide fees as a number, it will be added to the totalFees of the claim\n  - When you provide fees as an array, we check\n    - if a fee with same name already exists for the claim, if so, we add incoming fee amount to existing fee amount and add fee.amount to totalFees of the claim\n    - if a fee with same name does not exist, we create "
+        },
+        {
+          "info": {
+            "name": "Set link claims",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "/v1/:clientId/set_link_claims",
+            "headers": [
+              {
+                "name": "Authorization",
+                "value": "Bearer <access_token>"
+              }
+            ],
+            "params": [
+              {
+                "name": "clientId",
+                "value": "ec702157-705b-42a0-b70e-a60a63dd24ab",
+                "type": "path",
+                "description": "A Receive system identifier that will be assigned automatically.\nIt will be used for situations like Support related interventions or data segmentation.\n"
+              },
+              {
+                "name": "triggerName",
+                "value": "customTrigger1",
+                "type": "query",
+                "description": "This is name of Custom Trigger that should be triggered when this API is called."
+              },
+              {
+                "name": "async",
+                "value": "",
+                "type": "query",
+                "description": "The request is added to the queue without expecting the response"
+              },
+              {
+                "name": "minorVersion",
+                "value": "",
+                "type": "query",
+                "description": "Optional minor version identifier for message versioning. This value is passed as additional metadata with emitted messages."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "apikey",
+              "key": "Authorization",
+              "value": "{{Authorization}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Links claims into a shared-liability group or breaks existing links.\n\n**What linking does:** Claims in the same link group become synced mirrors of the same underlying debt. Whenever any claim in the group is updated, the platform overwrites the `amount`, `totalFees`, and `fees` fields on every other claim in the group via `cmd.linkedClaims.sync`. This means all linked claims always reflect the same balance.\n\n**Intended use case — shared liability only:** Use linking when multiple accounts (e.g."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}
