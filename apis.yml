@@ -42,6 +42,17 @@ tags:
 - Debt Collection
 - Receivables Management
 - Debt Servicing
+- Collection
+- Fintech
+- Payments
+- Webhook
+- Financial-Services
+- Dunning
+tags_raw:
+- Company
+- Debt Collection
+- Receivables Management
+- Debt Servicing
 - Collections
 - Fintech
 - Payments
@@ -184,6 +195,8 @@ apis:
   humanURL: https://api.receeve.com/api-reference
   baseURL: https://api.receive-demo.com
   tags:
+  - File
+  tags_raw:
   - Files
   properties:
   - type: OpenAPI
@@ -264,6 +277,8 @@ apis:
   humanURL: https://api.receeve.com/api-reference
   baseURL: https://api.receive-demo.com
   tags:
+  - Landing Page
+  tags_raw:
   - LandingPage
   properties:
   - type: OpenAPI
