@@ -1,0 +1,67 @@
+slug: receeve
+provider: Receeve
+generated_by: planning/capability-mapping/scripts/classify_capabilities.py
+model: claude-opus-5
+frame:
+- Banking & Capital Markets
+min_confidence: 0.7
+capability_model:
+  source: https://github.com/vincentmakes/turbo-ea-capabilities
+  license: CC-BY-4.0
+  attribution: Turbo EA Capabilities by Vincent Verdet — Turbo EA, https://github.com/vincentmakes/turbo-ea-capabilities,
+    CC BY 4.0
+  notice: NOTICE
+edge_count: 5
+edges:
+- tag: PromiseToPay
+  spec_file: receeve-promisetopay-api-openapi.yml
+  capability_id: BC-1320.40
+  capability_id_l1: BC-1320
+  capability_name: Collections & Recoveries Management
+  confidence: 0.85
+  evidence: createPromisesToPay  Create promises to pay, a Promise to Pay enables a debt to be paid partially
+    by a certain minimum amount and by a particular due date
+  reason: Promise-to-pay arrangements are a core collections/recoveries instrument on a debt servicing
+    platform; the operation summary states it explicitly.
+- tag: Claim
+  spec_file: receeve-claim-api-openapi.yml
+  capability_id: BC-1320.40
+  capability_id_l1: BC-1320
+  capability_name: Collections & Recoveries Management
+  confidence: 0.82
+  evidence: POST /v1/{clientId}/resolve_claims 'Resolves Claims with a reason'; 'Credit claims'; 'Debit
+    claims'; schemas Claim, ClaimResolutionReason, Repayment, Debtor, PortfolioReference
+  reason: Claims are the individual outstanding debts imported and worked in the collections lifecycle
+    — create, update, credit/debit and resolution of debt items is recoveries/collections operations.
+- tag: Account
+  spec_file: receeve-account-api-openapi.yml
+  capability_id: BC-1320.40
+  capability_id_l1: BC-1320
+  capability_name: Collections & Recoveries Management
+  confidence: 0.8
+  evidence: POST /v1/{clientId}/create_accounts 'Create Accounts in Receive'; 'Add account ledger entries';
+    'Add Account Debtors'; 'Allocate a payment across an account's claims'; schemas Debtor, Claim, AccountScore
+  reason: Accounts here are debt portfolios in a debt-collection/servicing platform, carrying debtors,
+    claims, ledger entries and payment allocation — collections and recoveries operations, not general
+    deposit accounts.
+- tag: Finance Instalments V2
+  spec_file: receeve-finance-instalments-v2-api-openapi.yml
+  capability_id: BC-1320.40
+  capability_id_l1: BC-1320
+  capability_name: Collections & Recoveries Management
+  confidence: 0.8
+  evidence: POST /finance/v1/{clientId}/create_instalment_plan  Create Instalment Plan; schemas InstalmentPlanV2,
+    InstalmentTransactionV2 on a "debt servicing platform"
+  reason: Instalment plan definition, computation and creation for outstanding debt on a collections platform
+    — repayment arrangement/restructuring, i.e. collections & recoveries. Not lending origination or servicing
+    of a performing loan.
+- tag: Finance Settlements
+  spec_file: receeve-finance-settlements-api-openapi.yml
+  capability_id: BC-1320.40
+  capability_id_l1: BC-1320
+  capability_name: Collections & Recoveries Management
+  confidence: 0.78
+  evidence: POST /finance/v1/{clientId}/apply_settlement  Apply a DIRECT Settlement; schema SettlementDiscount
+  reason: Settlement here is a discounted debt payoff arrangement in a collections platform (SettlementDiscount,
+    withdraw settlement), not securities settlement — collections/recoveries workout. Homograph guarded
+    against BC-1380.30.

@@ -365,6 +365,9 @@ apis:
   - type: Webhooks
     url: asyncapi/receeve-webhooks-asyncapi.yml
 common:
+- type: CapabilityMap
+  url: capabilities/receeve-capability-edges.yml
+  name: Receeve Business Capability Map
 - type: DomainSecurity
   url: security/receeve-domain-security.yml
 - type: AgenticAccess
