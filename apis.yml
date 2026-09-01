@@ -288,7 +288,7 @@ apis:
   humanURL: https://api.receeve.com/api-reference
   baseURL: https://api.receive-demo.com
   tags:
-  - LandingPage
+  - Landing Page
   tags_raw:
   - LandingPage
   properties:
