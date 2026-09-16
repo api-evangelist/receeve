@@ -1,18 +1,14 @@
 aid: receeve
 name: Receeve
-description: >-
-  Receeve is a no-code debt collection and receivables management SaaS platform,
-  founded in Hamburg, Germany and backed by Speedinvest. It was acquired by
-  InDebted and now operates as the "Receive" product — a debt servicing platform
-  that lets creditors, banks, lenders, utilities and collection agencies
-  automate the full collections lifecycle: importing accounts and claims,
-  running configurable dunning strategies and journeys, sending multi-channel
-  communications (email, SMS, letters, calls), generating hosted debtor landing
-  pages, and reconciling payments, promises-to-pay, instalment plans and
-  settlements. The Receive Client API is an OpenAPI 3.0 REST API secured with
-  OAuth2 client-credentials (Bearer tokens) and emits an extensive catalog of
-  signed webhooks for account, claim, communication, finance, landing-page and
-  strategy events.
+description: 'Receeve is a no-code debt collection and receivables management SaaS platform, founded in
+  Hamburg, Germany and backed by Speedinvest. It was acquired by InDebted and now operates as the "Receive"
+  product — a debt servicing platform that lets creditors, banks, lenders, utilities and collection agencies
+  automate the full collections lifecycle: importing accounts and claims, running configurable dunning
+  strategies and journeys, sending multi-channel communications (email, SMS, letters, calls), generating
+  hosted debtor landing pages, and reconciling payments, promises-to-pay, instalment plans and settlements.
+  The Receive Client API is an OpenAPI 3.0 REST API secured with OAuth2 client-credentials (Bearer tokens)
+  and emits an extensive catalog of signed webhooks for account, claim, communication, finance, landing-page
+  and strategy events.'
 url: https://raw.githubusercontent.com/api-evangelist/receeve/refs/heads/main/apis.yml
 x-type: company
 x-source: vc-portfolio
@@ -46,7 +42,7 @@ accessModel:
   method: derived
 specificationVersion: '0.23'
 created: '2026-07-17'
-modified: '2026-07-21'
+modified: '2026-09-16'
 image: https://www.indebted.co/favicon.ico
 tags:
 - Company
@@ -78,9 +74,8 @@ maintainers:
 apis:
 - aid: receeve:receeve-account-api
   name: Receeve Account API
-  description: >-
-    A formal business arrangement providing for regular dealings or services (such as banking, advertising,
-    or store credit) and involving the establishment and maintenance of an account
+  description: A formal business arrangement providing for regular dealings or services (such as banking,
+    advertising, or store credit) and involving the establishment and maintenance of an account
   humanURL: https://api.receeve.com/api-reference
   baseURL: https://api.receive-demo.com
   tags:
@@ -120,9 +115,8 @@ apis:
     url: asyncapi/receeve-webhooks-asyncapi.yml
 - aid: receeve:receeve-claim-api
   name: Receeve Claim API
-  description: >-
-    A claim is an outstanding payment that is owed. You can always update this balance if multiple payments
-    are missed and you want to aggregate the amounts.
+  description: A claim is an outstanding payment that is owed. You can always update this balance if multiple
+    payments are missed and you want to aggregate the amounts.
   humanURL: https://api.receeve.com/api-reference
   baseURL: https://api.receive-demo.com
   tags:
@@ -365,6 +359,8 @@ apis:
   - type: Webhooks
     url: asyncapi/receeve-webhooks-asyncapi.yml
 common:
+- type: Website
+  url: https://receeve.com
 - type: CapabilityMap
   url: capabilities/receeve-capability-edges.yml
   name: Receeve Business Capability Map
@@ -390,7 +386,10 @@ common:
   url: asyncapi/receeve-webhooks-asyncapi.yml
 - type: X-MCPServerCandidate
   url: mcp/receeve-mcp.yml
-  note: 'Renamed from MCPServer 2026-09-03 (roadmap#247): the manifest self-describes as status: candidate — a tool list derived from the published API contracts, not an existing server. The scorer already read the manifest and reported mcp_server correctly; the MCPServer type was crediting the artifact-type surfaces with a server that does not exist.'
+  note: 'Renamed from MCPServer 2026-09-03 (roadmap#247): the manifest self-describes as status: candidate
+    — a tool list derived from the published API contracts, not an existing server. The scorer already
+    read the manifest and reported mcp_server correctly; the MCPServer type was crediting the artifact-type
+    surfaces with a server that does not exist.'
 - type: LLMsTxt
   url: llms/receeve-llms.txt
 - type: Overlay
