@@ -344,6 +344,8 @@ apis:
   humanURL: https://api.receeve.com/api-reference
   baseURL: https://api.receive-demo.com
   tags:
+  - Landing Pages
+  tags_raw:
   - Landing Page
   properties:
   - type: OpenAPI
