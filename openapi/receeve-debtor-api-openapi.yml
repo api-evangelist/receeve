@@ -1,10 +1,10 @@
-openapi: 3.0.3
+openapi: 3.2.0
 info:
-  title: InDebted Receive API Documentation Account Debtor API
-  description: 'This is the API definition for interacting with InDebted''s Receive debt servicing platform. For more details please visit the [Integration Documentation](https://docs.indebted.co/docs/receive/receive-knowledge-base).
+  title: InDebted Receive API Documentation Debtor API
+  description: 'This is the API definition for interacting with InDebted''s Receive debt servicing platform. For more details please visit the Integration Documentation.
 
 
-    **Using this spec in code generators, Postman, or other tooling?** Fetch the raw document at [https://receive-api.indebted.co/openapi/apiSchema.yaml](https://receive-api.indebted.co/openapi/apiSchema.yaml) — that is the canonical OpenAPI file. Prefer it over the in-page download button, which re-serialises the document and can alter value types (e.g. date-formatted strings).'
+    **Using this spec in code generators, Postman, or other tooling?** Fetch the raw document at https://receive-api.indebted.co/openapi/apiSchema.yaml — that is the canonical OpenAPI file. Prefer it over the in-page download button, which re-serialises the document and can alter value types (e.g. date-formatted strings).'
   contact:
     email: techteam@indebted.co
   version: 1.53.1
@@ -19,9 +19,7 @@ paths:
       tags:
       - Debtor
       summary: It retrieves information about a debtor's accounts and claims
-      description: 'The intention of the endpoint is to retrieve information about a debtor''s accounts and claims.
-
-        '
+      description: The intention of the endpoint is to retrieve information about a debtor's accounts and claims.
       operationId: getDebtorAccountsAndClaims
       parameters:
       - $ref: '#/components/parameters/ClientIdParameter'
@@ -50,6 +48,123 @@ paths:
       - api_key: []
 components:
   schemas:
+    BaseClaim:
+      type: object
+      description: A claim is an outstanding payment that is owed. You can always update this balance if multiple payments are missed and you want to aggregate the amounts.
+      minProperties: 1
+      properties:
+        amount:
+          $ref: '#/components/schemas/Amount'
+        currency:
+          $ref: '#/components/schemas/Currency'
+        product:
+          $ref: '#/components/schemas/Product'
+        portfolioReference:
+          $ref: '#/components/schemas/PortfolioReference'
+        productReference:
+          $ref: '#/components/schemas/ProductReference'
+        creditorReference:
+          type: string
+          minLength: 1
+          description: Reference of the person/company to whom money is owed
+        totalFees:
+          $ref: '#/components/schemas/Amount'
+        currentDueDate:
+          $ref: '#/components/schemas/DueDate'
+        originalDueDate:
+          $ref: '#/components/schemas/OriginalDueDate'
+        scores:
+          type: array
+          description: List of scores
+          items:
+            $ref: '#/components/schemas/ClaimScore'
+        reason:
+          type: string
+          minLength: 1
+          deprecated: true
+          description: Reason for updating a claim (the reason must not be part of the Entity)
+        paymentReference:
+          $ref: '#/components/schemas/PaymentReference'
+        accountNumber:
+          allOf:
+          - $ref: '#/components/schemas/AccountReference'
+          - minLength: 1
+            deprecated: true
+            description: Account number in your system (DEPRECATED, use accountReference)
+        accountReference:
+          $ref: '#/components/schemas/AccountReference'
+        meta:
+          $ref: '#/components/schemas/Metadata'
+        fees:
+          type: array
+          description: List of fees. If neither fees nor totalFees are provided - we treat totalFees as 0. Using this field overwrites the totalFees value if you provided it as well.
+          items:
+            $ref: '#/components/schemas/Fee'
+        linkGroupId:
+          description: 'Shared-liability group identifier. Claims sharing a linkGroupId are synced mirrors of the same underlying debt: whenever one claim in the group is updated via cmd.linkedClaims.sync, the fields amount, totalFees, and fees are overwritten on every other claim in the group. Use this field only for shared-liability scenarios (e.g. co-debtors or guarantors each holding a separate account for the same debt). Do NOT use it to group related-but-independent claims such as instalments of a single purchase — doing so would cause every instalment''s amount to overwrite the others''.
+
+            '
+          type:
+          - string
+          - 'null'
+          format: uuid
+        origination:
+          $ref: '#/components/schemas/ClaimOrigination'
+        repaymentsHistory:
+          type: array
+          description: Pre-sale payment history for the claim
+          items:
+            $ref: '#/components/schemas/Repayment'
+        relatedClaims:
+          type: array
+          description: Typed relations from this claim to other claims. Lineage metadata only — the platform does not act on it. Use it to keep consolidation history queryable, e.g. an accelerated claim declaring which instalment claims it replaces.
+          items:
+            $ref: '#/components/schemas/RelatedClaim'
+        primaryDebtor:
+          $ref: '#/components/schemas/BaseDebtor'
+    Claim:
+      allOf:
+      - $ref: '#/components/schemas/BaseClaim'
+      - type: object
+        required:
+        - currency
+        - primaryDebtor
+        - accountReference
+        - originalDueDate
+        - currentDueDate
+        - amount
+        properties:
+          primaryDebtor:
+            $ref: '#/components/schemas/Debtor'
+    Debtor:
+      description: 'The Debtor is the entity that owes the money. It can be a person (natural) or a company (legal).
+
+        Notes:
+
+        - If the debtor is a person (natural), then firstName and lastName are required.
+
+        - If the debtor is a company (legal), then companyName is required.
+
+        '
+      allOf:
+      - $ref: '#/components/schemas/BaseDebtor'
+      - type: object
+        required:
+        - debtorReference
+        - contactInformation
+        properties:
+          contactInformation:
+            $ref: '#/components/schemas/ContactInformation'
+    Currency:
+      type: string
+      example: EUR
+      pattern: ^[A-Z]{3}$
+      description: 3-digit currency code (ISO 4217)
+    OriginalDueDate:
+      type: string
+      format: date
+      example: '2019-06-28'
+      description: Original due date in your system. This is the day when it went past due. DPD 0.
     ClaimScore:
       type: object
       description: An Claim Score is a score that is calculated for a specific claim.
@@ -66,7 +181,6 @@ components:
           - COLLECTION
           - BEHAVIORAL
         value:
-          nullable: true
           oneOf:
           - type: string
             example: risky
@@ -75,6 +189,233 @@ components:
             description: composed value
         meta:
           $ref: '#/components/schemas/Metadata'
+    PortfolioReference:
+      type: string
+      minLength: 1
+      example: EXTERNAL_PORTFOLIO_REFERENCE_002
+      description: This is a optional grouping field for reporting purposes.
+    Repayment:
+      type: object
+      description: A repayment entry in the pre-sale payment history of a claim
+      required:
+      - amount
+      properties:
+        amount:
+          $ref: '#/components/schemas/Amount'
+        date:
+          type:
+          - string
+          - 'null'
+          format: date
+          description: Date of that repayment
+          example: '2019-06-28'
+        dueDate:
+          type: string
+          format: date
+          description: Due date of that repayment
+          example: '2019-06-28'
+        outstandingAmount:
+          allOf:
+          - $ref: '#/components/schemas/Amount'
+          description: Outstanding amount after the repayment in cents
+        meta:
+          $ref: '#/components/schemas/Metadata'
+    ContactInformation:
+      description: 'Contact information of the debtor, used for communication purposes.
+
+        '
+      allOf:
+      - $ref: '#/components/schemas/BaseContactInformation'
+      - type: object
+        required:
+        - country
+    BaseDebtor:
+      type: object
+      properties:
+        birthday:
+          type: string
+          format: date
+          example: '1980-06-28'
+          description: Birthday of the debtor
+        gender:
+          type: string
+          example: M
+          pattern: ^(M|F)$
+          description: Gender of the debtor
+        firstName:
+          type: string
+          example: John
+          minLength: 1
+          description: First name of the debtor (required if type is 'natural')
+        lastName:
+          type: string
+          example: White
+          minLength: 1
+          description: Last name of the debtor (required if type is 'natural')
+        middleName:
+          type: string
+          example: Benedict
+          minLength: 1
+          description: Middle name of the debtor
+        title:
+          type: string
+          minLength: 1
+          example: Doctor
+          description: Title of the debtor
+        companyName:
+          type: string
+          minLength: 1
+          example: Acme Brick Co.
+          description: Company Name of the debtor (required if type is 'legal')
+        debtorReference:
+          $ref: '#/components/schemas/DebtorReference'
+        SSN:
+          type: string
+          example: AAA-GG-SSSS
+          description: National Identification Number of the debtor
+        type:
+          type: string
+          example: natural
+          enum:
+          - natural
+          - legal
+          description: 'Type of the debtor (default: natural)'
+        contactInformation:
+          $ref: '#/components/schemas/BaseContactInformation'
+    PaymentReference:
+      type: string
+      minLength: 1
+      example: paymentReference1
+      description: 'Payment reference used in online transactions.
+
+        It is a text reference that can be used to map the money transactions to other external systems.
+
+        '
+    DebtorReference:
+      type: string
+      minLength: 1
+      example: EXTERNAL_DEBTOR_REF_002
+      description: Your customer ID for this person or company
+    ClaimOrigination:
+      type: object
+      description: The product/service context and origin of the claim
+      required:
+      - type
+      - name
+      properties:
+        type:
+          type: string
+          enum:
+          - product
+          - service
+          description: Whether the claim originates from a product or a service
+        name:
+          type: string
+          minLength: 1
+          description: Name of the product/service
+          example: Loan
+        brand:
+          type: string
+          minLength: 1
+          description: Brand of the product
+          example: CreditLimit
+        code:
+          type: string
+          minLength: 1
+          description: External code/identifier of the product
+          example: CL
+    AccountReference:
+      type: string
+      minLength: 1
+      example: ACCOUNT_REFERENCE_002
+      description: Account reference in your system
+    Fee:
+      type: object
+      description: Additional expected payment amount.
+      required:
+      - name
+      - amount
+      properties:
+        name:
+          type: string
+          minLength: 1
+          description: 'Fee bucket name. `debit_claims` and `credit_claims` merge fees by exact name: the same name adjusts the existing bucket, on debit an unknown name creates a new bucket, and on credit an unknown name is silently ignored. Renaming a bucket mid-lifecycle fragments its history. Recommended canonical names: `interest`, `defaultInterest`, `lateFee`, `dunningFee`, `collectionCosts`, `repossessionCosts`. Any non-empty string is accepted.'
+          example: interest
+        amount:
+          $ref: '#/components/schemas/Amount'
+    DueDate:
+      type: string
+      format: date
+      example: '2019-06-28'
+      description: Current due date in your system. Use originalDueDate unless you purchased the debt and need this distinction.
+    Product:
+      type: object
+      description: A product is a service or item used to give context to the Claim or Ledger Entry
+      required:
+      - productReference
+      properties:
+        productReference:
+          $ref: '#/components/schemas/ProductReference'
+        paymentReference:
+          $ref: '#/components/schemas/PaymentReference'
+        type:
+          type: string
+          minLength: 1
+          example: Computer
+          description: Type of product
+        name:
+          type: string
+          minLength: 1
+          example: Macbook Pro
+          description: Product name
+        code:
+          type: string
+          minLength: 1
+          example: 111-22222-3333
+          description: Product code
+        meta:
+          $ref: '#/components/schemas/Metadata'
+    DebtorAccountsAndClaims:
+      type: array
+      items:
+        type: object
+        allOf:
+        - type: object
+          required:
+          - currency
+          - accountReference
+          properties:
+            accountReference:
+              $ref: '#/components/schemas/AccountReference'
+            meta:
+              $ref: '#/components/schemas/Metadata'
+            paymentReference:
+              $ref: '#/components/schemas/PaymentReference'
+            portfolioReference:
+              $ref: '#/components/schemas/PortfolioReference'
+            currency:
+              $ref: '#/components/schemas/Currency'
+        - type: object
+          required:
+          - claims
+          properties:
+            claims:
+              type: array
+              items:
+                $ref: '#/components/schemas/Claim'
+        - type: object
+          required:
+          - debtors
+          properties:
+            debtors:
+              type: array
+              items:
+                $ref: '#/components/schemas/Debtor'
+    Metadata:
+      type: object
+      description: Additional information related to the entity.
+      example:
+        sourceSystem: system1
     RelatedClaim:
       type: object
       description: A typed relation from this claim to another claim (lineage metadata; the platform does not act on it)
@@ -98,6 +439,11 @@ components:
           minLength: 1
           description: Your reference of the related claim
           example: API_CLAIM_REF_INST_001
+    ProductReference:
+      type: string
+      minLength: 1
+      example: PRODUCT_REFERENCE_1
+      description: Identifier for a product in your system. It is used for grouping purposes.
     BaseContactInformation:
       type: object
       properties:
@@ -198,358 +544,11 @@ components:
                   description: Work Phone Number
                   example: 495555555555
                   pattern: ^\+\d{1,3}\d{9,12}$
-    PaymentReference:
-      type: string
-      minLength: 1
-      example: paymentReference1
-      description: 'Payment reference used in online transactions.
-
-        It is a text reference that can be used to map the money transactions to other external systems.
-
-        '
-    ProductReference:
-      type: string
-      minLength: 1
-      example: PRODUCT_REFERENCE_1
-      description: Identifier for a product in your system. It is used for grouping purposes.
-    DueDate:
-      type: string
-      format: date
-      example: '2019-06-28'
-      description: Current due date in your system. Use originalDueDate unless you purchased the debt and need this distinction.
     Amount:
       minimum: 0
       type: integer
       example: 13025
       description: Monetary value in cents (natural nuumber)
-    ClaimOrigination:
-      type: object
-      description: The product/service context and origin of the claim
-      required:
-      - type
-      - name
-      properties:
-        type:
-          type: string
-          enum:
-          - product
-          - service
-          description: Whether the claim originates from a product or a service
-        name:
-          type: string
-          minLength: 1
-          description: Name of the product/service
-          example: Loan
-        brand:
-          type: string
-          minLength: 1
-          description: Brand of the product
-          example: CreditLimit
-        code:
-          type: string
-          minLength: 1
-          description: External code/identifier of the product
-          example: CL
-    BaseDebtor:
-      type: object
-      properties:
-        birthday:
-          type: string
-          format: date
-          example: '1980-06-28'
-          description: Birthday of the debtor
-        gender:
-          type: string
-          example: M
-          pattern: ^(M|F)$
-          description: Gender of the debtor
-        firstName:
-          type: string
-          example: John
-          minLength: 1
-          description: First name of the debtor (required if type is 'natural')
-        lastName:
-          type: string
-          example: White
-          minLength: 1
-          description: Last name of the debtor (required if type is 'natural')
-        middleName:
-          type: string
-          example: Benedict
-          minLength: 1
-          description: Middle name of the debtor
-        title:
-          type: string
-          minLength: 1
-          example: Doctor
-          description: Title of the debtor
-        companyName:
-          type: string
-          minLength: 1
-          example: Acme Brick Co.
-          description: Company Name of the debtor (required if type is 'legal')
-        debtorReference:
-          $ref: '#/components/schemas/DebtorReference'
-        SSN:
-          type: string
-          example: AAA-GG-SSSS
-          description: National Identification Number of the debtor
-        type:
-          type: string
-          example: natural
-          enum:
-          - natural
-          - legal
-          description: 'Type of the debtor (default: natural)'
-        contactInformation:
-          $ref: '#/components/schemas/BaseContactInformation'
-    AccountReference:
-      type: string
-      minLength: 1
-      example: ACCOUNT_REFERENCE_002
-      description: Account reference in your system
-    DebtorReference:
-      type: string
-      minLength: 1
-      example: EXTERNAL_DEBTOR_REF_002
-      description: Your customer ID for this person or company
-    BaseClaim:
-      type: object
-      description: A claim is an outstanding payment that is owed. You can always update this balance if multiple payments are missed and you want to aggregate the amounts.
-      minProperties: 1
-      properties:
-        amount:
-          $ref: '#/components/schemas/Amount'
-        currency:
-          $ref: '#/components/schemas/Currency'
-        product:
-          $ref: '#/components/schemas/Product'
-        portfolioReference:
-          $ref: '#/components/schemas/PortfolioReference'
-        productReference:
-          $ref: '#/components/schemas/ProductReference'
-        creditorReference:
-          type: string
-          minLength: 1
-          description: Reference of the person/company to whom money is owed
-        totalFees:
-          $ref: '#/components/schemas/Amount'
-        currentDueDate:
-          $ref: '#/components/schemas/DueDate'
-        originalDueDate:
-          $ref: '#/components/schemas/OriginalDueDate'
-        scores:
-          type: array
-          description: List of scores
-          items:
-            $ref: '#/components/schemas/ClaimScore'
-        reason:
-          type: string
-          minLength: 1
-          deprecated: true
-          description: Reason for updating a claim (the reason must not be part of the Entity)
-        paymentReference:
-          $ref: '#/components/schemas/PaymentReference'
-        accountNumber:
-          allOf:
-          - $ref: '#/components/schemas/AccountReference'
-          - minLength: 1
-            deprecated: true
-            description: Account number in your system (DEPRECATED, use accountReference)
-        accountReference:
-          $ref: '#/components/schemas/AccountReference'
-        meta:
-          $ref: '#/components/schemas/Metadata'
-        fees:
-          type: array
-          description: List of fees. If neither fees nor totalFees are provided - we treat totalFees as 0. Using this field overwrites the totalFees value if you provided it as well.
-          items:
-            $ref: '#/components/schemas/Fee'
-        linkGroupId:
-          description: 'Shared-liability group identifier. Claims sharing a linkGroupId are synced mirrors of the same underlying debt: whenever one claim in the group is updated via cmd.linkedClaims.sync, the fields amount, totalFees, and fees are overwritten on every other claim in the group. Use this field only for shared-liability scenarios (e.g. co-debtors or guarantors each holding a separate account for the same debt). Do NOT use it to group related-but-independent claims such as instalments of a single purchase — doing so would cause every instalment''s amount to overwrite the others''.
-
-            '
-          type: string
-          format: uuid
-          nullable: true
-        origination:
-          $ref: '#/components/schemas/ClaimOrigination'
-        repaymentsHistory:
-          type: array
-          description: Pre-sale payment history for the claim
-          items:
-            $ref: '#/components/schemas/Repayment'
-        relatedClaims:
-          type: array
-          description: Typed relations from this claim to other claims. Lineage metadata only — the platform does not act on it. Use it to keep consolidation history queryable, e.g. an accelerated claim declaring which instalment claims it replaces.
-          items:
-            $ref: '#/components/schemas/RelatedClaim'
-        primaryDebtor:
-          $ref: '#/components/schemas/BaseDebtor'
-    OriginalDueDate:
-      type: string
-      format: date
-      example: '2019-06-28'
-      description: Original due date in your system. This is the day when it went past due. DPD 0.
-    Debtor:
-      description: 'The Debtor is the entity that owes the money. It can be a person (natural) or a company (legal).
-
-        Notes:
-
-        - If the debtor is a person (natural), then firstName and lastName are required.
-
-        - If the debtor is a company (legal), then companyName is required.
-
-        '
-      allOf:
-      - $ref: '#/components/schemas/BaseDebtor'
-      - type: object
-        required:
-        - debtorReference
-        - contactInformation
-        properties:
-          contactInformation:
-            $ref: '#/components/schemas/ContactInformation'
-    Currency:
-      type: string
-      example: EUR
-      pattern: ^[A-Z]{3}$
-      description: 3-digit currency code (ISO 4217)
-    Repayment:
-      type: object
-      description: A repayment entry in the pre-sale payment history of a claim
-      required:
-      - amount
-      properties:
-        amount:
-          $ref: '#/components/schemas/Amount'
-        date:
-          type: string
-          format: date
-          nullable: true
-          description: Date of that repayment
-          example: '2019-06-28'
-        dueDate:
-          type: string
-          format: date
-          description: Due date of that repayment
-          example: '2019-06-28'
-        outstandingAmount:
-          allOf:
-          - $ref: '#/components/schemas/Amount'
-          description: Outstanding amount after the repayment in cents
-        meta:
-          $ref: '#/components/schemas/Metadata'
-    Metadata:
-      type: object
-      description: Additional information related to the entity.
-      example:
-        sourceSystem: system1
-    Claim:
-      allOf:
-      - $ref: '#/components/schemas/BaseClaim'
-      - type: object
-        required:
-        - currency
-        - primaryDebtor
-        - accountReference
-        - originalDueDate
-        - currentDueDate
-        - amount
-        properties:
-          primaryDebtor:
-            $ref: '#/components/schemas/Debtor'
-    ContactInformation:
-      description: 'Contact information of the debtor, used for communication purposes.
-
-        '
-      allOf:
-      - $ref: '#/components/schemas/BaseContactInformation'
-      - type: object
-        required:
-        - country
-    PortfolioReference:
-      type: string
-      minLength: 1
-      example: EXTERNAL_PORTFOLIO_REFERENCE_002
-      description: This is a optional grouping field for reporting purposes.
-    DebtorAccountsAndClaims:
-      type: array
-      items:
-        type: object
-        allOf:
-        - type: object
-          required:
-          - currency
-          - accountReference
-          properties:
-            accountReference:
-              $ref: '#/components/schemas/AccountReference'
-            meta:
-              $ref: '#/components/schemas/Metadata'
-            paymentReference:
-              $ref: '#/components/schemas/PaymentReference'
-            portfolioReference:
-              $ref: '#/components/schemas/PortfolioReference'
-            currency:
-              $ref: '#/components/schemas/Currency'
-        - type: object
-          required:
-          - claims
-          properties:
-            claims:
-              type: array
-              items:
-                $ref: '#/components/schemas/Claim'
-        - type: object
-          required:
-          - debtors
-          properties:
-            debtors:
-              type: array
-              items:
-                $ref: '#/components/schemas/Debtor'
-    Product:
-      type: object
-      description: A product is a service or item used to give context to the Claim or Ledger Entry
-      required:
-      - productReference
-      properties:
-        productReference:
-          $ref: '#/components/schemas/ProductReference'
-        paymentReference:
-          $ref: '#/components/schemas/PaymentReference'
-        type:
-          type: string
-          minLength: 1
-          example: Computer
-          description: Type of product
-        name:
-          type: string
-          minLength: 1
-          example: Macbook Pro
-          description: Product name
-        code:
-          type: string
-          minLength: 1
-          example: 111-22222-3333
-          description: Product code
-        meta:
-          $ref: '#/components/schemas/Metadata'
-    Fee:
-      type: object
-      description: Additional expected payment amount.
-      required:
-      - name
-      - amount
-      properties:
-        name:
-          type: string
-          minLength: 1
-          description: 'Fee bucket name. `debit_claims` and `credit_claims` merge fees by exact name: the same name adjusts the existing bucket, on debit an unknown name creates a new bucket, and on credit an unknown name is silently ignored. Renaming a bucket mid-lifecycle fragments its history. Recommended canonical names: `interest`, `defaultInterest`, `lateFee`, `dunningFee`, `collectionCosts`, `repossessionCosts`. Any non-empty string is accepted.'
-          example: interest
-        amount:
-          $ref: '#/components/schemas/Amount'
   responses:
     403Forbidden:
       description: Access is denied
@@ -561,8 +560,8 @@ components:
               message:
                 type: string
                 example: Forbidden
-    500InternalError:
-      description: Internal error occured
+    401Unauthorized:
+      description: Unauthorized
       content:
         application/json:
           schema:
@@ -570,7 +569,7 @@ components:
             properties:
               message:
                 type: string
-                example: Internal error
+                example: Unauthorized
     200SuccessGetDebtorAccountsAndClaims:
       description: Request for get_debtor_accounts_and_claims is successful
       content:
@@ -601,26 +600,6 @@ components:
               currency: EUR
               currentDueDate: '2024-05-01'
               fees: []
-    401Unauthorized:
-      description: Unauthorized
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              message:
-                type: string
-                example: Unauthorized
-    400BadRequest:
-      description: Incorrectly formed request
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              message:
-                type: string
-                example: 'Missing required request parameters: [Authorization]'
     429LimitsReached:
       description: Request was throttled
       content:
@@ -631,6 +610,26 @@ components:
               message:
                 type: string
                 example: Too Many Requests
+    400BadRequest:
+      description: Incorrectly formed request
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: 'Missing required request parameters: [Authorization]'
+    500InternalError:
+      description: Internal error occured
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Internal error
   parameters:
     ClientIdParameter:
       name: clientId
@@ -645,6 +644,14 @@ components:
       schema:
         type: string
         format: uuid
+    TriggerNameParameter:
+      name: triggerName
+      in: query
+      required: false
+      description: This is name of Custom Trigger that should be triggered when this API is called.
+      schema:
+        type: string
+      example: customTrigger1
     AuthorizationParameter:
       in: header
       name: Authorization
@@ -657,14 +664,6 @@ components:
       example: Bearer <access_token>
       schema:
         type: string
-    TriggerNameParameter:
-      name: triggerName
-      in: query
-      required: false
-      description: This is name of Custom Trigger that should be triggered when this API is called.
-      schema:
-        type: string
-      example: customTrigger1
   securitySchemes:
     api_key:
       type: apiKey

@@ -1,20 +1,7 @@
 {
   "provider": "receeve",
   "sources": [
-    "receeve-account-api-openapi.yml",
-    "receeve-accountmandate-api-openapi.yml",
-    "receeve-claim-api-openapi.yml",
-    "receeve-customtriggers-api-openapi.yml",
-    "receeve-debtor-api-openapi.yml",
-    "receeve-event-api-openapi.yml",
-    "receeve-files-api-openapi.yml",
-    "receeve-finance-instalments-v2-api-openapi.yml",
-    "receeve-finance-settlements-api-openapi.yml",
-    "receeve-journey-api-openapi.yml",
-    "receeve-landingpage-api-openapi.yml",
-    "receeve-message-api-openapi.yml",
-    "receeve-promisetopay-api-openapi.yml",
-    "receeve-security-api-openapi.yml"
+    "_original/receeve-openapi-original.yml"
   ],
   "outputs": [
     "receeve-account-api-openapi.yml",
@@ -32,9 +19,38 @@
     "receeve-promisetopay-api-openapi.yml",
     "receeve-security-api-openapi.yml"
   ],
-  "archived": [],
+  "archived": [
+    "deleted 1 superseded output(s) from the previous generation"
+  ],
   "errors": [],
   "warnings": [],
-  "notes": [],
-  "skipped": []
+  "notes": [
+    "sourced from openapi/_original/ (1 archived document(s)); previously refined output at the top level was skipped rather than re-split",
+    "receeve-openapi-original.yml: upgraded openapi 3.0.3 -> OpenAPI 3.2.0",
+    "receeve-openapi-original.yml: declared missing tag: AccountMandate",
+    "receeve-openapi-original.yml: declared missing tag: CustomTriggers",
+    "receeve-openapi-original.yml: declared missing tag: Debtor",
+    "receeve-openapi-original.yml: declared missing tag: Files",
+    "receeve-openapi-original.yml: declared missing tag: Finance Instalments V2",
+    "receeve-openapi-original.yml: declared missing tag: Finance Settlements",
+    "receeve-openapi-original.yml: declared missing tag: PromiseToPay",
+    "superseded outputs removed: receeve-landing-page-api-openapi.yml",
+    "apis.yml register: written (+1 apis, 14 total)"
+  ],
+  "skipped": [
+    "receeve-account-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "receeve-accountmandate-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "receeve-claim-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "receeve-customtriggers-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "receeve-debtor-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "receeve-event-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "receeve-files-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "receeve-finance-instalments-v2-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "receeve-finance-settlements-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "receeve-journey-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "receeve-landing-page-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "receeve-message-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "receeve-promisetopay-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "receeve-security-api-openapi.yml: previously refined output, superseded by openapi/_original/"
+  ]
 }

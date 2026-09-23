@@ -1,10 +1,10 @@
-openapi: 3.0.3
+openapi: 3.2.0
 info:
-  title: InDebted Receive API Documentation Account Event API
-  description: 'This is the API definition for interacting with InDebted''s Receive debt servicing platform. For more details please visit the [Integration Documentation](https://docs.indebted.co/docs/receive/receive-knowledge-base).
+  title: InDebted Receive API Documentation Event API
+  description: 'This is the API definition for interacting with InDebted''s Receive debt servicing platform. For more details please visit the Integration Documentation.
 
 
-    **Using this spec in code generators, Postman, or other tooling?** Fetch the raw document at [https://receive-api.indebted.co/openapi/apiSchema.yaml](https://receive-api.indebted.co/openapi/apiSchema.yaml) — that is the canonical OpenAPI file. Prefer it over the in-page download button, which re-serialises the document and can alter value types (e.g. date-formatted strings).'
+    **Using this spec in code generators, Postman, or other tooling?** Fetch the raw document at https://receive-api.indebted.co/openapi/apiSchema.yaml — that is the canonical OpenAPI file. Prefer it over the in-page download button, which re-serialises the document and can alter value types (e.g. date-formatted strings).'
   contact:
     email: techteam@indebted.co
   version: 1.53.1
@@ -19,7 +19,7 @@ paths:
     get:
       tags:
       - Event
-      summary: Get events by event type and timeframe. Paginated.
+      summary: Get events by event type and timeframe. Paginated
       operationId: getEvents
       parameters:
       - $ref: '#/components/parameters/ClientIdParameter'
@@ -71,7 +71,108 @@ paths:
       security:
       - api_key: []
 components:
+  responses:
+    400BadRequest:
+      description: Incorrectly formed request
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: 'Missing required request parameters: [Authorization]'
+    500InternalError:
+      description: Internal error occured
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Internal error
+    403Forbidden:
+      description: Access is denied
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Forbidden
+    401Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
+    429LimitsReached:
+      description: Request was throttled
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Too Many Requests
+    200SuccessGetEvents:
+      description: Request for get_events is successful
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+            - events
+            - limit
+            - page
+            - numberOfPages
+            properties:
+              events:
+                type: array
+                items:
+                  anyOf:
+                  - $ref: '#/components/schemas/ClaimCreatedEvent'
+                  - $ref: '#/components/schemas/ClaimDebtPaymentProcessingEvent'
+              limit:
+                type: integer
+                description: amount of events per current page
+                example: 1000
+              page:
+                type: integer
+                description: current page number
+                example: 1
+              numberOfPages:
+                type: integer
+                description: amount of pages with limit that is given for that request
+                example: 2
+          example:
+            page: 1
+            limit: 1000
+            numberOfPages: 1
+            events:
+            - messageId: a7d67994-14ad-4371-b810-483fa28318dd
+              timestamp: '2024-05-02T08:10:53.504Z'
+              details:
+                messageType: event.claim.created.v1
+                accountReference: ACC-DE-5567
+                claimRef: INV-2024-0042
+                receeveClaimRef: INV-2024-0042
+                amount: 149900
+                currency: EUR
+                dueDate: '2024-05-01'
   schemas:
+    Currency:
+      type: string
+      example: EUR
+      pattern: ^[A-Z]{3}$
+      description: 3-digit currency code (ISO 4217)
     ClaimDebtPaymentProcessingEvent:
       type: object
       required:
@@ -126,6 +227,20 @@ components:
               example: TRACKINGID123
             paymentReference:
               $ref: '#/components/schemas/PaymentReference'
+    DueDate:
+      type: string
+      format: date
+      example: '2019-06-28'
+      description: Current due date in your system. Use originalDueDate unless you purchased the debt and need this distinction.
+    PaymentReference:
+      type: string
+      minLength: 1
+      example: paymentReference1
+      description: 'Payment reference used in online transactions.
+
+        It is a text reference that can be used to map the money transactions to other external systems.
+
+        '
     ClaimCreatedEvent:
       type: object
       required:
@@ -176,26 +291,19 @@ components:
               $ref: '#/components/schemas/Currency'
             dueDate:
               $ref: '#/components/schemas/DueDate'
-    Currency:
-      type: string
-      example: EUR
-      pattern: ^[A-Z]{3}$
-      description: 3-digit currency code (ISO 4217)
-    PaymentReference:
-      type: string
-      minLength: 1
-      example: paymentReference1
-      description: 'Payment reference used in online transactions.
+  parameters:
+    AuthorizationParameter:
+      in: header
+      name: Authorization
+      required: true
+      description: 'OAuth2 Token (obtained from /oauth2/token )
 
-        It is a text reference that can be used to map the money transactions to other external systems.
+        Reference: https://docs.indebted.co/docs/receive/integration/use-cases/authentication-use-case
 
         '
-    DueDate:
-      type: string
-      format: date
-      example: '2019-06-28'
-      description: Current due date in your system. Use originalDueDate unless you purchased the debt and need this distinction.
-  parameters:
+      example: Bearer <access_token>
+      schema:
+        type: string
     ClientIdParameter:
       name: clientId
       in: path
@@ -209,114 +317,6 @@ components:
       schema:
         type: string
         format: uuid
-    AuthorizationParameter:
-      in: header
-      name: Authorization
-      required: true
-      description: 'OAuth2 Token (obtained from /oauth2/token )
-
-        Reference: https://docs.indebted.co/docs/receive/integration/use-cases/authentication-use-case
-
-        '
-      example: Bearer <access_token>
-      schema:
-        type: string
-  responses:
-    200SuccessGetEvents:
-      description: Request for get_events is successful
-      content:
-        application/json:
-          schema:
-            type: object
-            required:
-            - events
-            - limit
-            - page
-            - numberOfPages
-            properties:
-              events:
-                type: array
-                items:
-                  anyOf:
-                  - $ref: '#/components/schemas/ClaimCreatedEvent'
-                  - $ref: '#/components/schemas/ClaimDebtPaymentProcessingEvent'
-              limit:
-                type: integer
-                description: amount of events per current page
-                example: 1000
-              page:
-                type: integer
-                description: current page number
-                example: 1
-              numberOfPages:
-                type: integer
-                description: amount of pages with limit that is given for that request
-                example: 2
-          example:
-            page: 1
-            limit: 1000
-            numberOfPages: 1
-            events:
-            - messageId: a7d67994-14ad-4371-b810-483fa28318dd
-              timestamp: '2024-05-02T08:10:53.504Z'
-              details:
-                messageType: event.claim.created.v1
-                accountReference: ACC-DE-5567
-                claimRef: INV-2024-0042
-                receeveClaimRef: INV-2024-0042
-                amount: 149900
-                currency: EUR
-                dueDate: '2024-05-01'
-    403Forbidden:
-      description: Access is denied
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              message:
-                type: string
-                example: Forbidden
-    400BadRequest:
-      description: Incorrectly formed request
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              message:
-                type: string
-                example: 'Missing required request parameters: [Authorization]'
-    429LimitsReached:
-      description: Request was throttled
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              message:
-                type: string
-                example: Too Many Requests
-    500InternalError:
-      description: Internal error occured
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              message:
-                type: string
-                example: Internal error
-    401Unauthorized:
-      description: Unauthorized
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              message:
-                type: string
-                example: Unauthorized
   securitySchemes:
     api_key:
       type: apiKey
