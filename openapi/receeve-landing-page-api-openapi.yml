@@ -45,26 +45,6 @@ paths:
       - api_key: []
 components:
   responses:
-    404NotFound:
-      description: Not found
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              message:
-                type: string
-                example: Not found
-    400BadRequest:
-      description: Incorrectly formed request
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              message:
-                type: string
-                example: 'Missing required request parameters: [Authorization]'
     200SuccessGetLandingPageURL:
       description: Request for get_landing_page_url is successful
       content:
@@ -80,6 +60,16 @@ components:
                 example: https://domain.com/c/btXXskwXX
           example:
             URL: https://domain.com/c/btXXskwXX
+    404NotFound:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Not found
     403Forbidden:
       description: Access is denied
       content:
@@ -100,8 +90,8 @@ components:
               message:
                 type: string
                 example: Too Many Requests
-    401Unauthorized:
-      description: Unauthorized
+    400BadRequest:
+      description: Incorrectly formed request
       content:
         application/json:
           schema:
@@ -109,7 +99,7 @@ components:
             properties:
               message:
                 type: string
-                example: Unauthorized
+                example: 'Missing required request parameters: [Authorization]'
     500InternalError:
       description: Internal error occured
       content:
@@ -120,24 +110,17 @@ components:
               message:
                 type: string
                 example: Internal error
+    401Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
   parameters:
-    TriggerNameParameter:
-      name: triggerName
-      in: query
-      required: false
-      description: This is name of Custom Trigger that should be triggered when this API is called.
-      schema:
-        type: string
-      example: customTrigger1
-    ClaimReferenceParameter:
-      name: claimReference
-      in: query
-      required: true
-      example: ACCOUNT_REFERENCE_002
-      description: Receive Claim Reference
-      schema:
-        type: string
-        minLength: 1
     AuthorizationParameter:
       in: header
       name: Authorization
@@ -150,6 +133,23 @@ components:
       example: Bearer <access_token>
       schema:
         type: string
+    ClaimReferenceParameter:
+      name: claimReference
+      in: query
+      required: true
+      example: ACCOUNT_REFERENCE_002
+      description: Receive Claim Reference
+      schema:
+        type: string
+        minLength: 1
+    TriggerNameParameter:
+      name: triggerName
+      in: query
+      required: false
+      description: This is name of Custom Trigger that should be triggered when this API is called.
+      schema:
+        type: string
+      example: customTrigger1
     ClientIdParameter:
       name: clientId
       in: path

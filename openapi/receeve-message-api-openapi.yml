@@ -105,6 +105,41 @@ paths:
       security:
       - api_key: []
 components:
+  parameters:
+    AuthorizationParameter:
+      in: header
+      name: Authorization
+      required: true
+      description: 'OAuth2 Token (obtained from /oauth2/token )
+
+        Reference: https://docs.indebted.co/docs/receive/integration/use-cases/authentication-use-case
+
+        '
+      example: Bearer <access_token>
+      schema:
+        type: string
+    ClaimReferenceParameter:
+      name: claimReference
+      in: query
+      required: true
+      example: ACCOUNT_REFERENCE_002
+      description: Receive Claim Reference
+      schema:
+        type: string
+        minLength: 1
+    ClientIdParameter:
+      name: clientId
+      in: path
+      required: true
+      description: 'A Receive system identifier that will be assigned automatically.
+
+        It will be used for situations like Support related interventions or data segmentation.
+
+        '
+      example: ec702157-705b-42a0-b70e-a60a63dd24ab
+      schema:
+        type: string
+        format: uuid
   responses:
     200SuccessGetCommunicationMessageURLs:
       description: Request for get_communication_message_urls is successful
@@ -144,16 +179,6 @@ components:
               dateTime: 1714636253
               bundleId: BUNDLE-2024-05
               bundleName: May 2024 dunning cycle
-    400BadRequest:
-      description: Incorrectly formed request
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              message:
-                type: string
-                example: 'Missing required request parameters: [Authorization]'
     403Forbidden:
       description: Access is denied
       content:
@@ -174,8 +199,17 @@ components:
               message:
                 type: string
                 example: Too Many Requests
-    401Unauthorized:
-      description: Unauthorized
+    200SuccessMessage:
+      description: Request for get_message is successful
+      content:
+        text/plain:
+          schema:
+            type: string
+            example: 'Content-Type: text/plain; charset=utf-8 Message-ID: <f533311e-9dd6-5209-2969-1ad8d3e64636@169.169.169.93> Content-Transfer-Encoding: quoted-printable Date: Thu, 12 Mar 2020 14:19:04 +0000 MIME-Version: 1.0
+
+              SMS Text =E2=82=AC20.42'
+    400BadRequest:
+      description: Incorrectly formed request
       content:
         application/json:
           schema:
@@ -183,7 +217,7 @@ components:
             properties:
               message:
                 type: string
-                example: Unauthorized
+                example: 'Missing required request parameters: [Authorization]'
     500InternalError:
       description: Internal error occured
       content:
@@ -194,50 +228,16 @@ components:
               message:
                 type: string
                 example: Internal error
-    200SuccessMessage:
-      description: Request for get_message is successful
+    401Unauthorized:
+      description: Unauthorized
       content:
-        text/plain:
+        application/json:
           schema:
-            type: string
-            example: 'Content-Type: text/plain; charset=utf-8 Message-ID: <f533311e-9dd6-5209-2969-1ad8d3e64636@169.169.169.93> Content-Transfer-Encoding: quoted-printable Date: Thu, 12 Mar 2020 14:19:04 +0000 MIME-Version: 1.0
-
-              SMS Text =E2=82=AC20.42'
-  parameters:
-    ClaimReferenceParameter:
-      name: claimReference
-      in: query
-      required: true
-      example: ACCOUNT_REFERENCE_002
-      description: Receive Claim Reference
-      schema:
-        type: string
-        minLength: 1
-    AuthorizationParameter:
-      in: header
-      name: Authorization
-      required: true
-      description: 'OAuth2 Token (obtained from /oauth2/token )
-
-        Reference: https://docs.indebted.co/docs/receive/integration/use-cases/authentication-use-case
-
-        '
-      example: Bearer <access_token>
-      schema:
-        type: string
-    ClientIdParameter:
-      name: clientId
-      in: path
-      required: true
-      description: 'A Receive system identifier that will be assigned automatically.
-
-        It will be used for situations like Support related interventions or data segmentation.
-
-        '
-      example: ec702157-705b-42a0-b70e-a60a63dd24ab
-      schema:
-        type: string
-        format: uuid
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
   schemas:
     CommunicationMessageURL:
       type: object

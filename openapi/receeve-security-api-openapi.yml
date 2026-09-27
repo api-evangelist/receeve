@@ -59,26 +59,6 @@ paths:
       - NONE: []
 components:
   responses:
-    400BadRequest:
-      description: Incorrectly formed request
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              message:
-                type: string
-                example: 'Missing required request parameters: [Authorization]'
-    401Unauthorized:
-      description: Unauthorized
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              message:
-                type: string
-                example: Unauthorized
     403Forbidden:
       description: Access is denied
       content:
@@ -99,6 +79,16 @@ components:
               message:
                 type: string
                 example: Too Many Requests
+    400BadRequest:
+      description: Incorrectly formed request
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: 'Missing required request parameters: [Authorization]'
     200SuccessOauth2Token:
       description: Request to get oauth2 token was successful
       content:
@@ -132,6 +122,16 @@ components:
               message:
                 type: string
                 example: Internal error
+    401Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
   securitySchemes:
     api_key:
       type: apiKey

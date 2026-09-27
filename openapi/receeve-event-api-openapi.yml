@@ -71,108 +71,7 @@ paths:
       security:
       - api_key: []
 components:
-  responses:
-    400BadRequest:
-      description: Incorrectly formed request
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              message:
-                type: string
-                example: 'Missing required request parameters: [Authorization]'
-    500InternalError:
-      description: Internal error occured
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              message:
-                type: string
-                example: Internal error
-    403Forbidden:
-      description: Access is denied
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              message:
-                type: string
-                example: Forbidden
-    401Unauthorized:
-      description: Unauthorized
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              message:
-                type: string
-                example: Unauthorized
-    429LimitsReached:
-      description: Request was throttled
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              message:
-                type: string
-                example: Too Many Requests
-    200SuccessGetEvents:
-      description: Request for get_events is successful
-      content:
-        application/json:
-          schema:
-            type: object
-            required:
-            - events
-            - limit
-            - page
-            - numberOfPages
-            properties:
-              events:
-                type: array
-                items:
-                  anyOf:
-                  - $ref: '#/components/schemas/ClaimCreatedEvent'
-                  - $ref: '#/components/schemas/ClaimDebtPaymentProcessingEvent'
-              limit:
-                type: integer
-                description: amount of events per current page
-                example: 1000
-              page:
-                type: integer
-                description: current page number
-                example: 1
-              numberOfPages:
-                type: integer
-                description: amount of pages with limit that is given for that request
-                example: 2
-          example:
-            page: 1
-            limit: 1000
-            numberOfPages: 1
-            events:
-            - messageId: a7d67994-14ad-4371-b810-483fa28318dd
-              timestamp: '2024-05-02T08:10:53.504Z'
-              details:
-                messageType: event.claim.created.v1
-                accountReference: ACC-DE-5567
-                claimRef: INV-2024-0042
-                receeveClaimRef: INV-2024-0042
-                amount: 149900
-                currency: EUR
-                dueDate: '2024-05-01'
   schemas:
-    Currency:
-      type: string
-      example: EUR
-      pattern: ^[A-Z]{3}$
-      description: 3-digit currency code (ISO 4217)
     ClaimDebtPaymentProcessingEvent:
       type: object
       required:
@@ -227,11 +126,6 @@ components:
               example: TRACKINGID123
             paymentReference:
               $ref: '#/components/schemas/PaymentReference'
-    DueDate:
-      type: string
-      format: date
-      example: '2019-06-28'
-      description: Current due date in your system. Use originalDueDate unless you purchased the debt and need this distinction.
     PaymentReference:
       type: string
       minLength: 1
@@ -291,6 +185,16 @@ components:
               $ref: '#/components/schemas/Currency'
             dueDate:
               $ref: '#/components/schemas/DueDate'
+    DueDate:
+      type: string
+      format: date
+      example: '2019-06-28'
+      description: Current due date in your system. Use originalDueDate unless you purchased the debt and need this distinction.
+    Currency:
+      type: string
+      example: EUR
+      pattern: ^[A-Z]{3}$
+      description: 3-digit currency code (ISO 4217)
   parameters:
     AuthorizationParameter:
       in: header
@@ -317,6 +221,102 @@ components:
       schema:
         type: string
         format: uuid
+  responses:
+    403Forbidden:
+      description: Access is denied
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Forbidden
+    429LimitsReached:
+      description: Request was throttled
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Too Many Requests
+    200SuccessGetEvents:
+      description: Request for get_events is successful
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+            - events
+            - limit
+            - page
+            - numberOfPages
+            properties:
+              events:
+                type: array
+                items:
+                  anyOf:
+                  - $ref: '#/components/schemas/ClaimCreatedEvent'
+                  - $ref: '#/components/schemas/ClaimDebtPaymentProcessingEvent'
+              limit:
+                type: integer
+                description: amount of events per current page
+                example: 1000
+              page:
+                type: integer
+                description: current page number
+                example: 1
+              numberOfPages:
+                type: integer
+                description: amount of pages with limit that is given for that request
+                example: 2
+          example:
+            page: 1
+            limit: 1000
+            numberOfPages: 1
+            events:
+            - messageId: a7d67994-14ad-4371-b810-483fa28318dd
+              timestamp: '2024-05-02T08:10:53.504Z'
+              details:
+                messageType: event.claim.created.v1
+                accountReference: ACC-DE-5567
+                claimRef: INV-2024-0042
+                receeveClaimRef: INV-2024-0042
+                amount: 149900
+                currency: EUR
+                dueDate: '2024-05-01'
+    400BadRequest:
+      description: Incorrectly formed request
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: 'Missing required request parameters: [Authorization]'
+    500InternalError:
+      description: Internal error occured
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Internal error
+    401Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
   securitySchemes:
     api_key:
       type: apiKey
