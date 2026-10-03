@@ -45,31 +45,6 @@ paths:
       - api_key: []
 components:
   responses:
-    200SuccessGetLandingPageURL:
-      description: Request for get_landing_page_url is successful
-      content:
-        application/json:
-          schema:
-            type: object
-            required:
-            - URL
-            properties:
-              URL:
-                type: string
-                description: URL of Landing Page
-                example: https://domain.com/c/btXXskwXX
-          example:
-            URL: https://domain.com/c/btXXskwXX
-    404NotFound:
-      description: Not found
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              message:
-                type: string
-                example: Not found
     403Forbidden:
       description: Access is denied
       content:
@@ -80,6 +55,16 @@ components:
               message:
                 type: string
                 example: Forbidden
+    404NotFound:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Not found
     429LimitsReached:
       description: Request was throttled
       content:
@@ -90,6 +75,16 @@ components:
               message:
                 type: string
                 example: Too Many Requests
+    401Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
     400BadRequest:
       description: Incorrectly formed request
       content:
@@ -110,17 +105,35 @@ components:
               message:
                 type: string
                 example: Internal error
-    401Unauthorized:
-      description: Unauthorized
+    200SuccessGetLandingPageURL:
+      description: Request for get_landing_page_url is successful
       content:
         application/json:
           schema:
             type: object
+            required:
+            - URL
             properties:
-              message:
+              URL:
                 type: string
-                example: Unauthorized
+                description: URL of Landing Page
+                example: https://domain.com/c/btXXskwXX
+          example:
+            URL: https://domain.com/c/btXXskwXX
   parameters:
+    ClientIdParameter:
+      name: clientId
+      in: path
+      required: true
+      description: 'A Receive system identifier that will be assigned automatically.
+
+        It will be used for situations like Support related interventions or data segmentation.
+
+        '
+      example: ec702157-705b-42a0-b70e-a60a63dd24ab
+      schema:
+        type: string
+        format: uuid
     AuthorizationParameter:
       in: header
       name: Authorization
@@ -150,19 +163,6 @@ components:
       schema:
         type: string
       example: customTrigger1
-    ClientIdParameter:
-      name: clientId
-      in: path
-      required: true
-      description: 'A Receive system identifier that will be assigned automatically.
-
-        It will be used for situations like Support related interventions or data segmentation.
-
-        '
-      example: ec702157-705b-42a0-b70e-a60a63dd24ab
-      schema:
-        type: string
-        format: uuid
   securitySchemes:
     api_key:
       type: apiKey

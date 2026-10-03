@@ -806,70 +806,102 @@ paths:
       security:
       - api_key: []
 components:
-  parameters:
-    SequentialParameter:
-      name: sequential
-      in: query
-      required: false
-      description: The request body items are executed one after another one
-      schema:
-        type: boolean
-    AuthorizationParameter:
-      in: header
-      name: Authorization
-      required: true
-      description: 'OAuth2 Token (obtained from /oauth2/token )
-
-        Reference: https://docs.indebted.co/docs/receive/integration/use-cases/authentication-use-case
-
-        '
-      example: Bearer <access_token>
-      schema:
-        type: string
-    TriggerNameParameter:
-      name: triggerName
-      in: query
-      required: false
-      description: This is name of Custom Trigger that should be triggered when this API is called.
-      schema:
-        type: string
-      example: customTrigger1
-    AccountReferenceParameter:
-      name: accountReference
-      in: query
-      required: true
-      example: ACC
-      description: Account reference in your system
-      schema:
-        type: string
-    ClientIdParameter:
-      name: clientId
-      in: path
-      required: true
-      description: 'A Receive system identifier that will be assigned automatically.
-
-        It will be used for situations like Support related interventions or data segmentation.
-
-        '
-      example: ec702157-705b-42a0-b70e-a60a63dd24ab
-      schema:
-        type: string
-        format: uuid
-    AsyncParameter:
-      name: async
-      in: query
-      required: false
-      description: The request is added to the queue without expecting the response
-      schema:
-        type: boolean
-    MinorVersionParameter:
-      name: minorVersion
-      in: query
-      required: false
-      description: Optional minor version identifier for message versioning. This value is passed as additional metadata with emitted messages.
-      schema:
-        type: string
   responses:
+    200SuccessCreditClaim:
+      description: Response of Credit Claim
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties:
+              $ref: '#/components/schemas/CreditClaimActionResponse'
+          example:
+            INV-2024-0042:
+              success: true
+              messages:
+              - Successfully credited claim INV-2024-0042
+              messageIds:
+              - 3d9b7c2a-1f4e-4a8b-9c6d-2e5f8a1b0c4d
+    200SuccessCreateClaims:
+      description: Response of creating a set of claims
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties:
+              $ref: '#/components/schemas/CreateClaims'
+          example:
+            INV-2024-0042:
+              success: true
+              messages:
+              - Successfully created claim INV-2024-0042
+              messageIds:
+              - 7f257450-808c-4689-805f-6119cd8580ea
+    200SuccessGetDebtorAccountsAndClaims:
+      description: Request for get_debtor_accounts_and_claims is successful
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/DebtorAccountsAndClaims'
+          example:
+          - accountReference: ACC-DE-5567
+            currency: EUR
+            meta:
+              status: active
+            debtors:
+            - debtorReference: CUST-88213
+              type: natural
+              firstName: Anke
+              lastName: Weber
+              contactInformation:
+                email: anke.weber@example.de
+                country: DE
+            claims:
+            - claimReference: INV-2024-0042
+              accountReference: ACC-DE-5567
+              productReference: BROADBAND_PLAN_A
+              amount: 30000
+              totalFees: 2000
+              currency: EUR
+              currentDueDate: '2024-05-01'
+              fees: []
+    403Forbidden:
+      description: Access is denied
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Forbidden
+    200SuccessRecreateClaims:
+      description: Response of recreating a set of claims
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties:
+              $ref: '#/components/schemas/RecreateClaims'
+          example:
+            INV-2024-0042:
+              success: true
+              messages:
+              - Successfully recreated claim INV-2024-0042
+              messageIds:
+              - a1b2c3d4-0000-4a8b-9c6d-2e5f8a1b0c50
+    429LimitsReached:
+      description: Request was throttled
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Too Many Requests
     200SuccessGetAccountClaims:
       description: Request of get_account_claims is Successfull
       content:
@@ -930,21 +962,16 @@ components:
                     debtorReference: CUST-88213
                     firstName: Anke
                     lastName: Weber
-    200Success:
-      description: Request was successful
+    401Unauthorized:
+      description: Unauthorized
       content:
         application/json:
           schema:
             type: object
-            additionalProperties:
-              $ref: '#/components/schemas/ActionResponse'
-          example:
-            REFERENCE_1:
-              success: true
-              messages:
-              - Successfully processed action
-              messageIds:
-              - e66d62ed-2331-4ced-8c03-5e729e984adc
+            properties:
+              message:
+                type: string
+                example: Unauthorized
     400BadRequest:
       description: Incorrectly formed request
       content:
@@ -970,46 +997,21 @@ components:
               - Successfully debited claim INV-2024-0042
               messageIds:
               - 9c6d2e5f-8a1b-0c4d-3d9b-7c2a1f4e4a8b
-    403Forbidden:
-      description: Access is denied
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              message:
-                type: string
-                example: Forbidden
-    200SuccessCreditClaim:
-      description: Response of Credit Claim
+    200Success:
+      description: Request was successful
       content:
         application/json:
           schema:
             type: object
             additionalProperties:
-              $ref: '#/components/schemas/CreditClaimActionResponse'
+              $ref: '#/components/schemas/ActionResponse'
           example:
-            INV-2024-0042:
+            REFERENCE_1:
               success: true
               messages:
-              - Successfully credited claim INV-2024-0042
+              - Successfully processed action
               messageIds:
-              - 3d9b7c2a-1f4e-4a8b-9c6d-2e5f8a1b0c4d
-    200SuccessCreateClaims:
-      description: Response of creating a set of claims
-      content:
-        application/json:
-          schema:
-            type: object
-            additionalProperties:
-              $ref: '#/components/schemas/CreateClaims'
-          example:
-            INV-2024-0042:
-              success: true
-              messages:
-              - Successfully created claim INV-2024-0042
-              messageIds:
-              - 7f257450-808c-4689-805f-6119cd8580ea
+              - e66d62ed-2331-4ced-8c03-5e729e984adc
     500InternalError:
       description: Internal error occured
       content:
@@ -1020,101 +1022,37 @@ components:
               message:
                 type: string
                 example: Internal error
-    401Unauthorized:
-      description: Unauthorized
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              message:
-                type: string
-                example: Unauthorized
-    200SuccessRecreateClaims:
-      description: Response of recreating a set of claims
-      content:
-        application/json:
-          schema:
-            type: object
-            additionalProperties:
-              $ref: '#/components/schemas/RecreateClaims'
-          example:
-            INV-2024-0042:
-              success: true
-              messages:
-              - Successfully recreated claim INV-2024-0042
-              messageIds:
-              - a1b2c3d4-0000-4a8b-9c6d-2e5f8a1b0c50
-    200SuccessGetDebtorAccountsAndClaims:
-      description: Request for get_debtor_accounts_and_claims is successful
-      content:
-        application/json:
-          schema:
-            type: array
-            items:
-              $ref: '#/components/schemas/DebtorAccountsAndClaims'
-          example:
-          - accountReference: ACC-DE-5567
-            currency: EUR
-            meta:
-              status: active
-            debtors:
-            - debtorReference: CUST-88213
-              type: natural
-              firstName: Anke
-              lastName: Weber
-              contactInformation:
-                email: anke.weber@example.de
-                country: DE
-            claims:
-            - claimReference: INV-2024-0042
-              accountReference: ACC-DE-5567
-              productReference: BROADBAND_PLAN_A
-              amount: 30000
-              totalFees: 2000
-              currency: EUR
-              currentDueDate: '2024-05-01'
-              fees: []
-    429LimitsReached:
-      description: Request was throttled
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              message:
-                type: string
-                example: Too Many Requests
   schemas:
-    RelatedClaim:
+    Metadata:
       type: object
-      description: A typed relation from this claim to another claim (lineage metadata; the platform does not act on it)
-      required:
-      - type
-      - claimReference
-      additionalProperties: false
-      properties:
-        type:
-          type: string
-          description: 'Relation type, declared on THIS claim pointing at the referenced claim (single direction; inverses are derived at query time). REPLACES: this claim supersedes the referenced ones (e.g. a consolidated claim placed at acceleration after crediting the individual instalment claims). SPLIT_FROM: this claim was split out of the referenced claim (e.g. the disputed portion of an invoice separated for independent handling). REINSTATES: this claim places debt back into collection after the referenced claim was already resolved (e.g. a settlement breached after the original claim was closed). REFINANCES: this claim is a new credit agreement curing the referenced claims under new terms — counts as recovery. RESTRUCTURES: this claim re-schedules the referenced debt by agreement with the debtor (workout/forbearance executed in your core system and placed as a new claim — restructures executed inside Receive use an Instalment Plan instead; do not create a new claim for those). DEFERS: this fee claim gates a due-date deferral of the referenced claims.'
-          enum:
-          - REPLACES
-          - SPLIT_FROM
-          - REINSTATES
-          - REFINANCES
-          - RESTRUCTURES
-          - DEFERS
-        claimReference:
-          type: string
-          minLength: 1
-          description: Your reference of the related claim
-          example: API_CLAIM_REF_INST_001
-    DebtorReference:
+      description: Additional information related to the entity.
+      example:
+        sourceSystem: system1
+    DueDate:
       type: string
-      minLength: 1
-      example: EXTERNAL_DEBTOR_REF_002
-      description: Your customer ID for this person or company
-    CreditClaimInput:
+      format: date
+      example: '2019-06-28'
+      description: Current due date in your system. Use originalDueDate unless you purchased the debt and need this distinction.
+    Debtor:
+      description: 'The Debtor is the entity that owes the money. It can be a person (natural) or a company (legal).
+
+        Notes:
+
+        - If the debtor is a person (natural), then firstName and lastName are required.
+
+        - If the debtor is a company (legal), then companyName is required.
+
+        '
+      allOf:
+      - $ref: '#/components/schemas/BaseDebtor'
+      - type: object
+        required:
+        - debtorReference
+        - contactInformation
+        properties:
+          contactInformation:
+            $ref: '#/components/schemas/ContactInformation'
+    DebitClaimInput:
       type: object
       required:
       - amount
@@ -1131,7 +1069,7 @@ components:
             items:
               $ref: '#/components/schemas/Fee'
             description: Array of Fee objects with name and amount
-          description: Fees for the credit claim, can be a number or array of Fee objects
+          description: Fees for the debit claim, can be a number or array of Fee objects
         currency:
           $ref: '#/components/schemas/Currency'
         originator:
@@ -1139,29 +1077,23 @@ components:
           enum:
           - DCA
           - CLIENT
-        paymentDistributionPriority:
+        debitType:
           type: string
           enum:
-          - FEES_FIRST
-          - AMOUNT_FIRST
-          description: Defines the priority for payment distribution (whethere the payment amount should be distributed to claim's principal amount first or to claim's fees first)
-        creditType:
-          type: string
-          enum:
-          - PAYMENT
-          - DISCOUNT
           - ADJUSTMENT
-          description: Typed classification of the credit, mirroring the ledger entry types. Omitted implies PAYMENT (today's implicit semantics).
+          - CHARGEBACK
+          - INTEREST
+          description: Typed classification of the debit, mirroring the ledger entry types. Optional with no default.
         date:
           type: number
-          description: date of credit (unix timestamp in msec)
+          description: date of debit (unix timestamp in msec)
           example: 1647526514000
         descriptionText:
           type: string
-          description: some description for credit
+          description: some description for debit
         context:
           type: object
-          description: 'Optional free-form context forwarded to the claim credit event.
+          description: 'Optional free-form context forwarded to the claim debit event.
 
             Up to 10 key-value pairs. Values may be string, number, boolean, or null.
 
@@ -1172,132 +1104,15 @@ components:
             - type: string
             - type: number
             - type: boolean
-    Product:
-      type: object
-      description: A product is a service or item used to give context to the Claim or Ledger Entry
-      required:
-      - productReference
-      properties:
-        productReference:
-          $ref: '#/components/schemas/ProductReference'
-        paymentReference:
-          $ref: '#/components/schemas/PaymentReference'
-        type:
-          type: string
-          minLength: 1
-          example: Computer
-          description: Type of product
-        name:
-          type: string
-          minLength: 1
-          example: Macbook Pro
-          description: Product name
-        code:
-          type: string
-          minLength: 1
-          example: 111-22222-3333
-          description: Product code
-        meta:
-          $ref: '#/components/schemas/Metadata'
-    ImportClaimInput:
-      description: Input for update_claims endpoint.
-      allOf:
-      - $ref: '#/components/schemas/ClaimInput'
-      - $ref: '#/components/schemas/UpdateClaimOptions'
-      - type: object
-        properties:
-          movements:
-            type: array
-            description: 'Optional per-entry breakdown of the credit/debit movements behind this claim import. Emit-only classification, not state: the `amount` you send remains the source of truth for the claim balance — movements are never used to recompute it. When present, Receive emits one typed credited/debited event per movement instead of a single net event; you are responsible for keeping `amount` consistent with the movements you send. Absent -> behaviour identical to today.'
-            items:
-              $ref: '#/components/schemas/Movement'
-    Movement:
-      type: object
-      description: 'A single credit/debit movement contributing to a claim import. Emit-only classification, not state: movements never drive the claim `amount` — they only determine which typed credited/debited events Receive emits.'
-      required:
-      - direction
-      - amount
-      additionalProperties: false
-      properties:
-        direction:
-          type: string
-          enum:
-          - CREDIT
-          - DEBIT
-          description: Whether the movement decreases (CREDIT) or increases (DEBIT) the outstanding claim amount
-        amount:
-          type: integer
-          minimum: 0
-          description: The movement amount [cents]
-          example: 5000
-        type:
-          type: string
-          enum:
-          - PAYMENT
-          - DISCOUNT
-          - ADJUSTMENT
-          - CHARGEBACK
-          - INTEREST
-          description: 'Typed classification of the movement, reusing the claim credit/debit vocabulary: PAYMENT, DISCOUNT, or ADJUSTMENT for a CREDIT; ADJUSTMENT, CHARGEBACK, or INTEREST for a DEBIT.'
-        sourceRef:
-          type: string
-          minLength: 1
-          description: Opaque reference correlating this movement to the record that produced it (e.g. a ledger entry reference). Passed through verbatim; never interpreted by Receive.
-          example: LEDGER-ENTRY-0001
-    DebitClaimActionResponse:
-      allOf:
-      - $ref: '#/components/schemas/ActionResponse'
-      - type: object
-        properties:
-          data:
-            $ref: '#/components/schemas/DebitClaimInput'
-    Amount:
-      minimum: 0
-      type: integer
-      example: 13025
-      description: Monetary value in cents (natural nuumber)
-    RecreateClaims:
-      allOf:
-      - $ref: '#/components/schemas/ActionResponse'
-      - type: object
-        properties:
-          data:
-            $ref: '#/components/schemas/ClaimInput'
-    PortfolioReference:
-      type: string
-      minLength: 1
-      example: EXTERNAL_PORTFOLIO_REFERENCE_002
-      description: This is a optional grouping field for reporting purposes.
-    CreditClaimActionResponse:
-      allOf:
-      - $ref: '#/components/schemas/ActionResponse'
-      - type: object
-        properties:
-          data:
-            $ref: '#/components/schemas/CreditClaimInput'
-    ProductReference:
-      type: string
-      minLength: 1
-      example: PRODUCT_REFERENCE_1
-      description: Identifier for a product in your system. It is used for grouping purposes.
-    CreateClaimInput:
-      description: Input for create_claims endpoint.
-      allOf:
-      - $ref: '#/components/schemas/ClaimInput'
-    PaymentReference:
-      type: string
-      minLength: 1
-      example: paymentReference1
-      description: 'Payment reference used in online transactions.
-
-        It is a text reference that can be used to map the money transactions to other external systems.
-
-        '
-    UpdateClaimInput:
-      description: Input for update_claims endpoint.
-      allOf:
-      - $ref: '#/components/schemas/BaseClaim'
-      - $ref: '#/components/schemas/UpdateClaimOptions'
+        options:
+          type: object
+          additionalProperties: false
+          description: Debit options
+          properties:
+            forceAmountCheck:
+              type: boolean
+              example: false
+              description: 'Recompute the claim status from the resulting balance. Use on payment reversals (chargebacks): a debit against a RESOLVED claim restores the balance but does NOT reactivate it unless this flag is set.'
     ClaimOrigination:
       type: object
       description: The product/service context and origin of the claim
@@ -1326,11 +1141,23 @@ components:
           minLength: 1
           description: External code/identifier of the product
           example: CL
-    Metadata:
+    ClaimResponse:
       type: object
-      description: Additional information related to the entity.
-      example:
-        sourceSystem: system1
+      allOf:
+      - $ref: '#/components/schemas/Claim'
+      - required:
+        - claimReference
+        - status
+        properties:
+          claimReference:
+            type: string
+            minLength: 1
+            description: The current claim's reference
+          status:
+            type: string
+            enum:
+            - ACTIVE
+            - RESOLVED
     ActionResponse:
       type: object
       description: Response of any action that causes any side effect in the platform (e.g. create, update, delete)
@@ -1362,6 +1189,11 @@ components:
         - Successfully processed action
         messageIds:
         - e66d62ed-2331-4ced-8c03-5e729e984adc
+    ProductReference:
+      type: string
+      minLength: 1
+      example: PRODUCT_REFERENCE_1
+      description: Identifier for a product in your system. It is used for grouping purposes.
     Fee:
       type: object
       description: Additional expected payment amount.
@@ -1376,6 +1208,13 @@ components:
           example: interest
         amount:
           $ref: '#/components/schemas/Amount'
+    DebitClaimActionResponse:
+      allOf:
+      - $ref: '#/components/schemas/ActionResponse'
+      - type: object
+        properties:
+          data:
+            $ref: '#/components/schemas/DebitClaimInput'
     BaseContactInformation:
       type: object
       properties:
@@ -1476,66 +1315,6 @@ components:
                   description: Work Phone Number
                   example: 495555555555
                   pattern: ^\+\d{1,3}\d{9,12}$
-    Debtor:
-      description: 'The Debtor is the entity that owes the money. It can be a person (natural) or a company (legal).
-
-        Notes:
-
-        - If the debtor is a person (natural), then firstName and lastName are required.
-
-        - If the debtor is a company (legal), then companyName is required.
-
-        '
-      allOf:
-      - $ref: '#/components/schemas/BaseDebtor'
-      - type: object
-        required:
-        - debtorReference
-        - contactInformation
-        properties:
-          contactInformation:
-            $ref: '#/components/schemas/ContactInformation'
-    OriginalDueDate:
-      type: string
-      format: date
-      example: '2019-06-28'
-      description: Original due date in your system. This is the day when it went past due. DPD 0.
-    DueDate:
-      type: string
-      format: date
-      example: '2019-06-28'
-      description: Current due date in your system. Use originalDueDate unless you purchased the debt and need this distinction.
-    Claim:
-      allOf:
-      - $ref: '#/components/schemas/BaseClaim'
-      - type: object
-        required:
-        - currency
-        - primaryDebtor
-        - accountReference
-        - originalDueDate
-        - currentDueDate
-        - amount
-        properties:
-          primaryDebtor:
-            $ref: '#/components/schemas/Debtor'
-    ClaimResponse:
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/Claim'
-      - required:
-        - claimReference
-        - status
-        properties:
-          claimReference:
-            type: string
-            minLength: 1
-            description: The current claim's reference
-          status:
-            type: string
-            enum:
-            - ACTIVE
-            - RESOLVED
     BaseClaim:
       type: object
       description: A claim is an outstanding payment that is owed. You can always update this balance if multiple payments are missed and you want to aggregate the amounts.
@@ -1610,144 +1389,15 @@ components:
             $ref: '#/components/schemas/RelatedClaim'
         primaryDebtor:
           $ref: '#/components/schemas/BaseDebtor'
-    ClaimInput:
-      description: Used when creating or importing claims
-      allOf:
-      - $ref: '#/components/schemas/BaseClaim'
-      - type: object
-        required:
-        - originalDueDate
-        - currentDueDate
-        - amount
-        properties:
-          originalDueDate:
-            $ref: '#/components/schemas/OriginalDueDate'
-          currentDueDate:
-            $ref: '#/components/schemas/DueDate'
-      - anyOf:
-        - type: object
-          description: The `accountReference` is optional, but `primaryDebtor` and `currency` are required
-          required:
-          - primaryDebtor
-          - currency
-          properties:
-            primaryDebtor:
-              $ref: '#/components/schemas/Debtor'
-        - type: object
-          description: The `primaryDebtor` and the `currency` of the `Account` is used if not specified in the `Claim`
-          required:
-          - accountReference
-    ClaimScore:
-      type: object
-      description: An Claim Score is a score that is calculated for a specific claim.
-      required:
-      - type
-      - value
-      properties:
-        type:
-          type: string
-          description: Type of score
-          enum:
-          - INTERNAL
-          - EXTERNAL
-          - COLLECTION
-          - BEHAVIORAL
-        value:
-          oneOf:
-          - type: string
-            example: risky
-            description: The score's value
-          - type: object
-            description: composed value
-        meta:
-          $ref: '#/components/schemas/Metadata'
-    DebitClaimInput:
-      type: object
-      required:
-      - amount
-      - currency
-      - originator
-      properties:
-        amount:
-          $ref: '#/components/schemas/Amount'
-        fees:
-          oneOf:
-          - type: number
-            description: Fees as a numeric value
-          - type: array
-            items:
-              $ref: '#/components/schemas/Fee'
-            description: Array of Fee objects with name and amount
-          description: Fees for the debit claim, can be a number or array of Fee objects
-        currency:
-          $ref: '#/components/schemas/Currency'
-        originator:
-          type: string
-          enum:
-          - DCA
-          - CLIENT
-        debitType:
-          type: string
-          enum:
-          - ADJUSTMENT
-          - CHARGEBACK
-          - INTEREST
-          description: Typed classification of the debit, mirroring the ledger entry types. Optional with no default.
-        date:
-          type: number
-          description: date of debit (unix timestamp in msec)
-          example: 1647526514000
-        descriptionText:
-          type: string
-          description: some description for debit
-        context:
-          type: object
-          description: 'Optional free-form context forwarded to the claim debit event.
+    PaymentReference:
+      type: string
+      minLength: 1
+      example: paymentReference1
+      description: 'Payment reference used in online transactions.
 
-            Up to 10 key-value pairs. Values may be string, number, boolean, or null.
+        It is a text reference that can be used to map the money transactions to other external systems.
 
-            '
-          maxProperties: 10
-          additionalProperties:
-            oneOf:
-            - type: string
-            - type: number
-            - type: boolean
-        options:
-          type: object
-          additionalProperties: false
-          description: Debit options
-          properties:
-            forceAmountCheck:
-              type: boolean
-              example: false
-              description: 'Recompute the claim status from the resulting balance. Use on payment reversals (chargebacks): a debit against a RESOLVED claim restores the balance but does NOT reactivate it unless this flag is set.'
-    Repayment:
-      type: object
-      description: A repayment entry in the pre-sale payment history of a claim
-      required:
-      - amount
-      properties:
-        amount:
-          $ref: '#/components/schemas/Amount'
-        date:
-          type:
-          - string
-          - 'null'
-          format: date
-          description: Date of that repayment
-          example: '2019-06-28'
-        dueDate:
-          type: string
-          format: date
-          description: Due date of that repayment
-          example: '2019-06-28'
-        outstandingAmount:
-          allOf:
-          - $ref: '#/components/schemas/Amount'
-          description: Outstanding amount after the repayment in cents
-        meta:
-          $ref: '#/components/schemas/Metadata'
+        '
     DebtorAccountsAndClaims:
       type: array
       items:
@@ -1784,11 +1434,77 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/Debtor'
-    AccountReference:
-      type: string
-      minLength: 1
-      example: ACCOUNT_REFERENCE_002
-      description: Account reference in your system
+    Product:
+      type: object
+      description: A product is a service or item used to give context to the Claim or Ledger Entry
+      required:
+      - productReference
+      properties:
+        productReference:
+          $ref: '#/components/schemas/ProductReference'
+        paymentReference:
+          $ref: '#/components/schemas/PaymentReference'
+        type:
+          type: string
+          minLength: 1
+          example: Computer
+          description: Type of product
+        name:
+          type: string
+          minLength: 1
+          example: Macbook Pro
+          description: Product name
+        code:
+          type: string
+          minLength: 1
+          example: 111-22222-3333
+          description: Product code
+        meta:
+          $ref: '#/components/schemas/Metadata'
+    ImportClaimInput:
+      description: Input for update_claims endpoint.
+      allOf:
+      - $ref: '#/components/schemas/ClaimInput'
+      - $ref: '#/components/schemas/UpdateClaimOptions'
+      - type: object
+        properties:
+          movements:
+            type: array
+            description: 'Optional per-entry breakdown of the credit/debit movements behind this claim import. Emit-only classification, not state: the `amount` you send remains the source of truth for the claim balance — movements are never used to recompute it. When present, Receive emits one typed credited/debited event per movement instead of a single net event; you are responsible for keeping `amount` consistent with the movements you send. Absent -> behaviour identical to today.'
+            items:
+              $ref: '#/components/schemas/Movement'
+    UpdateClaimInput:
+      description: Input for update_claims endpoint.
+      allOf:
+      - $ref: '#/components/schemas/BaseClaim'
+      - $ref: '#/components/schemas/UpdateClaimOptions'
+    ClaimInput:
+      description: Used when creating or importing claims
+      allOf:
+      - $ref: '#/components/schemas/BaseClaim'
+      - type: object
+        required:
+        - originalDueDate
+        - currentDueDate
+        - amount
+        properties:
+          originalDueDate:
+            $ref: '#/components/schemas/OriginalDueDate'
+          currentDueDate:
+            $ref: '#/components/schemas/DueDate'
+      - anyOf:
+        - type: object
+          description: The `accountReference` is optional, but `primaryDebtor` and `currency` are required
+          required:
+          - primaryDebtor
+          - currency
+          properties:
+            primaryDebtor:
+              $ref: '#/components/schemas/Debtor'
+        - type: object
+          description: The `primaryDebtor` and the `currency` of the `Account` is used if not specified in the `Claim`
+          required:
+          - accountReference
     ContactInformation:
       description: 'Contact information of the debtor, used for communication purposes.
 
@@ -1798,6 +1514,54 @@ components:
       - type: object
         required:
         - country
+    OriginalDueDate:
+      type: string
+      format: date
+      example: '2019-06-28'
+      description: Original due date in your system. This is the day when it went past due. DPD 0.
+    ClaimScore:
+      type: object
+      description: An Claim Score is a score that is calculated for a specific claim.
+      required:
+      - type
+      - value
+      properties:
+        type:
+          type: string
+          description: Type of score
+          enum:
+          - INTERNAL
+          - EXTERNAL
+          - COLLECTION
+          - BEHAVIORAL
+        value:
+          oneOf:
+          - type: string
+            example: risky
+            description: The score's value
+          - type: object
+            description: composed value
+        meta:
+          $ref: '#/components/schemas/Metadata'
+    Currency:
+      type: string
+      example: EUR
+      pattern: ^[A-Z]{3}$
+      description: 3-digit currency code (ISO 4217)
+    Claim:
+      allOf:
+      - $ref: '#/components/schemas/BaseClaim'
+      - type: object
+        required:
+        - currency
+        - primaryDebtor
+        - accountReference
+        - originalDueDate
+        - currentDueDate
+        - amount
+        properties:
+          primaryDebtor:
+            $ref: '#/components/schemas/Debtor'
     CreateClaims:
       allOf:
       - $ref: '#/components/schemas/ActionResponse'
@@ -1805,11 +1569,105 @@ components:
         properties:
           data:
             $ref: '#/components/schemas/ClaimInput'
-    Currency:
+    CreditClaimActionResponse:
+      allOf:
+      - $ref: '#/components/schemas/ActionResponse'
+      - type: object
+        properties:
+          data:
+            $ref: '#/components/schemas/CreditClaimInput'
+    RecreateClaims:
+      allOf:
+      - $ref: '#/components/schemas/ActionResponse'
+      - type: object
+        properties:
+          data:
+            $ref: '#/components/schemas/ClaimInput'
+    UpdateClaimOptions:
+      description: Additional modifiers when updating claims
+      properties:
+        options:
+          properties:
+            forceAmountCheck:
+              type: boolean
+              example: false
+              description: Let the claim status the same, regardless of the changes in the amount
+    ClaimResolutionReason:
       type: string
-      example: EUR
-      pattern: ^[A-Z]{3}$
-      description: 3-digit currency code (ISO 4217)
+      enum:
+      - CLAIM_SOLD
+      - CLAIM_PAID
+      - FRAUDULENT
+      - CLAIM_DISCARDED
+      - CLAIM_DISCHARGED
+      - CLAIM_INVALIDATED
+      example: CLAIM_PAID
+      description: 'The reason for the claim resolution.
+
+        '
+    CreditClaimInput:
+      type: object
+      required:
+      - amount
+      - currency
+      - originator
+      properties:
+        amount:
+          $ref: '#/components/schemas/Amount'
+        fees:
+          oneOf:
+          - type: number
+            description: Fees as a numeric value
+          - type: array
+            items:
+              $ref: '#/components/schemas/Fee'
+            description: Array of Fee objects with name and amount
+          description: Fees for the credit claim, can be a number or array of Fee objects
+        currency:
+          $ref: '#/components/schemas/Currency'
+        originator:
+          type: string
+          enum:
+          - DCA
+          - CLIENT
+        paymentDistributionPriority:
+          type: string
+          enum:
+          - FEES_FIRST
+          - AMOUNT_FIRST
+          description: Defines the priority for payment distribution (whethere the payment amount should be distributed to claim's principal amount first or to claim's fees first)
+        creditType:
+          type: string
+          enum:
+          - PAYMENT
+          - DISCOUNT
+          - ADJUSTMENT
+          description: Typed classification of the credit, mirroring the ledger entry types. Omitted implies PAYMENT (today's implicit semantics).
+        date:
+          type: number
+          description: date of credit (unix timestamp in msec)
+          example: 1647526514000
+        descriptionText:
+          type: string
+          description: some description for credit
+        context:
+          type: object
+          description: 'Optional free-form context forwarded to the claim credit event.
+
+            Up to 10 key-value pairs. Values may be string, number, boolean, or null.
+
+            '
+          maxProperties: 10
+          additionalProperties:
+            oneOf:
+            - type: string
+            - type: number
+            - type: boolean
+    PortfolioReference:
+      type: string
+      minLength: 1
+      example: EXTERNAL_PORTFOLIO_REFERENCE_002
+      description: This is a optional grouping field for reporting purposes.
     BaseDebtor:
       type: object
       properties:
@@ -1863,28 +1721,170 @@ components:
           description: 'Type of the debtor (default: natural)'
         contactInformation:
           $ref: '#/components/schemas/BaseContactInformation'
-    UpdateClaimOptions:
-      description: Additional modifiers when updating claims
+    Amount:
+      minimum: 0
+      type: integer
+      example: 13025
+      description: Monetary value in cents (natural nuumber)
+    RelatedClaim:
+      type: object
+      description: A typed relation from this claim to another claim (lineage metadata; the platform does not act on it)
+      required:
+      - type
+      - claimReference
+      additionalProperties: false
       properties:
-        options:
-          properties:
-            forceAmountCheck:
-              type: boolean
-              example: false
-              description: Let the claim status the same, regardless of the changes in the amount
-    ClaimResolutionReason:
+        type:
+          type: string
+          description: 'Relation type, declared on THIS claim pointing at the referenced claim (single direction; inverses are derived at query time). REPLACES: this claim supersedes the referenced ones (e.g. a consolidated claim placed at acceleration after crediting the individual instalment claims). SPLIT_FROM: this claim was split out of the referenced claim (e.g. the disputed portion of an invoice separated for independent handling). REINSTATES: this claim places debt back into collection after the referenced claim was already resolved (e.g. a settlement breached after the original claim was closed). REFINANCES: this claim is a new credit agreement curing the referenced claims under new terms — counts as recovery. RESTRUCTURES: this claim re-schedules the referenced debt by agreement with the debtor (workout/forbearance executed in your core system and placed as a new claim — restructures executed inside Receive use an Instalment Plan instead; do not create a new claim for those). DEFERS: this fee claim gates a due-date deferral of the referenced claims.'
+          enum:
+          - REPLACES
+          - SPLIT_FROM
+          - REINSTATES
+          - REFINANCES
+          - RESTRUCTURES
+          - DEFERS
+        claimReference:
+          type: string
+          minLength: 1
+          description: Your reference of the related claim
+          example: API_CLAIM_REF_INST_001
+    CreateClaimInput:
+      description: Input for create_claims endpoint.
+      allOf:
+      - $ref: '#/components/schemas/ClaimInput'
+    DebtorReference:
       type: string
-      enum:
-      - CLAIM_SOLD
-      - CLAIM_PAID
-      - FRAUDULENT
-      - CLAIM_DISCARDED
-      - CLAIM_DISCHARGED
-      - CLAIM_INVALIDATED
-      example: CLAIM_PAID
-      description: 'The reason for the claim resolution.
+      minLength: 1
+      example: EXTERNAL_DEBTOR_REF_002
+      description: Your customer ID for this person or company
+    Repayment:
+      type: object
+      description: A repayment entry in the pre-sale payment history of a claim
+      required:
+      - amount
+      properties:
+        amount:
+          $ref: '#/components/schemas/Amount'
+        date:
+          type:
+          - string
+          - 'null'
+          format: date
+          description: Date of that repayment
+          example: '2019-06-28'
+        dueDate:
+          type: string
+          format: date
+          description: Due date of that repayment
+          example: '2019-06-28'
+        outstandingAmount:
+          allOf:
+          - $ref: '#/components/schemas/Amount'
+          description: Outstanding amount after the repayment in cents
+        meta:
+          $ref: '#/components/schemas/Metadata'
+    AccountReference:
+      type: string
+      minLength: 1
+      example: ACCOUNT_REFERENCE_002
+      description: Account reference in your system
+    Movement:
+      type: object
+      description: 'A single credit/debit movement contributing to a claim import. Emit-only classification, not state: movements never drive the claim `amount` — they only determine which typed credited/debited events Receive emits.'
+      required:
+      - direction
+      - amount
+      additionalProperties: false
+      properties:
+        direction:
+          type: string
+          enum:
+          - CREDIT
+          - DEBIT
+          description: Whether the movement decreases (CREDIT) or increases (DEBIT) the outstanding claim amount
+        amount:
+          type: integer
+          minimum: 0
+          description: The movement amount [cents]
+          example: 5000
+        type:
+          type: string
+          enum:
+          - PAYMENT
+          - DISCOUNT
+          - ADJUSTMENT
+          - CHARGEBACK
+          - INTEREST
+          description: 'Typed classification of the movement, reusing the claim credit/debit vocabulary: PAYMENT, DISCOUNT, or ADJUSTMENT for a CREDIT; ADJUSTMENT, CHARGEBACK, or INTEREST for a DEBIT.'
+        sourceRef:
+          type: string
+          minLength: 1
+          description: Opaque reference correlating this movement to the record that produced it (e.g. a ledger entry reference). Passed through verbatim; never interpreted by Receive.
+          example: LEDGER-ENTRY-0001
+  parameters:
+    MinorVersionParameter:
+      name: minorVersion
+      in: query
+      required: false
+      description: Optional minor version identifier for message versioning. This value is passed as additional metadata with emitted messages.
+      schema:
+        type: string
+    AuthorizationParameter:
+      in: header
+      name: Authorization
+      required: true
+      description: 'OAuth2 Token (obtained from /oauth2/token )
+
+        Reference: https://docs.indebted.co/docs/receive/integration/use-cases/authentication-use-case
 
         '
+      example: Bearer <access_token>
+      schema:
+        type: string
+    AsyncParameter:
+      name: async
+      in: query
+      required: false
+      description: The request is added to the queue without expecting the response
+      schema:
+        type: boolean
+    SequentialParameter:
+      name: sequential
+      in: query
+      required: false
+      description: The request body items are executed one after another one
+      schema:
+        type: boolean
+    AccountReferenceParameter:
+      name: accountReference
+      in: query
+      required: true
+      example: ACC
+      description: Account reference in your system
+      schema:
+        type: string
+    ClientIdParameter:
+      name: clientId
+      in: path
+      required: true
+      description: 'A Receive system identifier that will be assigned automatically.
+
+        It will be used for situations like Support related interventions or data segmentation.
+
+        '
+      example: ec702157-705b-42a0-b70e-a60a63dd24ab
+      schema:
+        type: string
+        format: uuid
+    TriggerNameParameter:
+      name: triggerName
+      in: query
+      required: false
+      description: This is name of Custom Trigger that should be triggered when this API is called.
+      schema:
+        type: string
+      example: customTrigger1
   securitySchemes:
     api_key:
       type: apiKey

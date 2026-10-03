@@ -123,128 +123,7 @@ paths:
       security:
       - api_key: []
 components:
-  parameters:
-    AuthorizationParameter:
-      in: header
-      name: Authorization
-      required: true
-      description: 'OAuth2 Token (obtained from /oauth2/token )
-
-        Reference: https://docs.indebted.co/docs/receive/integration/use-cases/authentication-use-case
-
-        '
-      example: Bearer <access_token>
-      schema:
-        type: string
-    SequentialParameter:
-      name: sequential
-      in: query
-      required: false
-      description: The request body items are executed one after another one
-      schema:
-        type: boolean
-    TriggerNameParameter:
-      name: triggerName
-      in: query
-      required: false
-      description: This is name of Custom Trigger that should be triggered when this API is called.
-      schema:
-        type: string
-      example: customTrigger1
-    AccountReferenceParameter:
-      name: accountReference
-      in: query
-      required: true
-      example: ACC
-      description: Account reference in your system
-      schema:
-        type: string
-    ClientIdParameter:
-      name: clientId
-      in: path
-      required: true
-      description: 'A Receive system identifier that will be assigned automatically.
-
-        It will be used for situations like Support related interventions or data segmentation.
-
-        '
-      example: ec702157-705b-42a0-b70e-a60a63dd24ab
-      schema:
-        type: string
-        format: uuid
-    AsyncParameter:
-      name: async
-      in: query
-      required: false
-      description: The request is added to the queue without expecting the response
-      schema:
-        type: boolean
-    MinorVersionParameter:
-      name: minorVersion
-      in: query
-      required: false
-      description: Optional minor version identifier for message versioning. This value is passed as additional metadata with emitted messages.
-      schema:
-        type: string
   schemas:
-    TrustlyAccountMandateInput:
-      allOf:
-      - $ref: '#/components/schemas/BaseAccountMandateInput'
-      - type: object
-        required:
-        - providerName
-        properties:
-          providerName:
-            type: string
-            enum:
-            - trustly
-    MandateCardTypeRepresentation:
-      type: object
-      required:
-      - cardIssuer
-      - lastDigits
-      properties:
-        cardIssuer:
-          type: string
-          example: VISA
-        lastDigits:
-          type: string
-          example: '1404'
-        holderName:
-          type: string
-        expiryMonth:
-          type: string
-          example: 5
-        expiryYear:
-          type: string
-          example: 2023
-        bankName:
-          type: string
-    DebtorReference:
-      type: string
-      minLength: 1
-      example: EXTERNAL_DEBTOR_REF_002
-      description: Your customer ID for this person or company
-    SplitAccountMandateInput:
-      allOf:
-      - $ref: '#/components/schemas/BaseAccountMandateInput'
-      - type: object
-        required:
-        - providerName
-        properties:
-          providerName:
-            type: string
-            enum:
-            - split
-    CreateAccountMandates:
-      allOf:
-      - $ref: '#/components/schemas/ActionResponse'
-      - type: object
-        properties:
-          data:
-            type: array
-            items:
-              $ref: '#/components/schemas/AccountMandateInput'
     FerratumV2AccountMandateInput:
       allOf:
       - $ref: '#/components/schemas/BaseAccountMandateInput'
@@ -256,46 +135,6 @@ components:
             type: string
             enum:
             - ferratumCheckoutCreditCardV2
-    AccountMandate:
-      type: object
-      required:
-      - mandateId
-      - accountReference
-      - providerName
-      properties:
-        mandateId:
-          type: string
-          description: mandate id (can be the mandate id of external system)
-          example: d34b443e-968e-4647-80ec-292ee38c8b34
-          minLength: 1
-        accountReference:
-          $ref: '#/components/schemas/AccountReference'
-        providerName:
-          type: string
-          description: Name of payment provider
-          example: trustly
-        debtorReference:
-          $ref: '#/components/schemas/DebtorReference'
-        productReferences:
-          type: array
-          description: Product References
-          items:
-            $ref: '#/components/schemas/ProductReference'
-        mandateRepresentation:
-          oneOf:
-          - $ref: '#/components/schemas/MandateAccountTypeRepresentation'
-          - $ref: '#/components/schemas/MandateCardTypeRepresentation'
-    AccountMandateInput:
-      oneOf:
-      - $ref: '#/components/schemas/FerratumV2AccountMandateInput'
-      - $ref: '#/components/schemas/PaylandsAccountMandateInput'
-      - $ref: '#/components/schemas/SplitAccountMandateInput'
-      - $ref: '#/components/schemas/TrustlyAccountMandateInput'
-    ProductReference:
-      type: string
-      minLength: 1
-      example: PRODUCT_REFERENCE_1
-      description: Identifier for a product in your system. It is used for grouping purposes.
     AccountMandateDeleteInput:
       description: Input for delete_account_mandates endpoint.
       type: object
@@ -341,6 +180,39 @@ components:
         - Successfully processed action
         messageIds:
         - e66d62ed-2331-4ced-8c03-5e729e984adc
+    MandateCardTypeRepresentation:
+      type: object
+      required:
+      - cardIssuer
+      - lastDigits
+      properties:
+        cardIssuer:
+          type: string
+          example: VISA
+        lastDigits:
+          type: string
+          example: '1404'
+        holderName:
+          type: string
+        expiryMonth:
+          type: string
+          example: 5
+        expiryYear:
+          type: string
+          example: 2023
+        bankName:
+          type: string
+    ProductReference:
+      type: string
+      minLength: 1
+      example: PRODUCT_REFERENCE_1
+      description: Identifier for a product in your system. It is used for grouping purposes.
+    AccountMandateInput:
+      oneOf:
+      - $ref: '#/components/schemas/FerratumV2AccountMandateInput'
+      - $ref: '#/components/schemas/PaylandsAccountMandateInput'
+      - $ref: '#/components/schemas/SplitAccountMandateInput'
+      - $ref: '#/components/schemas/TrustlyAccountMandateInput'
     PaylandsAccountMandateInput:
       allOf:
       - $ref: '#/components/schemas/BaseAccountMandateInput'
@@ -357,6 +229,26 @@ components:
           clientIpAddress:
             type: string
             description: The customer ip address is needed for Paylands mandate to work
+    TrustlyAccountMandateInput:
+      allOf:
+      - $ref: '#/components/schemas/BaseAccountMandateInput'
+      - type: object
+        required:
+        - providerName
+        properties:
+          providerName:
+            type: string
+            enum:
+            - trustly
+    CreateAccountMandates:
+      allOf:
+      - $ref: '#/components/schemas/ActionResponse'
+      - type: object
+        properties:
+          data:
+            type: array
+            items:
+              $ref: '#/components/schemas/AccountMandateInput'
     MandateAccountTypeRepresentation:
       type: object
       required:
@@ -369,6 +261,22 @@ components:
           type: string
         accountNumber:
           type: string
+    SplitAccountMandateInput:
+      allOf:
+      - $ref: '#/components/schemas/BaseAccountMandateInput'
+      - type: object
+        required:
+        - providerName
+        properties:
+          providerName:
+            type: string
+            enum:
+            - split
+    DebtorReference:
+      type: string
+      minLength: 1
+      example: EXTERNAL_DEBTOR_REF_002
+      description: Your customer ID for this person or company
     AccountReference:
       type: string
       minLength: 1
@@ -405,7 +313,124 @@ components:
           oneOf:
           - $ref: '#/components/schemas/MandateAccountTypeRepresentation'
           - $ref: '#/components/schemas/MandateCardTypeRepresentation'
+    AccountMandate:
+      type: object
+      required:
+      - mandateId
+      - accountReference
+      - providerName
+      properties:
+        mandateId:
+          type: string
+          description: mandate id (can be the mandate id of external system)
+          example: d34b443e-968e-4647-80ec-292ee38c8b34
+          minLength: 1
+        accountReference:
+          $ref: '#/components/schemas/AccountReference'
+        providerName:
+          type: string
+          description: Name of payment provider
+          example: trustly
+        debtorReference:
+          $ref: '#/components/schemas/DebtorReference'
+        productReferences:
+          type: array
+          description: Product References
+          items:
+            $ref: '#/components/schemas/ProductReference'
+        mandateRepresentation:
+          oneOf:
+          - $ref: '#/components/schemas/MandateAccountTypeRepresentation'
+          - $ref: '#/components/schemas/MandateCardTypeRepresentation'
+  parameters:
+    MinorVersionParameter:
+      name: minorVersion
+      in: query
+      required: false
+      description: Optional minor version identifier for message versioning. This value is passed as additional metadata with emitted messages.
+      schema:
+        type: string
+    AuthorizationParameter:
+      in: header
+      name: Authorization
+      required: true
+      description: 'OAuth2 Token (obtained from /oauth2/token )
+
+        Reference: https://docs.indebted.co/docs/receive/integration/use-cases/authentication-use-case
+
+        '
+      example: Bearer <access_token>
+      schema:
+        type: string
+    AsyncParameter:
+      name: async
+      in: query
+      required: false
+      description: The request is added to the queue without expecting the response
+      schema:
+        type: boolean
+    SequentialParameter:
+      name: sequential
+      in: query
+      required: false
+      description: The request body items are executed one after another one
+      schema:
+        type: boolean
+    AccountReferenceParameter:
+      name: accountReference
+      in: query
+      required: true
+      example: ACC
+      description: Account reference in your system
+      schema:
+        type: string
+    ClientIdParameter:
+      name: clientId
+      in: path
+      required: true
+      description: 'A Receive system identifier that will be assigned automatically.
+
+        It will be used for situations like Support related interventions or data segmentation.
+
+        '
+      example: ec702157-705b-42a0-b70e-a60a63dd24ab
+      schema:
+        type: string
+        format: uuid
+    TriggerNameParameter:
+      name: triggerName
+      in: query
+      required: false
+      description: This is name of Custom Trigger that should be triggered when this API is called.
+      schema:
+        type: string
+      example: customTrigger1
   responses:
+    200SuccessCreateAccountMandates:
+      description: Response of creating a set of account mandates
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties:
+              $ref: '#/components/schemas/CreateAccountMandates'
+          example:
+            MANDATE-7f257450:
+              success: true
+              messages:
+              - Successfully created mandate MANDATE-7f257450
+              messageIds:
+              - a1b2c3d4-0000-4a8b-9c6d-2e5f8a1b0c44
+    403Forbidden:
+      description: Access is denied
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Forbidden
     200SuccessGetAccountMandates:
       description: Request for get_account_mandates is successful
       content:
@@ -421,6 +446,26 @@ components:
             debtorReference: CUST-88213
             productReferences:
             - BROADBAND_PLAN_A
+    429LimitsReached:
+      description: Request was throttled
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Too Many Requests
+    401Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
     400BadRequest:
       description: Incorrectly formed request
       content:
@@ -446,16 +491,6 @@ components:
               - Successfully processed action
               messageIds:
               - e66d62ed-2331-4ced-8c03-5e729e984adc
-    403Forbidden:
-      description: Access is denied
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              message:
-                type: string
-                example: Forbidden
     500InternalError:
       description: Internal error occured
       content:
@@ -466,41 +501,6 @@ components:
               message:
                 type: string
                 example: Internal error
-    401Unauthorized:
-      description: Unauthorized
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              message:
-                type: string
-                example: Unauthorized
-    200SuccessCreateAccountMandates:
-      description: Response of creating a set of account mandates
-      content:
-        application/json:
-          schema:
-            type: object
-            additionalProperties:
-              $ref: '#/components/schemas/CreateAccountMandates'
-          example:
-            MANDATE-7f257450:
-              success: true
-              messages:
-              - Successfully created mandate MANDATE-7f257450
-              messageIds:
-              - a1b2c3d4-0000-4a8b-9c6d-2e5f8a1b0c44
-    429LimitsReached:
-      description: Request was throttled
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              message:
-                type: string
-                example: Too Many Requests
   securitySchemes:
     api_key:
       type: apiKey
