@@ -289,76 +289,58 @@ paths:
       security:
       - api_key: []
 components:
-  schemas:
-    ApplySettlementInput:
-      type: object
-      required:
-      - definitionId
-      - accountReference
-      - externalClaimRefs
-      - applicationRef
-      properties:
-        definitionId:
-          type: string
-          description: Identifier of the DIRECT settlement definition to apply
-        accountReference:
-          type: string
-          description: Account reference identifier
-        externalClaimRefs:
-          type: array
-          minItems: 1
-          items:
-            type: string
-          description: Client claim references the settlement is applied to
-        applicationRef:
-          type: string
-          description: Idempotency key for this application
-        form:
-          type: object
-          additionalProperties: true
-          description: Form data for programmatic discounts
-    SettlementDiscount:
-      description: The discount rule a settlement applies.
-      oneOf:
-      - type: object
-        required:
-        - type
-        - percentage
-        properties:
-          type:
-            type: string
-            enum:
-            - PERCENTAGE
-          percentage:
-            type: number
-            minimum: 0
-            maximum: 100
-      - type: object
-        required:
-        - type
-        - amount
-        properties:
-          type:
-            type: string
-            enum:
-            - FIXED
-          amount:
-            type: integer
-            description: Fixed discount amount in minor units (cents)
-      - type: object
-        required:
-        - type
-        - script
-        properties:
-          type:
-            type: string
-            enum:
-            - PROGRAMMATIC
-          script:
-            type: string
-          form:
+  responses:
+    400BadRequest:
+      description: Incorrectly formed request
+      content:
+        application/json:
+          schema:
             type: object
-            additionalProperties: true
+            properties:
+              message:
+                type: string
+                example: 'Missing required request parameters: [Authorization]'
+    403Forbidden:
+      description: Access is denied
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Forbidden
+    500InternalError:
+      description: Internal error occured
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Internal error
+    401Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
+    429LimitsReached:
+      description: Request was throttled
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Too Many Requests
+  schemas:
     ActionResponse:
       type: object
       description: Response of any action that causes any side effect in the platform (e.g. create, update, delete)
@@ -463,6 +445,84 @@ components:
         properties:
           data:
             $ref: '#/components/schemas/SettlementDefinitionInput'
+    ApplySettlementInput:
+      type: object
+      required:
+      - definitionId
+      - accountReference
+      - externalClaimRefs
+      - applicationRef
+      properties:
+        definitionId:
+          type: string
+          description: Identifier of the DIRECT settlement definition to apply
+        accountReference:
+          type: string
+          description: Account reference identifier
+        externalClaimRefs:
+          type: array
+          minItems: 1
+          items:
+            type: string
+          description: Client claim references the settlement is applied to
+        applicationRef:
+          type: string
+          description: Idempotency key for this application
+        form:
+          type: object
+          additionalProperties: true
+          description: Form data for programmatic discounts
+    GetSettlements:
+      allOf:
+      - $ref: '#/components/schemas/ActionResponse'
+      - type: object
+        properties:
+          data:
+            type: array
+            items:
+              $ref: '#/components/schemas/Settlement'
+    SettlementDiscount:
+      description: The discount rule a settlement applies.
+      oneOf:
+      - type: object
+        required:
+        - type
+        - percentage
+        properties:
+          type:
+            type: string
+            enum:
+            - PERCENTAGE
+          percentage:
+            type: number
+            minimum: 0
+            maximum: 100
+      - type: object
+        required:
+        - type
+        - amount
+        properties:
+          type:
+            type: string
+            enum:
+            - FIXED
+          amount:
+            type: integer
+            description: Fixed discount amount in minor units (cents)
+      - type: object
+        required:
+        - type
+        - script
+        properties:
+          type:
+            type: string
+            enum:
+            - PROGRAMMATIC
+          script:
+            type: string
+          form:
+            type: object
+            additionalProperties: true
     GetSettlement:
       allOf:
       - $ref: '#/components/schemas/ActionResponse'
@@ -470,44 +530,6 @@ components:
         properties:
           data:
             $ref: '#/components/schemas/Settlement'
-    WithdrawSettlementInput:
-      type: object
-      required:
-      - settlementId
-      properties:
-        settlementId:
-          type: string
-          description: Identifier of the settlement instance to withdraw
-        reason:
-          type: string
-          description: Optional human-readable reason for the withdrawal
-    SettlementDefinitionInput:
-      type: object
-      required:
-      - id
-      - version
-      - discount
-      - selector
-      - enabled
-      properties:
-        id:
-          type: string
-          description: Client-provided identifier of the settlement definition
-        version:
-          type: integer
-          minimum: 1
-          description: Monotonic version of the definition
-        discount:
-          $ref: '#/components/schemas/SettlementDiscount'
-        selector:
-          $ref: '#/components/schemas/SettlementSelector'
-        guards:
-          type: object
-          properties:
-            maxDiscountPercentage:
-              type: number
-        enabled:
-          type: boolean
     SettlementSelector:
       description: What the settlement definition materialises against.
       oneOf:
@@ -543,35 +565,45 @@ components:
             type: string
             enum:
             - DIRECT
-    GetSettlements:
-      allOf:
-      - $ref: '#/components/schemas/ActionResponse'
-      - type: object
-        properties:
-          data:
-            type: array
-            items:
-              $ref: '#/components/schemas/Settlement'
+    SettlementDefinitionInput:
+      type: object
+      required:
+      - id
+      - version
+      - discount
+      - selector
+      - enabled
+      properties:
+        id:
+          type: string
+          description: Client-provided identifier of the settlement definition
+        version:
+          type: integer
+          minimum: 1
+          description: Monotonic version of the definition
+        discount:
+          $ref: '#/components/schemas/SettlementDiscount'
+        selector:
+          $ref: '#/components/schemas/SettlementSelector'
+        guards:
+          type: object
+          properties:
+            maxDiscountPercentage:
+              type: number
+        enabled:
+          type: boolean
+    WithdrawSettlementInput:
+      type: object
+      required:
+      - settlementId
+      properties:
+        settlementId:
+          type: string
+          description: Identifier of the settlement instance to withdraw
+        reason:
+          type: string
+          description: Optional human-readable reason for the withdrawal
   parameters:
-    AuthorizationParameter:
-      in: header
-      name: Authorization
-      required: true
-      description: 'OAuth2 Token (obtained from /oauth2/token )
-
-        Reference: https://docs.indebted.co/docs/receive/integration/use-cases/authentication-use-case
-
-        '
-      example: Bearer <access_token>
-      schema:
-        type: string
-    AsyncParameter:
-      name: async
-      in: query
-      required: false
-      description: The request is added to the queue without expecting the response
-      schema:
-        type: boolean
     ClientIdParameter:
       name: clientId
       in: path
@@ -585,6 +617,18 @@ components:
       schema:
         type: string
         format: uuid
+    AuthorizationParameter:
+      in: header
+      name: Authorization
+      required: true
+      description: 'OAuth2 Token (obtained from /oauth2/token )
+
+        Reference: https://docs.indebted.co/docs/receive/integration/use-cases/authentication-use-case
+
+        '
+      example: Bearer <access_token>
+      schema:
+        type: string
     TriggerNameParameter:
       name: triggerName
       in: query
@@ -593,57 +637,13 @@ components:
       schema:
         type: string
       example: customTrigger1
-  responses:
-    403Forbidden:
-      description: Access is denied
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              message:
-                type: string
-                example: Forbidden
-    429LimitsReached:
-      description: Request was throttled
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              message:
-                type: string
-                example: Too Many Requests
-    401Unauthorized:
-      description: Unauthorized
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              message:
-                type: string
-                example: Unauthorized
-    400BadRequest:
-      description: Incorrectly formed request
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              message:
-                type: string
-                example: 'Missing required request parameters: [Authorization]'
-    500InternalError:
-      description: Internal error occured
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              message:
-                type: string
-                example: Internal error
+    AsyncParameter:
+      name: async
+      in: query
+      required: false
+      description: The request is added to the queue without expecting the response
+      schema:
+        type: boolean
   securitySchemes:
     api_key:
       type: apiKey

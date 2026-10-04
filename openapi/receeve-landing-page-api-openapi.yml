@@ -44,17 +44,50 @@ paths:
       security:
       - api_key: []
 components:
+  parameters:
+    TriggerNameParameter:
+      name: triggerName
+      in: query
+      required: false
+      description: This is name of Custom Trigger that should be triggered when this API is called.
+      schema:
+        type: string
+      example: customTrigger1
+    ClientIdParameter:
+      name: clientId
+      in: path
+      required: true
+      description: 'A Receive system identifier that will be assigned automatically.
+
+        It will be used for situations like Support related interventions or data segmentation.
+
+        '
+      example: ec702157-705b-42a0-b70e-a60a63dd24ab
+      schema:
+        type: string
+        format: uuid
+    ClaimReferenceParameter:
+      name: claimReference
+      in: query
+      required: true
+      example: ACCOUNT_REFERENCE_002
+      description: Receive Claim Reference
+      schema:
+        type: string
+        minLength: 1
+    AuthorizationParameter:
+      in: header
+      name: Authorization
+      required: true
+      description: 'OAuth2 Token (obtained from /oauth2/token )
+
+        Reference: https://docs.indebted.co/docs/receive/integration/use-cases/authentication-use-case
+
+        '
+      example: Bearer <access_token>
+      schema:
+        type: string
   responses:
-    403Forbidden:
-      description: Access is denied
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              message:
-                type: string
-                example: Forbidden
     404NotFound:
       description: Not found
       content:
@@ -65,16 +98,6 @@ components:
               message:
                 type: string
                 example: Not found
-    429LimitsReached:
-      description: Request was throttled
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              message:
-                type: string
-                example: Too Many Requests
     401Unauthorized:
       description: Unauthorized
       content:
@@ -85,16 +108,6 @@ components:
               message:
                 type: string
                 example: Unauthorized
-    400BadRequest:
-      description: Incorrectly formed request
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              message:
-                type: string
-                example: 'Missing required request parameters: [Authorization]'
     500InternalError:
       description: Internal error occured
       content:
@@ -105,6 +118,26 @@ components:
               message:
                 type: string
                 example: Internal error
+    403Forbidden:
+      description: Access is denied
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Forbidden
+    400BadRequest:
+      description: Incorrectly formed request
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: 'Missing required request parameters: [Authorization]'
     200SuccessGetLandingPageURL:
       description: Request for get_landing_page_url is successful
       content:
@@ -120,49 +153,16 @@ components:
                 example: https://domain.com/c/btXXskwXX
           example:
             URL: https://domain.com/c/btXXskwXX
-  parameters:
-    ClientIdParameter:
-      name: clientId
-      in: path
-      required: true
-      description: 'A Receive system identifier that will be assigned automatically.
-
-        It will be used for situations like Support related interventions or data segmentation.
-
-        '
-      example: ec702157-705b-42a0-b70e-a60a63dd24ab
-      schema:
-        type: string
-        format: uuid
-    AuthorizationParameter:
-      in: header
-      name: Authorization
-      required: true
-      description: 'OAuth2 Token (obtained from /oauth2/token )
-
-        Reference: https://docs.indebted.co/docs/receive/integration/use-cases/authentication-use-case
-
-        '
-      example: Bearer <access_token>
-      schema:
-        type: string
-    ClaimReferenceParameter:
-      name: claimReference
-      in: query
-      required: true
-      example: ACCOUNT_REFERENCE_002
-      description: Receive Claim Reference
-      schema:
-        type: string
-        minLength: 1
-    TriggerNameParameter:
-      name: triggerName
-      in: query
-      required: false
-      description: This is name of Custom Trigger that should be triggered when this API is called.
-      schema:
-        type: string
-      example: customTrigger1
+    429LimitsReached:
+      description: Request was throttled
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Too Many Requests
   securitySchemes:
     api_key:
       type: apiKey

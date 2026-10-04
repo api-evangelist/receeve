@@ -59,16 +59,6 @@ paths:
       - NONE: []
 components:
   responses:
-    403Forbidden:
-      description: Access is denied
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              message:
-                type: string
-                example: Forbidden
     200SuccessOauth2Token:
       description: Request to get oauth2 token was successful
       content:
@@ -92,16 +82,6 @@ components:
             access_token: <access_token>
             token_type: Bearer
             expires_in: 3600
-    429LimitsReached:
-      description: Request was throttled
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              message:
-                type: string
-                example: Too Many Requests
     401Unauthorized:
       description: Unauthorized
       content:
@@ -112,16 +92,6 @@ components:
               message:
                 type: string
                 example: Unauthorized
-    400BadRequest:
-      description: Incorrectly formed request
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              message:
-                type: string
-                example: 'Missing required request parameters: [Authorization]'
     500InternalError:
       description: Internal error occured
       content:
@@ -132,6 +102,36 @@ components:
               message:
                 type: string
                 example: Internal error
+    400BadRequest:
+      description: Incorrectly formed request
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: 'Missing required request parameters: [Authorization]'
+    429LimitsReached:
+      description: Request was throttled
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Too Many Requests
+    403Forbidden:
+      description: Access is denied
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Forbidden
   securitySchemes:
     api_key:
       type: apiKey

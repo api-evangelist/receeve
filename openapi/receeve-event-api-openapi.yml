@@ -71,27 +71,131 @@ paths:
       security:
       - api_key: []
 components:
+  schemas:
+    ClaimCreatedEvent:
+      type: object
+      required:
+      - messageId
+      - timestamp
+      - details
+      properties:
+        messageId:
+          type: string
+          minLength: 1
+          example: 51a35d12-9145-4c97-8285-08156681e47
+          description: message identifier in Receive system
+        timestamp:
+          type: string
+          minLength: 1
+          description: UTC timestamp
+          example: '2020-04-17T08:14:29.863Z'
+        details:
+          type: object
+          required:
+          - messageType
+          - claimRef
+          - receeveClaimRef
+          - amount
+          - currency
+          - dueDate
+          properties:
+            messageType:
+              type: string
+              minLength: 1
+              example: event.claim.created.v1
+              description: type of event that happened in Receive system
+            claimRef:
+              type: string
+              minLength: 1
+              example: ABCDEF123
+              description: reference to the Claim in external(your) system
+            receeveClaimRef:
+              type: string
+              minLength: 1
+              example: ABCDEF123-2020-01-15
+              description: reference to the Claim in Receive system
+            amount:
+              type: integer
+              description: Amount of the claim without fees in cents
+              example: 2000
+            currency:
+              $ref: '#/components/schemas/Currency'
+            dueDate:
+              $ref: '#/components/schemas/DueDate'
+    DueDate:
+      type: string
+      format: date
+      example: '2019-06-28'
+      description: Current due date in your system. Use originalDueDate unless you purchased the debt and need this distinction.
+    PaymentReference:
+      type: string
+      minLength: 1
+      example: paymentReference1
+      description: 'Payment reference used in online transactions.
+
+        It is a text reference that can be used to map the money transactions to other external systems.
+
+        '
+    Currency:
+      type: string
+      example: EUR
+      pattern: ^[A-Z]{3}$
+      description: 3-digit currency code (ISO 4217)
+    ClaimDebtPaymentProcessingEvent:
+      type: object
+      required:
+      - messageId
+      - timestamp
+      - details
+      properties:
+        messageId:
+          type: string
+          description: message identifier in Receive system
+          example: 51a35d12-9145-4c97-8285-08156681e47
+        timestamp:
+          type: string
+          description: UTC timestamp
+          example: '2020-04-17T08:14:29.863Z'
+        details:
+          type: object
+          required:
+          - messageType
+          - claimRef
+          - receeveClaimRef
+          - providerName
+          - amount
+          - currency
+          - trackingId
+          properties:
+            messageType:
+              type: string
+              description: type of event that happened in Receive system
+              example: event.claimDebtPayment.processing.v1
+            claimRef:
+              type: string
+              description: reference to the Claim in external(your) system
+              example: ABCDEF123
+            receeveClaimRef:
+              type: string
+              description: reference to the Claim in Receive system
+              example: ABCDEF123-2020-01-15
+            providerName:
+              type: string
+              description: Name of payment provider
+              example: Trustly
+            amount:
+              type: integer
+              description: Amount of the payment transaction in cents
+              example: 2000
+            currency:
+              $ref: '#/components/schemas/Currency'
+            trackingId:
+              type: string
+              description: Tracking id from payment provider
+              example: TRACKINGID123
+            paymentReference:
+              $ref: '#/components/schemas/PaymentReference'
   responses:
-    403Forbidden:
-      description: Access is denied
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              message:
-                type: string
-                example: Forbidden
-    429LimitsReached:
-      description: Request was throttled
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              message:
-                type: string
-                example: Too Many Requests
     200SuccessGetEvents:
       description: Request for get_events is successful
       content:
@@ -147,16 +251,6 @@ components:
               message:
                 type: string
                 example: Unauthorized
-    400BadRequest:
-      description: Incorrectly formed request
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              message:
-                type: string
-                example: 'Missing required request parameters: [Authorization]'
     500InternalError:
       description: Internal error occured
       content:
@@ -167,130 +261,36 @@ components:
               message:
                 type: string
                 example: Internal error
-  schemas:
-    Currency:
-      type: string
-      example: EUR
-      pattern: ^[A-Z]{3}$
-      description: 3-digit currency code (ISO 4217)
-    DueDate:
-      type: string
-      format: date
-      example: '2019-06-28'
-      description: Current due date in your system. Use originalDueDate unless you purchased the debt and need this distinction.
-    ClaimCreatedEvent:
-      type: object
-      required:
-      - messageId
-      - timestamp
-      - details
-      properties:
-        messageId:
-          type: string
-          minLength: 1
-          example: 51a35d12-9145-4c97-8285-08156681e47
-          description: message identifier in Receive system
-        timestamp:
-          type: string
-          minLength: 1
-          description: UTC timestamp
-          example: '2020-04-17T08:14:29.863Z'
-        details:
-          type: object
-          required:
-          - messageType
-          - claimRef
-          - receeveClaimRef
-          - amount
-          - currency
-          - dueDate
-          properties:
-            messageType:
-              type: string
-              minLength: 1
-              example: event.claim.created.v1
-              description: type of event that happened in Receive system
-            claimRef:
-              type: string
-              minLength: 1
-              example: ABCDEF123
-              description: reference to the Claim in external(your) system
-            receeveClaimRef:
-              type: string
-              minLength: 1
-              example: ABCDEF123-2020-01-15
-              description: reference to the Claim in Receive system
-            amount:
-              type: integer
-              description: Amount of the claim without fees in cents
-              example: 2000
-            currency:
-              $ref: '#/components/schemas/Currency'
-            dueDate:
-              $ref: '#/components/schemas/DueDate'
-    ClaimDebtPaymentProcessingEvent:
-      type: object
-      required:
-      - messageId
-      - timestamp
-      - details
-      properties:
-        messageId:
-          type: string
-          description: message identifier in Receive system
-          example: 51a35d12-9145-4c97-8285-08156681e47
-        timestamp:
-          type: string
-          description: UTC timestamp
-          example: '2020-04-17T08:14:29.863Z'
-        details:
-          type: object
-          required:
-          - messageType
-          - claimRef
-          - receeveClaimRef
-          - providerName
-          - amount
-          - currency
-          - trackingId
-          properties:
-            messageType:
-              type: string
-              description: type of event that happened in Receive system
-              example: event.claimDebtPayment.processing.v1
-            claimRef:
-              type: string
-              description: reference to the Claim in external(your) system
-              example: ABCDEF123
-            receeveClaimRef:
-              type: string
-              description: reference to the Claim in Receive system
-              example: ABCDEF123-2020-01-15
-            providerName:
-              type: string
-              description: Name of payment provider
-              example: Trustly
-            amount:
-              type: integer
-              description: Amount of the payment transaction in cents
-              example: 2000
-            currency:
-              $ref: '#/components/schemas/Currency'
-            trackingId:
-              type: string
-              description: Tracking id from payment provider
-              example: TRACKINGID123
-            paymentReference:
-              $ref: '#/components/schemas/PaymentReference'
-    PaymentReference:
-      type: string
-      minLength: 1
-      example: paymentReference1
-      description: 'Payment reference used in online transactions.
-
-        It is a text reference that can be used to map the money transactions to other external systems.
-
-        '
+    403Forbidden:
+      description: Access is denied
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Forbidden
+    400BadRequest:
+      description: Incorrectly formed request
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: 'Missing required request parameters: [Authorization]'
+    429LimitsReached:
+      description: Request was throttled
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Too Many Requests
   parameters:
     ClientIdParameter:
       name: clientId
