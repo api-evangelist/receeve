@@ -124,46 +124,6 @@ paths:
       - api_key: []
 components:
   schemas:
-    AccountMandateInput:
-      oneOf:
-      - $ref: '#/components/schemas/FerratumV2AccountMandateInput'
-      - $ref: '#/components/schemas/PaylandsAccountMandateInput'
-      - $ref: '#/components/schemas/SplitAccountMandateInput'
-      - $ref: '#/components/schemas/TrustlyAccountMandateInput'
-    MandateAccountTypeRepresentation:
-      type: object
-      required:
-      - bankName
-      - accountNumber
-      properties:
-        holderName:
-          type: string
-        bankName:
-          type: string
-        accountNumber:
-          type: string
-    TrustlyAccountMandateInput:
-      allOf:
-      - $ref: '#/components/schemas/BaseAccountMandateInput'
-      - type: object
-        required:
-        - providerName
-        properties:
-          providerName:
-            type: string
-            enum:
-            - trustly
-    SplitAccountMandateInput:
-      allOf:
-      - $ref: '#/components/schemas/BaseAccountMandateInput'
-      - type: object
-        required:
-        - providerName
-        properties:
-          providerName:
-            type: string
-            enum:
-            - split
     ActionResponse:
       type: object
       description: Response of any action that causes any side effect in the platform (e.g. create, update, delete)
@@ -224,57 +184,38 @@ components:
           oneOf:
           - $ref: '#/components/schemas/MandateAccountTypeRepresentation'
           - $ref: '#/components/schemas/MandateCardTypeRepresentation'
-    AccountMandateDeleteInput:
-      description: Input for delete_account_mandates endpoint.
-      type: object
-      required:
-      - accountReference
-      - mandateId
-      properties:
-        accountReference:
-          $ref: '#/components/schemas/AccountReference'
-        mandateId:
-          type: string
-          description: mandate id (can be the mandate id of external system)
-          example: d34b443e-968e-4647-80ec-292ee38c8b34
-          minLength: 1
-    AccountReference:
-      type: string
-      minLength: 1
-      example: ACCOUNT_REFERENCE_002
-      description: Account reference in your system
-    ProductReference:
-      type: string
-      minLength: 1
-      example: PRODUCT_REFERENCE_1
-      description: Identifier for a product in your system. It is used for grouping purposes.
-    MandateCardTypeRepresentation:
-      type: object
-      required:
-      - cardIssuer
-      - lastDigits
-      properties:
-        cardIssuer:
-          type: string
-          example: VISA
-        lastDigits:
-          type: string
-          example: '1404'
-        holderName:
-          type: string
-        expiryMonth:
-          type: string
-          example: 5
-        expiryYear:
-          type: string
-          example: 2023
-        bankName:
-          type: string
     DebtorReference:
       type: string
       minLength: 1
       example: EXTERNAL_DEBTOR_REF_002
       description: Your customer ID for this person or company
+    FerratumV2AccountMandateInput:
+      allOf:
+      - $ref: '#/components/schemas/BaseAccountMandateInput'
+      - type: object
+        required:
+        - providerName
+        properties:
+          providerName:
+            type: string
+            enum:
+            - ferratumCheckoutCreditCardV2
+    PaylandsAccountMandateInput:
+      allOf:
+      - $ref: '#/components/schemas/BaseAccountMandateInput'
+      - type: object
+        required:
+        - providerName
+        - clientIpAddress
+        properties:
+          providerName:
+            type: string
+            enum:
+            - paylandsenBizum
+            - paylandsenCards
+          clientIpAddress:
+            type: string
+            description: The customer ip address is needed for Paylands mandate to work
     BaseAccountMandateInput:
       type: object
       required:
@@ -306,22 +247,6 @@ components:
           oneOf:
           - $ref: '#/components/schemas/MandateAccountTypeRepresentation'
           - $ref: '#/components/schemas/MandateCardTypeRepresentation'
-    PaylandsAccountMandateInput:
-      allOf:
-      - $ref: '#/components/schemas/BaseAccountMandateInput'
-      - type: object
-        required:
-        - providerName
-        - clientIpAddress
-        properties:
-          providerName:
-            type: string
-            enum:
-            - paylandsenBizum
-            - paylandsenCards
-          clientIpAddress:
-            type: string
-            description: The customer ip address is needed for Paylands mandate to work
     CreateAccountMandates:
       allOf:
       - $ref: '#/components/schemas/ActionResponse'
@@ -331,7 +256,53 @@ components:
             type: array
             items:
               $ref: '#/components/schemas/AccountMandateInput'
-    FerratumV2AccountMandateInput:
+    AccountReference:
+      type: string
+      minLength: 1
+      example: ACCOUNT_REFERENCE_002
+      description: Account reference in your system
+    AccountMandateDeleteInput:
+      description: Input for delete_account_mandates endpoint.
+      type: object
+      required:
+      - accountReference
+      - mandateId
+      properties:
+        accountReference:
+          $ref: '#/components/schemas/AccountReference'
+        mandateId:
+          type: string
+          description: mandate id (can be the mandate id of external system)
+          example: d34b443e-968e-4647-80ec-292ee38c8b34
+          minLength: 1
+    ProductReference:
+      type: string
+      minLength: 1
+      example: PRODUCT_REFERENCE_1
+      description: Identifier for a product in your system. It is used for grouping purposes.
+    MandateCardTypeRepresentation:
+      type: object
+      required:
+      - cardIssuer
+      - lastDigits
+      properties:
+        cardIssuer:
+          type: string
+          example: VISA
+        lastDigits:
+          type: string
+          example: '1404'
+        holderName:
+          type: string
+        expiryMonth:
+          type: string
+          example: 5
+        expiryYear:
+          type: string
+          example: 2023
+        bankName:
+          type: string
+    TrustlyAccountMandateInput:
       allOf:
       - $ref: '#/components/schemas/BaseAccountMandateInput'
       - type: object
@@ -341,43 +312,100 @@ components:
           providerName:
             type: string
             enum:
-            - ferratumCheckoutCreditCardV2
+            - trustly
+    AccountMandateInput:
+      oneOf:
+      - $ref: '#/components/schemas/FerratumV2AccountMandateInput'
+      - $ref: '#/components/schemas/PaylandsAccountMandateInput'
+      - $ref: '#/components/schemas/SplitAccountMandateInput'
+      - $ref: '#/components/schemas/TrustlyAccountMandateInput'
+    MandateAccountTypeRepresentation:
+      type: object
+      required:
+      - bankName
+      - accountNumber
+      properties:
+        holderName:
+          type: string
+        bankName:
+          type: string
+        accountNumber:
+          type: string
+    SplitAccountMandateInput:
+      allOf:
+      - $ref: '#/components/schemas/BaseAccountMandateInput'
+      - type: object
+        required:
+        - providerName
+        properties:
+          providerName:
+            type: string
+            enum:
+            - split
+  parameters:
+    TriggerNameParameter:
+      name: triggerName
+      in: query
+      required: false
+      description: This is name of Custom Trigger that should be triggered when this API is called.
+      schema:
+        type: string
+      example: customTrigger1
+    AuthorizationParameter:
+      in: header
+      name: Authorization
+      required: true
+      description: 'OAuth2 Token (obtained from /oauth2/token )
+
+        Reference: https://docs.indebted.co/docs/receive/integration/use-cases/authentication-use-case
+
+        '
+      example: Bearer <access_token>
+      schema:
+        type: string
+    SequentialParameter:
+      name: sequential
+      in: query
+      required: false
+      description: The request body items are executed one after another one
+      schema:
+        type: boolean
+    AccountReferenceParameter:
+      name: accountReference
+      in: query
+      required: true
+      example: ACC
+      description: Account reference in your system
+      schema:
+        type: string
+    ClientIdParameter:
+      name: clientId
+      in: path
+      required: true
+      description: 'A Receive system identifier that will be assigned automatically.
+
+        It will be used for situations like Support related interventions or data segmentation.
+
+        '
+      example: ec702157-705b-42a0-b70e-a60a63dd24ab
+      schema:
+        type: string
+        format: uuid
+    MinorVersionParameter:
+      name: minorVersion
+      in: query
+      required: false
+      description: Optional minor version identifier for message versioning. This value is passed as additional metadata with emitted messages.
+      schema:
+        type: string
+    AsyncParameter:
+      name: async
+      in: query
+      required: false
+      description: The request is added to the queue without expecting the response
+      schema:
+        type: boolean
   responses:
-    400BadRequest:
-      description: Incorrectly formed request
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              message:
-                type: string
-                example: 'Missing required request parameters: [Authorization]'
-    403Forbidden:
-      description: Access is denied
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              message:
-                type: string
-                example: Forbidden
-    200SuccessCreateAccountMandates:
-      description: Response of creating a set of account mandates
-      content:
-        application/json:
-          schema:
-            type: object
-            additionalProperties:
-              $ref: '#/components/schemas/CreateAccountMandates'
-          example:
-            MANDATE-7f257450:
-              success: true
-              messages:
-              - Successfully created mandate MANDATE-7f257450
-              messageIds:
-              - a1b2c3d4-0000-4a8b-9c6d-2e5f8a1b0c44
     200SuccessGetAccountMandates:
       description: Request for get_account_mandates is successful
       content:
@@ -393,16 +421,21 @@ components:
             debtorReference: CUST-88213
             productReferences:
             - BROADBAND_PLAN_A
-    500InternalError:
-      description: Internal error occured
+    200SuccessCreateAccountMandates:
+      description: Response of creating a set of account mandates
       content:
         application/json:
           schema:
             type: object
-            properties:
-              message:
-                type: string
-                example: Internal error
+            additionalProperties:
+              $ref: '#/components/schemas/CreateAccountMandates'
+          example:
+            MANDATE-7f257450:
+              success: true
+              messages:
+              - Successfully created mandate MANDATE-7f257450
+              messageIds:
+              - a1b2c3d4-0000-4a8b-9c6d-2e5f8a1b0c44
     401Unauthorized:
       description: Unauthorized
       content:
@@ -438,69 +471,36 @@ components:
               message:
                 type: string
                 example: Too Many Requests
-  parameters:
-    ClientIdParameter:
-      name: clientId
-      in: path
-      required: true
-      description: 'A Receive system identifier that will be assigned automatically.
-
-        It will be used for situations like Support related interventions or data segmentation.
-
-        '
-      example: ec702157-705b-42a0-b70e-a60a63dd24ab
-      schema:
-        type: string
-        format: uuid
-    AccountReferenceParameter:
-      name: accountReference
-      in: query
-      required: true
-      example: ACC
-      description: Account reference in your system
-      schema:
-        type: string
-    AuthorizationParameter:
-      in: header
-      name: Authorization
-      required: true
-      description: 'OAuth2 Token (obtained from /oauth2/token )
-
-        Reference: https://docs.indebted.co/docs/receive/integration/use-cases/authentication-use-case
-
-        '
-      example: Bearer <access_token>
-      schema:
-        type: string
-    MinorVersionParameter:
-      name: minorVersion
-      in: query
-      required: false
-      description: Optional minor version identifier for message versioning. This value is passed as additional metadata with emitted messages.
-      schema:
-        type: string
-    TriggerNameParameter:
-      name: triggerName
-      in: query
-      required: false
-      description: This is name of Custom Trigger that should be triggered when this API is called.
-      schema:
-        type: string
-      example: customTrigger1
-    SequentialParameter:
-      name: sequential
-      in: query
-      required: false
-      description: The request body items are executed one after another one
-      schema:
-        type: boolean
-    AsyncParameter:
-      name: async
-      in: query
-      required: false
-      description: The request is added to the queue without expecting the response
-      schema:
-        type: boolean
+    403Forbidden:
+      description: Access is denied
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Forbidden
+    400BadRequest:
+      description: Incorrectly formed request
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: 'Missing required request parameters: [Authorization]'
+    500InternalError:
+      description: Internal error occured
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Internal error
   securitySchemes:
     api_key:
       type: apiKey

@@ -45,6 +45,18 @@ paths:
       - api_key: []
 components:
   parameters:
+    AuthorizationParameter:
+      in: header
+      name: Authorization
+      required: true
+      description: 'OAuth2 Token (obtained from /oauth2/token )
+
+        Reference: https://docs.indebted.co/docs/receive/integration/use-cases/authentication-use-case
+
+        '
+      example: Bearer <access_token>
+      schema:
+        type: string
     TriggerNameParameter:
       name: triggerName
       in: query
@@ -53,6 +65,15 @@ components:
       schema:
         type: string
       example: customTrigger1
+    ClaimReferenceParameter:
+      name: claimReference
+      in: query
+      required: true
+      example: ACCOUNT_REFERENCE_002
+      description: Receive Claim Reference
+      schema:
+        type: string
+        minLength: 1
     ClientIdParameter:
       name: clientId
       in: path
@@ -66,38 +87,7 @@ components:
       schema:
         type: string
         format: uuid
-    ClaimReferenceParameter:
-      name: claimReference
-      in: query
-      required: true
-      example: ACCOUNT_REFERENCE_002
-      description: Receive Claim Reference
-      schema:
-        type: string
-        minLength: 1
-    AuthorizationParameter:
-      in: header
-      name: Authorization
-      required: true
-      description: 'OAuth2 Token (obtained from /oauth2/token )
-
-        Reference: https://docs.indebted.co/docs/receive/integration/use-cases/authentication-use-case
-
-        '
-      example: Bearer <access_token>
-      schema:
-        type: string
   responses:
-    404NotFound:
-      description: Not found
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              message:
-                type: string
-                example: Not found
     401Unauthorized:
       description: Unauthorized
       content:
@@ -108,26 +98,6 @@ components:
               message:
                 type: string
                 example: Unauthorized
-    500InternalError:
-      description: Internal error occured
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              message:
-                type: string
-                example: Internal error
-    403Forbidden:
-      description: Access is denied
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              message:
-                type: string
-                example: Forbidden
     400BadRequest:
       description: Incorrectly formed request
       content:
@@ -138,6 +108,36 @@ components:
               message:
                 type: string
                 example: 'Missing required request parameters: [Authorization]'
+    500InternalError:
+      description: Internal error occured
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Internal error
+    429LimitsReached:
+      description: Request was throttled
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Too Many Requests
+    403Forbidden:
+      description: Access is denied
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Forbidden
     200SuccessGetLandingPageURL:
       description: Request for get_landing_page_url is successful
       content:
@@ -153,8 +153,8 @@ components:
                 example: https://domain.com/c/btXXskwXX
           example:
             URL: https://domain.com/c/btXXskwXX
-    429LimitsReached:
-      description: Request was throttled
+    404NotFound:
+      description: Not found
       content:
         application/json:
           schema:
@@ -162,7 +162,7 @@ components:
             properties:
               message:
                 type: string
-                example: Too Many Requests
+                example: Not found
   securitySchemes:
     api_key:
       type: apiKey

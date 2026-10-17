@@ -127,20 +127,6 @@ components:
       format: date
       example: '2019-06-28'
       description: Current due date in your system. Use originalDueDate unless you purchased the debt and need this distinction.
-    PaymentReference:
-      type: string
-      minLength: 1
-      example: paymentReference1
-      description: 'Payment reference used in online transactions.
-
-        It is a text reference that can be used to map the money transactions to other external systems.
-
-        '
-    Currency:
-      type: string
-      example: EUR
-      pattern: ^[A-Z]{3}$
-      description: 3-digit currency code (ISO 4217)
     ClaimDebtPaymentProcessingEvent:
       type: object
       required:
@@ -195,6 +181,20 @@ components:
               example: TRACKINGID123
             paymentReference:
               $ref: '#/components/schemas/PaymentReference'
+    Currency:
+      type: string
+      example: EUR
+      pattern: ^[A-Z]{3}$
+      description: 3-digit currency code (ISO 4217)
+    PaymentReference:
+      type: string
+      minLength: 1
+      example: paymentReference1
+      description: 'Payment reference used in online transactions.
+
+        It is a text reference that can be used to map the money transactions to other external systems.
+
+        '
   responses:
     200SuccessGetEvents:
       description: Request for get_events is successful
@@ -251,8 +251,8 @@ components:
               message:
                 type: string
                 example: Unauthorized
-    500InternalError:
-      description: Internal error occured
+    429LimitsReached:
+      description: Request was throttled
       content:
         application/json:
           schema:
@@ -260,7 +260,7 @@ components:
             properties:
               message:
                 type: string
-                example: Internal error
+                example: Too Many Requests
     403Forbidden:
       description: Access is denied
       content:
@@ -281,8 +281,8 @@ components:
               message:
                 type: string
                 example: 'Missing required request parameters: [Authorization]'
-    429LimitsReached:
-      description: Request was throttled
+    500InternalError:
+      description: Internal error occured
       content:
         application/json:
           schema:
@@ -290,8 +290,20 @@ components:
             properties:
               message:
                 type: string
-                example: Too Many Requests
+                example: Internal error
   parameters:
+    AuthorizationParameter:
+      in: header
+      name: Authorization
+      required: true
+      description: 'OAuth2 Token (obtained from /oauth2/token )
+
+        Reference: https://docs.indebted.co/docs/receive/integration/use-cases/authentication-use-case
+
+        '
+      example: Bearer <access_token>
+      schema:
+        type: string
     ClientIdParameter:
       name: clientId
       in: path
@@ -305,18 +317,6 @@ components:
       schema:
         type: string
         format: uuid
-    AuthorizationParameter:
-      in: header
-      name: Authorization
-      required: true
-      description: 'OAuth2 Token (obtained from /oauth2/token )
-
-        Reference: https://docs.indebted.co/docs/receive/integration/use-cases/authentication-use-case
-
-        '
-      example: Bearer <access_token>
-      schema:
-        type: string
   securitySchemes:
     api_key:
       type: apiKey

@@ -289,57 +289,6 @@ paths:
       security:
       - api_key: []
 components:
-  responses:
-    400BadRequest:
-      description: Incorrectly formed request
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              message:
-                type: string
-                example: 'Missing required request parameters: [Authorization]'
-    403Forbidden:
-      description: Access is denied
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              message:
-                type: string
-                example: Forbidden
-    500InternalError:
-      description: Internal error occured
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              message:
-                type: string
-                example: Internal error
-    401Unauthorized:
-      description: Unauthorized
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              message:
-                type: string
-                example: Unauthorized
-    429LimitsReached:
-      description: Request was throttled
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              message:
-                type: string
-                example: Too Many Requests
   schemas:
     ActionResponse:
       type: object
@@ -372,6 +321,102 @@ components:
         - Successfully processed action
         messageIds:
         - e66d62ed-2331-4ced-8c03-5e729e984adc
+    GetSettlements:
+      allOf:
+      - $ref: '#/components/schemas/ActionResponse'
+      - type: object
+        properties:
+          data:
+            type: array
+            items:
+              $ref: '#/components/schemas/Settlement'
+    WithdrawSettlementInput:
+      type: object
+      required:
+      - settlementId
+      properties:
+        settlementId:
+          type: string
+          description: Identifier of the settlement instance to withdraw
+        reason:
+          type: string
+          description: Optional human-readable reason for the withdrawal
+    SetSettlementDefinition:
+      allOf:
+      - $ref: '#/components/schemas/ActionResponse'
+      - type: object
+        properties:
+          data:
+            $ref: '#/components/schemas/SettlementDefinitionInput'
+    SettlementSelector:
+      description: What the settlement definition materialises against.
+      oneOf:
+      - type: object
+        required:
+        - type
+        - promiseToPayId
+        properties:
+          type:
+            type: string
+            enum:
+            - PROMISE_TO_PAY_INSTANCE
+          promiseToPayId:
+            type: string
+      - type: object
+        required:
+        - type
+        - instalmentPlanDefinitionIds
+        properties:
+          type:
+            type: string
+            enum:
+            - INSTALMENT_PLAN_DEFINITION
+          instalmentPlanDefinitionIds:
+            type: array
+            items:
+              type: string
+      - type: object
+        required:
+        - type
+        properties:
+          type:
+            type: string
+            enum:
+            - DIRECT
+    GetSettlement:
+      allOf:
+      - $ref: '#/components/schemas/ActionResponse'
+      - type: object
+        properties:
+          data:
+            $ref: '#/components/schemas/Settlement'
+    SettlementDefinitionInput:
+      type: object
+      required:
+      - id
+      - version
+      - discount
+      - selector
+      - enabled
+      properties:
+        id:
+          type: string
+          description: Client-provided identifier of the settlement definition
+        version:
+          type: integer
+          minimum: 1
+          description: Monotonic version of the definition
+        discount:
+          $ref: '#/components/schemas/SettlementDiscount'
+        selector:
+          $ref: '#/components/schemas/SettlementSelector'
+        guards:
+          type: object
+          properties:
+            maxDiscountPercentage:
+              type: number
+        enabled:
+          type: boolean
     Settlement:
       type: object
       required:
@@ -438,13 +483,6 @@ components:
         withdrawnAt:
           type: string
           format: date-time
-    SetSettlementDefinition:
-      allOf:
-      - $ref: '#/components/schemas/ActionResponse'
-      - type: object
-        properties:
-          data:
-            $ref: '#/components/schemas/SettlementDefinitionInput'
     ApplySettlementInput:
       type: object
       required:
@@ -472,15 +510,6 @@ components:
           type: object
           additionalProperties: true
           description: Form data for programmatic discounts
-    GetSettlements:
-      allOf:
-      - $ref: '#/components/schemas/ActionResponse'
-      - type: object
-        properties:
-          data:
-            type: array
-            items:
-              $ref: '#/components/schemas/Settlement'
     SettlementDiscount:
       description: The discount rule a settlement applies.
       oneOf:
@@ -523,87 +552,27 @@ components:
           form:
             type: object
             additionalProperties: true
-    GetSettlement:
-      allOf:
-      - $ref: '#/components/schemas/ActionResponse'
-      - type: object
-        properties:
-          data:
-            $ref: '#/components/schemas/Settlement'
-    SettlementSelector:
-      description: What the settlement definition materialises against.
-      oneOf:
-      - type: object
-        required:
-        - type
-        - promiseToPayId
-        properties:
-          type:
-            type: string
-            enum:
-            - PROMISE_TO_PAY_INSTANCE
-          promiseToPayId:
-            type: string
-      - type: object
-        required:
-        - type
-        - instalmentPlanDefinitionIds
-        properties:
-          type:
-            type: string
-            enum:
-            - INSTALMENT_PLAN_DEFINITION
-          instalmentPlanDefinitionIds:
-            type: array
-            items:
-              type: string
-      - type: object
-        required:
-        - type
-        properties:
-          type:
-            type: string
-            enum:
-            - DIRECT
-    SettlementDefinitionInput:
-      type: object
-      required:
-      - id
-      - version
-      - discount
-      - selector
-      - enabled
-      properties:
-        id:
-          type: string
-          description: Client-provided identifier of the settlement definition
-        version:
-          type: integer
-          minimum: 1
-          description: Monotonic version of the definition
-        discount:
-          $ref: '#/components/schemas/SettlementDiscount'
-        selector:
-          $ref: '#/components/schemas/SettlementSelector'
-        guards:
-          type: object
-          properties:
-            maxDiscountPercentage:
-              type: number
-        enabled:
-          type: boolean
-    WithdrawSettlementInput:
-      type: object
-      required:
-      - settlementId
-      properties:
-        settlementId:
-          type: string
-          description: Identifier of the settlement instance to withdraw
-        reason:
-          type: string
-          description: Optional human-readable reason for the withdrawal
   parameters:
+    TriggerNameParameter:
+      name: triggerName
+      in: query
+      required: false
+      description: This is name of Custom Trigger that should be triggered when this API is called.
+      schema:
+        type: string
+      example: customTrigger1
+    AuthorizationParameter:
+      in: header
+      name: Authorization
+      required: true
+      description: 'OAuth2 Token (obtained from /oauth2/token )
+
+        Reference: https://docs.indebted.co/docs/receive/integration/use-cases/authentication-use-case
+
+        '
+      example: Bearer <access_token>
+      schema:
+        type: string
     ClientIdParameter:
       name: clientId
       in: path
@@ -617,26 +586,6 @@ components:
       schema:
         type: string
         format: uuid
-    AuthorizationParameter:
-      in: header
-      name: Authorization
-      required: true
-      description: 'OAuth2 Token (obtained from /oauth2/token )
-
-        Reference: https://docs.indebted.co/docs/receive/integration/use-cases/authentication-use-case
-
-        '
-      example: Bearer <access_token>
-      schema:
-        type: string
-    TriggerNameParameter:
-      name: triggerName
-      in: query
-      required: false
-      description: This is name of Custom Trigger that should be triggered when this API is called.
-      schema:
-        type: string
-      example: customTrigger1
     AsyncParameter:
       name: async
       in: query
@@ -644,6 +593,57 @@ components:
       description: The request is added to the queue without expecting the response
       schema:
         type: boolean
+  responses:
+    401Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
+    429LimitsReached:
+      description: Request was throttled
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Too Many Requests
+    403Forbidden:
+      description: Access is denied
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Forbidden
+    400BadRequest:
+      description: Incorrectly formed request
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: 'Missing required request parameters: [Authorization]'
+    500InternalError:
+      description: Internal error occured
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Internal error
   securitySchemes:
     api_key:
       type: apiKey
